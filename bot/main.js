@@ -1,13 +1,18 @@
 const Discord = require('discord.js');
 const config = require('./config.json');
+const utils = require('./util.js')
 const fs = require('fs');
 const mongoose = require('mongoose');
-mongoose.connect(config.db+'/rpBot', {useNewUrlParser: true});
+mongoose.connect(config.db, {useNewUrlParser: true});
 const db = mongoose.connection
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function() {
   console.log("Connected to database")
 });
+
+//Create setting schema
+const schemas = require('./schemas.js');
+const guildSettings = mongoose.model('guildSettings', schemas.guildSettings)
 
 const client = new Discord.Client();
 
@@ -25,34 +30,34 @@ for (const file of commandFiles) {
 
 client.once('ready', async () => {
   console.log(`Logged in as ${client.user.tag}!`);
-  await client.user.setPresence({ game: { name: `${config.prefix}help` }, status: 'online' })
-  .catch(console.error);
 });
 
-client.on('message', msg => {
-	if (!msg.content.startsWith(config.prefix) || msg.author.bot) return;
+client.on('message',async msg => {
 
-	const args = msg.content.slice(config.prefix.length).split(/ +/);
+  settings = await utils.getGuildSettings(msg.guild.id, guildSettings)
+	if (!msg.content.startsWith(settings.prefix) || msg.author.bot) return;
+
+	const args = msg.content.slice(settings.prefix.length).split(/ +/);
 	const commandName = args.shift().toLowerCase();
 
   const command = client.commands.get(commandName)
     || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
   if(!command) return
   if (command.guildOnly && msg.channel.type !== 'text') {
-  	return msg.reply('I can\'t execute that command inside DMs!');
+  	return await msg.reply('I can\'t execute that command inside DMs!');
   }
   if (command.args && args.length < command.argsMin) {
     let reply = `You didn't provide enough arguments, ${msg.author}!`;
 			if (command.usage) {
-				reply += `\nThe proper usage would be: \`${config.prefix}${command.name} ${command.usage}\``;
+				reply += `\nThe proper usage would be: \`${settings.prefix}${command.name} ${command.usage}\``;
 			}
-			return msg.channel.send(reply);
+			return await msg.channel.send(reply);
     }
 
 
 
   try {
-  	command.execute(client, msg, args);
+  	await command.execute(client, guildSettings, msg, args);
   } catch (error) {
   	console.error(error);
   	msg.reply('there was an error trying to execute that command!');

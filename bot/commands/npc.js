@@ -11,7 +11,7 @@ module.exports = {
 	args: true,
 	argsMin: 2,
 	usage: '<name> <text>',
-	async execute(client, msg, args) {
+	async execute(client, guildSettings, msg, args) {
     if(!msg.member.hasPermission(this.perms)) return;
 
 
