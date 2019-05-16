@@ -10,7 +10,7 @@ module.exports = {
 	args: true,
 	usage: '<standard dice notation>',
 	example: '2d6+3',
-	execute(msg, args) {
+	execute(client, msg, args) {
     if(!msg.member.hasPermission(this.perms)) return;
 		const roll = new DiceRoller()
 		if(!roll.validate(args[0])) return msg.channel.send("Somethings wrong with your notation, check the help command for an example")

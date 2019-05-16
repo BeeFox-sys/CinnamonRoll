@@ -9,7 +9,7 @@ module.exports = {
 	guildOnly: false,
 	args: false,
 	usage: '[command]',
-	execute(msg, args) {
+	execute(client, msg, args) {
     if(!msg.member.hasPermission(this.perms)) return;
     const data = [];
     const { commands } = msg.client;
