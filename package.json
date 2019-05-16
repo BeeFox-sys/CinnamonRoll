@@ -15,5 +15,9 @@
   "bugs": {
     "url": "https://github.com/PlatypodeCode/rpBot/issues"
   },
-  "homepage": "https://github.com/PlatypodeCode/rpBot#readme"
+  "homepage": "https://github.com/PlatypodeCode/rpBot#readme",
+  "dependencies": {
+    "discord.js": "^11.5.0",
+    "mongoose": "^5.5.8"
+  }
 }
