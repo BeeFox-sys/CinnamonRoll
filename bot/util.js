@@ -15,7 +15,30 @@ module.exports = {
 			hook = await webhooks.find(hook => hook.owner.id === client.user.id)
 		}
     return hook
+  },
+
+  //Webhook Finder
+  async getGuildSettings(guild, collection) {
+
+    var doc = await collection.findById(guild).exec()
+    if(doc) return doc
+    var newSettings = await new collection({
+            _id: guild,
+            prefix: config.prefix
+          })
+    await newSettings.save((err, newDoc)=>{
+        if (err) return console.error(err)
+        return newDoc;
+      });
+    },
+
+  async checkGameAdmin(guildSettings, msg){
+    if(!guildSettings.admin) return true
+    for (var role in guildSettings.admin) {
+      if (object.hasOwnProperty(role)) {
+        if(msg.member.roles.get(role) != undefined) return true; break;
+      }
+    }
+    return false
   }
-
-
 }
