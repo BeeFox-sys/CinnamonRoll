@@ -54,10 +54,8 @@ client.on('message',async msg => {
 			return await msg.channel.send(reply);
     }
 
-
-
   try {
-  	await command.execute(client, guildSettings, msg, args);
+  	await command.execute(client, settings, msg, args);
   } catch (error) {
   	console.error(error);
   	msg.reply('there was an error trying to execute that command!');

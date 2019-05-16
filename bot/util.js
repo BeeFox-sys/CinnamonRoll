@@ -32,13 +32,16 @@ module.exports = {
       });
     },
 
-  async checkGameAdmin(guildSettings, msg){
-    if(!guildSettings.admin) return true
-    for (var role in guildSettings.admin) {
-      if (object.hasOwnProperty(role)) {
-        if(msg.member.roles.get(role) != undefined) return true; break;
-      }
+  checkGameAdmin(guildSettings, msg){
+    if(guildSettings.admin.length == 0) return true;
+    for (var i = 0; i < guildSettings.admin.length; i++) {
+      console.log(i)
+      if(msg.member.roles.get(guildSettings.admin[i]) != undefined) {
+         return true;
+         break;
+       }
     }
+    console.log("here")
     return false
   }
 }
