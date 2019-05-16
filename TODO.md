@@ -1,6 +1,6 @@
 # NPC command
-- [ ] Delete message after running the NPC command
-- [ ] Rename command in command's settings
+- [x] Delete message after running the NPC command
+- [x] Rename command in command's settings
 
 # Locations
 - [ ] Create locations schema

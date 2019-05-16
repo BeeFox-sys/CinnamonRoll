@@ -1,25 +1,24 @@
 const Discord = require('discord.js');
+const utils = require('../util.js');
+const config = require('../config.json')
 
 module.exports = {
-	name: 'extra',
-	aliases: ['e','npc'],
+	name: 'npc',
+	aliases: ['n'],
 	description: 'Summon an extra',
   perms: [''],
 	guildOnly: true,
-	args: false,
-	usage: '<Words>',
+	args: true,
+	argsMin: 2,
+	usage: '<name> <text>',
 	async execute(client, msg, args) {
     if(!msg.member.hasPermission(this.perms)) return;
 
-		var webhooks = await msg.guild.fetchWebhooks()
-		var hook
-		webhooks = webhooks.filter(hook => hook.channelID === msg.channel.id)
-		if(webhooks.find(hook => hook.owner.id === client.user.id) == null){
-			hook = await msg.channel.createWebhook("rpBot")
-		} else {
-			hook = await webhooks.find(hook => hook.owner.id === client.user.id)
-		}
+
+		hook = await utils.webhookCheck(client, msg)
 		await hook.edit(args.shift()+" [NPC]", "./bot/transparent.png")
 		await hook.send(args.join(" "))
+
+		await msg.delete()
 	},
 };

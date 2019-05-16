@@ -7,7 +7,6 @@ const db = mongoose.connection
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function() {
   console.log("Connected to database")
-
 });
 
 const client = new Discord.Client();
@@ -38,21 +37,19 @@ client.on('message', msg => {
 
   const command = client.commands.get(commandName)
     || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
-
   if(!command) return
-
   if (command.guildOnly && msg.channel.type !== 'text') {
   	return msg.reply('I can\'t execute that command inside DMs!');
   }
-
-  if (command.args && !args.length) {
-    let reply = `You didn't provide any arguments, ${msg.author}!`;
+  if (command.args && args.length < command.argsMin) {
+    let reply = `You didn't provide enough arguments, ${msg.author}!`;
 			if (command.usage) {
 				reply += `\nThe proper usage would be: \`${config.prefix}${command.name} ${command.usage}\``;
 			}
-
 			return msg.channel.send(reply);
     }
+
+
 
   try {
   	command.execute(client, msg, args);

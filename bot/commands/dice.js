@@ -8,6 +8,7 @@ module.exports = {
   perms: [''],
 	guildOnly: false,
 	args: true,
+	argsMin: 1,
 	usage: '<standard dice notation>',
 	example: '2d6+3',
 	execute(client, msg, args) {
