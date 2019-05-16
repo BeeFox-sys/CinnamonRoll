@@ -1,0 +1,22 @@
+version: '3'
+
+services:
+  bot:
+    container_name: rpBot-app
+    build: .
+    entrypoint:
+      - node
+      - bot/main.js
+    depends_on:
+      - db
+    restart: always
+  db:
+    container_name: rpBot-db
+    image: mvertes/alpine-mongo
+    volumes:
+      - "data:/data/db"
+    restart: always
+
+volumes:
+  data:
+    driver: local
