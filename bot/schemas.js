@@ -16,6 +16,7 @@ module.exports = {
     _id: String,
     owner: String,
     name: String,
+    colour: String,
     images: [String],
     description: String
   }),
