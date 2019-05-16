@@ -1,0 +1,19 @@
+{
+  "name": "rpbot",
+  "version": "1.0.0",
+  "description": "A discord bot for rp stuff",
+  "main": "bot/main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PlatypodeCode/rpBot.git"
+  },
+  "author": "PlatypodeCode",
+  "license": "SEE LICENSE IN LICENSE",
+  "bugs": {
+    "url": "https://github.com/PlatypodeCode/rpBot/issues"
+  },
+  "homepage": "https://github.com/PlatypodeCode/rpBot#readme"
+}
