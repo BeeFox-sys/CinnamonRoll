@@ -2,7 +2,7 @@ const Discord = require('discord.js');
 
 module.exports = {
 	name: 'extra',
-	aliases: ['e'],
+	aliases: ['e','npc'],
 	description: 'Summon an extra',
   perms: [''],
 	guildOnly: true,
@@ -19,7 +19,7 @@ module.exports = {
 		} else {
 			hook = await webhooks.find(hook => hook.owner.id === client.user.id)
 		}
-		await hook.edit(args.shift()+"[NPC]", "./bot/transparent.png")
+		await hook.edit(args.shift()+" [NPC]", "./bot/transparent.png")
 		await hook.send(args.join(" "))
 	},
 };
