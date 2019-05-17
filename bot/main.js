@@ -35,9 +35,18 @@ client.once('ready', async () => {
 client.on('message',async msg => {
 
   settings = await utils.getGuildSettings(msg.guild.id, guildSettings)
-	if (!msg.content.startsWith(settings.prefix) || msg.author.bot) return;
+	if (!(msg.content.startsWith(settings.prefix) || msg.content.startsWith(`<@${client.user.id}>`))|| msg.author.bot) return;
 
-	const args = msg.content.slice(settings.prefix.length).split(/ +/);
+  var args
+  if(msg.content.startsWith(`<@${client.user.id}>`)){
+    args = msg.content.slice(`<@${client.user.id}> `.length).split(/ +/);
+    if(args[0] == '') {
+      args[0] = 'help'
+    }
+  } else {
+    args = msg.content.slice(settings.prefix.length).split(/ +/);
+  }
+
 	const commandName = args.shift().toLowerCase();
 
   const command = client.commands.get(commandName)
