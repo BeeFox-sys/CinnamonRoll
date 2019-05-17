@@ -53,21 +53,21 @@ client.on('message',async msg => {
     || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
   if(!command) return
   if (command.guildOnly && msg.channel.type !== 'text') {
-  	return await msg.reply('I can\'t execute that command inside DMs!');
+  	return await msg.channel.send(utils.errorEmbed('I can\'t execute that command inside DMs!'));
   }
   if (command.args && args.length < command.argsMin) {
-    let reply = `You didn't provide enough arguments, ${msg.author}!`;
+    let reply = `You didn't provide enough arguments!`;
 			if (command.usage) {
 				reply += `\nThe proper usage would be: \`${settings.prefix}${command.name} ${command.usage}\``;
 			}
-			return await msg.channel.send(reply);
+			return await msg.channel.send(utils.errorEmbed(reply));
     }
 
   try {
   	await command.execute(client, settings, msg, args);
   } catch (error) {
   	console.error(error);
-  	msg.reply('there was an error trying to execute that command!');
+  	msg.channel.send(utils.errorEmbed('There was an error trying to execute that command!'));
   }
 });
 
