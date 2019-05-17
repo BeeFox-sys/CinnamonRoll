@@ -1,5 +1,7 @@
 const { prefix } = require('../config.json');
 const Discord = require('discord.js');
+const utils = require('../util.js')
+
 
 module.exports = {
 	name: 'help',
@@ -32,14 +34,13 @@ module.exports = {
     const command = commands.get(name) || commands.find(c => c.aliases && c.aliases.includes(name));
 
     if (!command) {
-    	return msg.reply('that\'s not a valid command!');
+    	return msg.channel.send(utils.errorEmbed('That\'s not a valid command!'));
     }
 
     data.push(`**Name:** ${command.name}`);
 
-    embed = new Discord.RichEmbed()
+    embed = utils.warnEmbed()
       .setFooter(`You can send \`${prefix}help [command name]\` to get info on a specific command!`)
-      .setColor("#ffaa00")
     if (command.aliases) embed.addField(`Aliases:`, `${command.aliases.join(', ')}`);
     if (command.description) embed.addField(`Description:`,`${command.description}`);
     if (command.usage) embed.addField(`Usage:`,`${prefix}${command.name} ${command.usage}`);

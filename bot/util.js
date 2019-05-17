@@ -43,5 +43,26 @@ module.exports = {
     }
     console.log("here")
     return false
-  }
+  },
+
+  errorEmbed(text){
+    embed = new Discord.RichEmbed()
+      .setColor('#ff2200')
+      .setDescription(text || "")
+    return embed
+  },
+
+  passEmbed(text){
+    embed = new Discord.RichEmbed()
+      .setColor('#43b581')
+      .setDescription(text || "")
+    return embed
+  },
+
+  warnEmbed(text){
+    embed = new Discord.RichEmbed()
+      .setColor('#43b581')
+      .setDescription(text || "")
+    return embed
+  },
 }

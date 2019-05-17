@@ -1,5 +1,7 @@
 const DiceRoller = require('../Libs/DiceRoller.js');
 const Discord = require('discord.js');
+const utils = require('../util.js')
+
 
 module.exports = {
 	name: 'roll',
@@ -14,10 +16,10 @@ module.exports = {
 	execute(client, guildSettings, msg, args) {
     if(!msg.member.hasPermission(this.perms)) return;
 		const roll = new DiceRoller()
-		if(!roll.validate(args[0])) return msg.channel.send("Somethings wrong with your notation, check the help command for an example")
+		if(!roll.validate(args[0])) return msg.channel.send(utils.errorEmbed("Somethings wrong with your notation, check the help command for an example"))
 		results = roll.roll(args[0])
 
-		embed = new Discord.RichEmbed()
+		embed = utils.passEmbed()
 		if(results.rolls.join("+").length > 1800){
 			rolls = results.total - results.modifier
 			embed.addField(`Rolls Total:`,`\`${rolls}\``)
@@ -28,7 +30,6 @@ module.exports = {
 		embed.addField(`Modifier:`,`\`${results.modifier}\``)
 		embed.addField(`Total:`,`\`${results.total}\``,)
 		embed.setAuthor(msg.member.displayName, msg.author.avatarURL)
-		embed.setColor("#43b581")
 		return msg.channel.send(embed)
 	},
 };
