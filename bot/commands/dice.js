@@ -8,7 +8,6 @@ module.exports = {
 	aliases: ['r', 'dice', 'd'],
 	description: 'Ping!',
   perms: [''],
-	guildOnly: false,
 	args: true,
 	argsMin: 1,
 	usage: '<standard dice notation>',

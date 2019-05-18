@@ -7,16 +7,19 @@ module.exports = {
   guildSettings: new mongoose.Schema({
     _id: String,
     prefix: String,
-    locations: [String],
-    characters: [String],
-    admin: [String]
+    locations: [{ type: Schema.Types.ObjectId, ref:'location' }],
+    characters: [{ type: Schema.Types.ObjectId, ref:'character' }],
+    admin: [String],
+    colour: Number,
+    gameName: String
   }),
 
   location: new mongoose.Schema({
     _id: String,
     owner: String,
+    guild: String,
     name: String,
-    colour: String,
+    colour: Number,
     images: [String],
     description: String
   }),
@@ -24,15 +27,21 @@ module.exports = {
   character: new mongoose.Schema({
     _id: String,
     owner: String,
+    guild: String,
     name: String,
     displayName: String,
+    proxy:{
+      prefix: String,
+      suffix: String
+    },
     birthday: String,
-    colour: String,
+    colour: Number,
     avatar: String,
     description: String,
     inventory: [{
       itemName: String,
       quantity: Number
-    }]
+    }],
+    images: [String]
   })
 }
