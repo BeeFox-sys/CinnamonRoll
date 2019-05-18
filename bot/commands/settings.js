@@ -5,7 +5,6 @@ module.exports = {
 	name: 'settings',
 	aliases: ['setting', 'set'],
 	description: 'Changes server prefix, admin only',
-	guildOnly: true,
 	args: false,
 	argsMin: 0,
 	usage: '[prefix <new prefix>]',
@@ -20,7 +19,7 @@ module.exports = {
 			    roles.set(guildSettings.admin[i], msg.guild.roles.get(guildSettings.admin[i]))
 			  }
 				var rolesMsg = ""
-				if(roles.size == 0){rolesMsg = "`No manager roles`"}
+				if(roles.size == 0){rolesMsg = "`None`"}
 			  else{roles.tap(role => {rolesMsg += `\n${role.name}`})}
 
 
@@ -28,6 +27,7 @@ module.exports = {
 					.setColor('#ffaa00')
 					.addField('Current Prefix:', guildSettings.prefix, true)
 					.addField('Game Manager Roles:', rolesMsg, true)
+					.addField('Game Name:', guildSettings.gameName || "`Unset`", true)
 
 				return msg.channel.send(embed)
 			}
@@ -76,6 +76,25 @@ module.exports = {
 		        return msg.channel.send(utils.passEmbed(response))
 		      }
 		    })
+			}
+			//name
+			else if (args[0] == "name") {
+				if(args.length > 2){
+					guildSettings.gameName = args.slice(1).join(" ")
+					response = `Name set to **${guildSettings.gameName}**`
+				} else {
+					guildSettings.gameName = ""
+					response = "Name Cleared"
+				}
+				return guildSettings.save((err, doc) => {
+		      if(err){
+		        console.log(err)
+		        return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command!"))
+		      } else {
+		        return msg.channel.send(utils.passEmbed(response))
+		      }
+		    })
+
 			}
 
 

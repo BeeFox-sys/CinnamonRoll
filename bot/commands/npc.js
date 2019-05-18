@@ -7,7 +7,6 @@ module.exports = {
 	aliases: ['n'],
 	description: 'Summon an extra',
   perms: [''],
-	guildOnly: true,
 	args: true,
 	argsMin: 2,
 	usage: '<name> <text>',

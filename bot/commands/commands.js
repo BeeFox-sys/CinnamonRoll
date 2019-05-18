@@ -8,7 +8,6 @@ module.exports = {
 	aliases: ['h', 'commands'],
 	description: 'List all of my commands or info about a specific command.',
   perms: [''],
-	guildOnly: false,
 	args: false,
 	usage: '[command]',
 	execute(client, guildSettings, msg, args) {
