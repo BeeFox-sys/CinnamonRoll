@@ -34,9 +34,11 @@ client.once('ready', async () => {
 });
 
 client.on('message',async msg => {
+  if(msg.author.bot) return
+  if(msg.channel.type !== 'text')	return await msg.channel.send(utils.errorEmbed('I only work in servers!'));
 
   settings = await utils.getGuildSettings(msg.guild.id, guildSettings)
-	if (!(msg.content.startsWith(settings.prefix) || msg.content.startsWith(`<@${client.user.id}>`))|| msg.author.bot) return;
+	if (!(msg.content.startsWith(settings.prefix) || msg.content.startsWith(`<@${client.user.id}>`))) return;
 
   var args
   if(msg.content.startsWith(`<@${client.user.id}>`)){
@@ -53,9 +55,6 @@ client.on('message',async msg => {
   const command = client.commands.get(commandName)
     || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
   if(!command) return
-  if (command.guildOnly && msg.channel.type !== 'text') {
-  	return await msg.channel.send(utils.errorEmbed('I can\'t execute that command inside DMs!'));
-  }
   if (command.args && args.length < command.argsMin) {
     let reply = `You didn't provide enough arguments!`;
 			if (command.usage) {

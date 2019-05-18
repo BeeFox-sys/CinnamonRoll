@@ -65,4 +65,21 @@ module.exports = {
       .setDescription(text || "")
     return embed
   },
+
+  async generateID(collection){
+    var result = '';
+    var foundEmpty = false
+    while (!foundEmpty) {
+      result = ''
+      for ( var i = 0; i < config.idLength; i++ ) {
+         result += config.idCharacters.charAt(Math.floor(Math.random() * config.idCharacters.length));
+      }
+      await collection.findById(result,(err, doc)=>{
+        if(doc == null){
+          foundEmpty = true
+        }
+      })
+    }
+    return result;
+  }
 }
