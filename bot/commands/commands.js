@@ -7,9 +7,8 @@ module.exports = {
 	name: 'help',
 	aliases: ['h', 'commands'],
 	description: 'List all of my commands or info about a specific command.',
-  perms: [''],
 	args: false,
-	usage: '[command]',
+	usage: ['[command]'],
 	execute(client, guildSettings, msg, args) {
     if(!msg.member.hasPermission(this.perms)) return;
     const data = [];
@@ -42,7 +41,13 @@ module.exports = {
       .setFooter(`You can send \`${prefix}help [command name]\` to get info on a specific command!`)
     if (command.aliases) embed.addField(`Aliases:`, `${command.aliases.join(', ')}`);
     if (command.description) embed.addField(`Description:`,`${command.description}`);
-    if (command.usage) embed.addField(`Usage:`,`${prefix}${command.name} ${command.usage}`);
+    if (command.usage) {
+			usage = ""
+			for(var i = 0; i < command.usage.length; i++){
+				usage += `\n${prefix}${command.name}  ${command.usage[i]}`
+			}
+			embed.addField(`Usage:`,usage);
+		}
     if (command.example) embed.addField(`Example:`,`${prefix}${command.name} ${command.example}`);
 
 

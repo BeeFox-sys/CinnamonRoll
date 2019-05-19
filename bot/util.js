@@ -35,13 +35,11 @@ module.exports = {
   checkGameAdmin(guildSettings, msg){
     if(guildSettings.admin.length == 0) return true;
     for (var i = 0; i < guildSettings.admin.length; i++) {
-      console.log(i)
       if(msg.member.roles.get(guildSettings.admin[i]) != undefined) {
          return true;
          break;
        }
     }
-    console.log("here")
     return false
   },
 
