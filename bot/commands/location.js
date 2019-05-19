@@ -48,7 +48,50 @@ module.exports = {
 
 
 
-    return msg.channel.send(utils.errorEmbed("That is not a subcommand"))
+		//Find Location
+		var name = args[0]
+		var location = utils.findObjInArray(name, locationsList)
+		if(location == null) return msg.channel.send(utils.errorEmbed("That location does not exist"))
+
+		//Location editing commands
+		if(args[1] == "colour" || args[1] == "color"){
+			var colour = args.splice(2).join("_").toUpperCase()
+			if(utils.valadateColour(colour)){
+				location.colour = colour
+				if(colour == "DEFAULT") location.colour = ""
+				return await location.save((err,  doc)=>{
+					if(err) {
+						console.log(err)
+						return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
+					}
+					return msg.channel.send(utils.passEmbed(`Set colour to **${doc.colour.toLowerCase() || "default"}**`))
+				})
+			}
+			embed = utils.errorEmbed()
+			embed.setTitle("Colour must be a hex code or one of these:")
+			embed.description = "```"
+			for (var colour in Discord.Constants.Colors) {
+				if (Discord.Constants.Colors.hasOwnProperty(colour)) {
+					embed.description += `\n${utils.toTitleCase(colour.replace(/_/g, " "))}`
+				}
+			}
+			embed.description += "```"
+			return msg.channel.send(embed)
+		}
+
+
+		//return location
+		embed = utils.passEmbed()
+		embed.setTitle(location.name)
+		embed.setFooter(location._id)
+		embed.setColor(location.colour)
+		embed.setDescription(location.description || "")
+		var references = ""
+		for (var i = 0; i < location.references.length; i++) {
+			references += `\n[${location.references[i].name}](${location.references[i].url})`
+		}
+		if(references != "") embed.addField("references",references)
+		return msg.channel.send(embed)
 
 	},
 };

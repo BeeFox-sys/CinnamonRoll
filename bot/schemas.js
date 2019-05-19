@@ -19,8 +19,11 @@ module.exports = {
     owner: String,
     guild: String,
     name: String,
-    colour: Number,
-    images: [String],
+    colour: String,
+    references: [{
+      name: String,
+      url: String
+    }],
     description: String
   }),
 
@@ -42,6 +45,9 @@ module.exports = {
       itemName: String,
       quantity: Number
     }],
-    images: [String]
+    references: [{
+      name: String,
+      url: String
+    }]
   })
 }
