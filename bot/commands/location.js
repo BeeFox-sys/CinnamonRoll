@@ -49,6 +49,7 @@ module.exports = {
 
 
 		//Find Location
+		args = utils.quoteFinder(args)
 		var name = args[0]
 		var location = utils.findObjInArray(name, locationsList)
 		if(location == null) return msg.channel.send(utils.errorEmbed("That location does not exist"))
