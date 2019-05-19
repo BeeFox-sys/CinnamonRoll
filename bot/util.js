@@ -107,6 +107,7 @@ module.exports = {
     if(colourTest != undefined) return true
     return /^[0-9A-F]{6}$/i.test(colour.replace("#", ""))
   },
+
   toTitleCase(str) {
         return str.replace(
             /\w\S*/g,
@@ -114,5 +115,25 @@ module.exports = {
                 return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
             }
         );
+    },
+
+  quoteFinder(array){
+    var start = null
+    var end = null
+    for(var i = 0; i < array.length; i++){
+      if(array[i].startsWith(`"`)){
+        start = i
+      }
+      if(array[i].endsWith(`"`)){
+        end = i + 1
+      }
+      if(start != null && end != null) break
     }
+    if(start != null && end != null && start < end){
+      quote = array.slice(start, end).join(" ").slice(1,-1)
+      var del = end - start
+      array.splice(start, del, quote)
+    }
+    return array
+  }
 }
