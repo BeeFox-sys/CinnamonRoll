@@ -7,7 +7,7 @@ module.exports = {
 	description: 'Changes server prefix, admin only',
 	args: false,
 	argsMin: 0,
-	usage: '[prefix <new prefix>]',
+	usage: ['[prefix <new prefix>]'],
 	example: 'prefix rp!',
 	execute(client, guildSettings, msg, args) {
 		if(msg.member.hasPermission("MANAGE_GUILD")){

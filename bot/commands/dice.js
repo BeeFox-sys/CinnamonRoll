@@ -7,10 +7,9 @@ module.exports = {
 	name: 'roll',
 	aliases: ['r', 'dice', 'd'],
 	description: 'Ping!',
-  perms: [''],
 	args: true,
 	argsMin: 1,
-	usage: '<standard dice notation>',
+	usage: ['<standard dice notation>'],
 	example: '2d6+3',
 	execute(client, guildSettings, msg, args) {
     if(!msg.member.hasPermission(this.perms)) return;
