@@ -81,5 +81,38 @@ module.exports = {
       })
     }
     return result;
-  }
+  },
+
+  //Find by ID/Name
+  findObjInArray(search, objectsArray) {
+    var result = null;
+    for (var i = 0; i < objectsArray.length; i++) {
+      if(objectsArray[i]._id == search){
+        return objectsArray[i]
+      }
+    }
+    if(result == null){
+      for (var i = 0; i < objectsArray.length; i++) {
+        if(objectsArray[i].name == search){
+          result = objectsArray[i]
+        }
+      }
+    }
+    return result
+  },
+
+  valadateColour(colour){
+    if (colour === 'RANDOM') return true
+    colourTest = Discord.Constants.Colors[colour]
+    if(colourTest != undefined) return true
+    return /^[0-9A-F]{6}$/i.test(colour.replace("#", ""))
+  },
+  toTitleCase(str) {
+        return str.replace(
+            /\w\S*/g,
+            function(txt) {
+                return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+            }
+        );
+    }
 }
