@@ -1,5 +1,5 @@
 {
-  "name": "rpbot",
+  "name": "CinnamonRP",
   "version": "1.0.0",
   "description": "A discord bot for rp stuff",
   "main": "bot/main.js",
@@ -8,14 +8,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/PlatypodeCode/rpBot.git"
+    "url": "git+https://github.com/PlatypodeCode/CinnamonRP.git"
   },
   "author": "PlatypodeCode",
   "license": "SEE LICENSE IN LICENSE",
   "bugs": {
-    "url": "https://github.com/PlatypodeCode/rpBot/issues"
+    "url": "https://github.com/PlatypodeCode/CinnamonRP/issues"
   },
-  "homepage": "https://github.com/PlatypodeCode/rpBot#readme",
+  "homepage": "https://github.com/PlatypodeCode/CinnamonRP#readme",
   "dependencies": {
     "discord.js": "^11.5.0",
     "mongoose": "^5.5.8"
