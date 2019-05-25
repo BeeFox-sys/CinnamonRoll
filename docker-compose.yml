@@ -2,7 +2,7 @@ version: '3'
 
 services:
   bot:
-    container_name: rpBot-app
+    container_name: CinnamonRP-bot
     build: .
     entrypoint:
       - node
@@ -11,7 +11,7 @@ services:
       - db
     restart: always
   db:
-    container_name: rpBot-db
+    container_name: CinnamonRP-db
     image: mvertes/alpine-mongo
     volumes:
       - "data:/data/db"
