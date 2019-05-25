@@ -23,8 +23,8 @@ module.exports = {
     const permissions = '536996928';
 
     // Construct the URL with proper client ID and permissions integer
-    const url = 'https://discordapp.com/oauth2/authorize?client_id=' + client_id + '&scope=bot&permissions=' + permissions;
+    const url = `https://discordapp.com/oauth2/authorize?client_id=${client_id}&scope=bot&permissions=${permissions}`;
     // Finally, send the message with the invite link
-    return msg.channel.send('\u2705 Use this link to add CinnamonRP to your server:\n' + url);
+    return msg.channel.send(`\u2705 Use this link to add CinnamonRP to your server:\n${url}`);
   },
 };
