@@ -54,7 +54,6 @@ module.exports = {
   reaction: new mongoose.Schema({
     _id: String,
     user: String,
-    type: String,
-    id: String,
-  })
+    settings: Object
+  }) //Settings object must have Type tag
 }
