@@ -1,5 +1,5 @@
 {
   "prefix": "!!",
   "token": "",
-  "db": "mongodb://localhost/CinnamonRP"
+  "db": "mongodb://db/CinnamonRP"
 }
