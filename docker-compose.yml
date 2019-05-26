@@ -12,9 +12,10 @@ services:
     restart: always
   db:
     container_name: CinnamonRP-db
-    image: mvertes/alpine-mongo
+    image: mongo
     volumes:
       - "data:/data/db"
+      - "./backup:/backup"
     restart: always
 
 volumes:
