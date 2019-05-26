@@ -38,7 +38,7 @@ module.exports = {
       suffix: String
     },
     birthday: String,
-    colour: Number,
+    colour: String,
     avatar: String,
     description: String,
     inventory: [{
