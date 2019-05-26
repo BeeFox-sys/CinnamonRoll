@@ -70,7 +70,7 @@ Removes a reference from \`<character>\``,
 		if(character == null) return msg.channel.send(utils.errorEmbed(`Character \"${name}\" does not exist`))
 
 		//Character editing commands
-		if(args.length > 1){
+		if(args.length > 1 && character.owner == msg.member.id){
 			//Colour: <character> colour <hex|word>
 			if(args[1] == "colour" || args[1] == "color"){
 				var colour = args.splice(2).join("_").toUpperCase()
