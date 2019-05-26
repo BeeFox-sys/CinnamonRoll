@@ -1,6 +1,6 @@
 # CinnamonRP
 
-This is a discord bot for roleplay. Inspired by [Pluralkit](https://github.com/xSke/PluralKit)!
+This is a discord bot for roleplay. Inspired by [PluralKit](https://github.com/xSke/PluralKit)!
 
 # How to run!
 The bot currently isn't hosted, however I plan to do this once more features are added!
