@@ -1,5 +1,7 @@
 {
   "prefix": "!!",
   "token": "",
-  "db": "mongodb://db/CinnamonRP"
+  "db": "mongodb://db/CinnamonRP",
+  "idCharacters": "abcdefghijklmnopqrstuvwxyz",
+  "idLength": 5
 }
