@@ -12,7 +12,7 @@ module.exports = {
 	description: `Location Command`,
 	args: false,
 	argsMin: 0,
-	usage: [`[location]`,`add <name>`,`<location> colour <hex|word>`,`<location> description <description>`],
+	usage: [`[location]`,`add <name>`,`<location> remove`,`<location> colour <hex|word>`,`<location> description <description>`, `<location> reference add <name> <url>`,`<location> reference remove <name>`],
 	example: '',
 	async execute(client, guildSettings, msg, args) {
     const locationsList = await locationsModel.find({guild: guildSettings._id})
@@ -84,7 +84,7 @@ module.exports = {
 			}
 
 			//Description: <location> description <description>
-			if(args[1] == "description" || args[1] == "desc"){
+			else if(args[1] == "description" || args[1] == "desc"){
 				desc = args.splice(2).join(" ")
 				location.description = desc
 				return await location.save((err,  doc)=>{
@@ -96,7 +96,7 @@ module.exports = {
 				})
 			}
 
-			if(args[1] == "reference"){
+			else if(args[1] == "reference"){
 				if(args[2] == "add"){
 					if(args.length < 5) return msg.channel.send(utils.errorEmbed("A reference must have a name and a link"))
 					var name = utils.quoteFinder(args.slice(3))[0]
@@ -130,6 +130,25 @@ module.exports = {
 						return msg.channel.send(utils.passEmbed(`Removed reference!`))
 					})
 				}
+			}
+
+			else if(args[1] == "remove"){
+				return msg.channel.send(utils.passEmbed(`React ✅ to delete ${location.name}`))
+					.then(async response => {
+						newReact = await new reactResponse()
+						newReact._id = response.id
+						newReact.user = msg.member.id
+						newReact.type = "deleteLocation"
+						newReact.id = location._id
+
+						return newReact.save( err => {
+							if(err) {
+								console.log(err)
+								return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
+							}
+							return response.react("✅")
+						})
+					})
 			}
 
 			return msg.channel.send(utils.errorEmbed("That is not a valid subcommand"))
