@@ -77,4 +77,39 @@ client.on('message',async msg => {
   }
 });
 
+//reaction stuff
+client.on("messageReactionAdd",async (react,user) =>{
+  if(user.id == client.user.id) return
+  const reactions = mongoose.model('reactions', schemas.reaction)
+
+  return reactions.findById(react.message.id, (err,doc) =>{
+    if(err){
+      console.log(err)
+      return react.message.channel.send(utils.errorEmbed("Something went wrong with that reaction"))
+    }
+
+    if(doc == null) return
+
+    if(doc.type == "deleteLocation"){
+      const locations = mongoose.model('locations', schemas.location)
+
+      return locations.deleteOne({_id: doc.id}, (err) =>{
+        if(err) {
+          console.log(err)
+          return react.message.channel.send(utils.errorEmbed("Something went wrong with that reaction"))
+        }
+        react.message.channel.send(utils.passEmbed(`Deleted location`))
+        reactions.deleteOne({_id: doc._id}, err =>{
+          if(err) return console.log(err)
+        })
+      })
+    }
+
+    return react.message.channel.send(utils.errorEmbed("Something went wrong with that reaction"))
+  })
+
+
+
+})
+
 client.login(config.token);
