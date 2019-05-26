@@ -49,5 +49,16 @@ module.exports = {
       name: String,
       url: String
     }]
+  }),
+
+  reaction: new mongoose.Schema({
+    _id: String,
+    message: Object,
+    userID: String,
+    action: {
+      type: String,
+      id: String,
+      collection: Object
+    }
   })
 }
