@@ -26,7 +26,7 @@ Removes a reference from \`<character>\``,
   usage: [`[character]`,`add <name>`,`<character> remove`,`<character> colour <hex|word>`,`<character> description <description>`, `<character> reference add <name> <url>`,`<character> reference remove <name>`],
   example: '',
 	async execute(client, guildSettings, msg, args) {
-    const charactersList = await charactersModel.find({guild: guildSettings._id})
+    const charactersList = guildSettings.characters
     if(args.length == 0){
       if(charactersList.length == 0){
         return msg.channel.send(utils.errorEmbed(`This server has no characters\nCreate one with \`${guildSettings.prefix}character add <name>\``))
@@ -47,11 +47,14 @@ Removes a reference from \`<character>\``,
         newCharacter.name = args.splice(1).join(" ")
         newCharacter._id = await utils.generateID(charactersModel)
         newCharacter.guild = guildSettings._id
-        return await newCharacter.save((err,  doc)=>{
+        newCharacter.owner = msg.member.id
+        return await newCharacter.save(async (err,  doc)=>{
           if(err) {
             console.log(err)
             return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
           }
+          await guildSettings.characters.push(doc._id)
+          await guildSettings.save()
           return msg.channel.send(utils.passEmbed(`Created **${doc.name}** \`(${doc._id})\``))
         })
       }
