@@ -4,20 +4,21 @@
 
 # Locations
 - [x] Create locations schema
-- [ ] Create locations command
-  - [ ] `create` command
-  - [ ] `delete` command
-  - [ ] `picture` command
-  - [ ] `description` command
-  - [ ] `colour` command
+- [x] Create locations command
+  - [x] `add` command
+  - [x] `remove` command
+  - [x] `reference` command
+  - [x] `description` command
+  - [x] `colour` command
   - [ ] Custom fields?
 
 # Character
 - [x] Create character schema
 - [ ] Create character command
-  - [ ] `create` command
-  - [ ] `delete` command
-  - [ ] `picture` command
+  - [ ] `add` command
+  - [ ] `remove` command
+  - [ ] `proxy` command
+  - [ ] `reference` command
   - [ ] `description` command
   - [ ] `birthday` command
   - [ ] `nickname` command
@@ -27,10 +28,10 @@
 
 # Guild Settings
 - [x] Create settings schema
-- [ ] Create settings commands
-  - [ ] `prefix` command
+- [x] Create settings commands
+  - [x] `prefix` command
   - [ ] `adminrole` command
 
 # Misc
 - [ ] Try out [Eris](https://abal.moe/Eris/)
-- [ ] Pluralkit import function
+- [ ] PluralKit import function
