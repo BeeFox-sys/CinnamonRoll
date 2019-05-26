@@ -30,7 +30,7 @@ Removes a reference from \`<location>\``,
     const locationsList = await locationsModel.find({guild: guildSettings._id})
     if(args.length == 0){
       if(locationsList.length == 0){
-        return msg.channel.send(utils.errorEmbed(`This server has no locations\nCreate one with \`${guildSettings.prefix}location new <name>\``))
+        return msg.channel.send(utils.errorEmbed(`This server has no locations\nCreate one with \`${guildSettings.prefix}location add <name>\``))
       }
       response = utils.passEmbed()
       response.setTitle(`Locations for ${guildSettings.gameName || msg.guild.name}`)
@@ -42,7 +42,7 @@ Removes a reference from \`<location>\``,
       return msg.channel.send(response)
     }
 
-    else if (args[0] == "add") {
+    else if (args[0] == "add" || args[0] == "new" || args[0] == "create") {
       if(args.length > 1){
         var newLocation = await new locationsModel()
         newLocation.name = args.splice(1).join(" ")
@@ -65,7 +65,7 @@ Removes a reference from \`<location>\``,
 		args = utils.quoteFinder(args)
 		var name = args[0]
 		var location = utils.findObjInArray(name, locationsList)
-		if(location == null) return msg.channel.send(utils.errorEmbed("That location does not exist"))
+		if(location == null) return msg.channel.send(utils.errorEmbed(`Location \"${name}\" does not exist`))
 
 		//Location editing commands
 		if(args.length > 1 && utils.checkGameAdmin(guildSettings, msg)){
@@ -108,8 +108,8 @@ Removes a reference from \`<location>\``,
 				})
 			}
 
-			else if(args[1] == "reference"){
-				if(args[2] == "add"){
+			else if(args[1] == "reference" || args[1] == "ref"){
+				if(args[2] == "add" || args[2] == "new"){
 					if(args.length < 5) return msg.channel.send(utils.errorEmbed("A reference must have a name and a link"))
 					var name = utils.quoteFinder(args.slice(3))[0]
 					var url = utils.quoteFinder(args.slice(3))[1]
@@ -125,13 +125,13 @@ Removes a reference from \`<location>\``,
 							console.log(err)
 							return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
 						}
-						return msg.channel.send(utils.passEmbed(`Added reference!`))
+						return msg.channel.send(utils.passEmbed(`Added reference \"${name}\"!`))
 					})
-				} else if(args[2] == "remove"){
+				} else if(args[2] == "remove" || args[2] == "delete"){
 					if(args.length < 4) return msg.channel.send(utils.errorEmbed("Must supply a reference to delete"))
 					var name = utils.quoteFinder(args.slice(3))[0]
 					var find = location.references.filter(ref => ref.name == name)
-					if(find.length == 0) return msg.channel.send(utils.errorEmbed("That reference doesn't exist!"))
+					if(find.length == 0) return msg.channel.send(utils.errorEmbed(`Reference \"${name}\" doesn't exist!`))
 					var index = location.references.indexOf(find[0])
 					location.references.splice(index,1)
 					return location.save((err) => {
@@ -139,12 +139,12 @@ Removes a reference from \`<location>\``,
 							console.log(err)
 						  return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
 						}
-						return msg.channel.send(utils.passEmbed(`Removed reference!`))
+						return msg.channel.send(utils.passEmbed(`Removed reference \"${name}\"!`))
 					})
 				}
 			}
 
-			else if(args[1] == "remove"){
+			else if(args[1] == "remove" || args[1] == "delete" || args[1] == "destroy"){
 				return msg.channel.send(utils.passEmbed(`React ✅ to delete ${location.name}`))
 					.then(async response => {
 						newReact = await new reactResponse()
