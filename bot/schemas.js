@@ -53,12 +53,8 @@ module.exports = {
 
   reaction: new mongoose.Schema({
     _id: String,
-    message: Object,
-    userID: String,
-    action: {
-      type: String,
-      id: String,
-      collection: Object
-    }
+    user: String,
+    type: String,
+    id: String,
   })
 }
