@@ -19,6 +19,8 @@ db.once('open', function() {
 //Create setting schema
 const schemas = require('./schemas.js');
 const guildSettings = mongoose.model('guildSettings', schemas.guildSettings)
+const reactions = mongoose.model('reactions', schemas.reaction)
+
 
 const client = new Discord.Client();
 
@@ -80,7 +82,6 @@ client.on('message',async msg => {
 //reaction stuff
 client.on("messageReactionAdd",async (react,user) =>{
   if(user.id == client.user.id) return
-  const reactions = mongoose.model('reactions', schemas.reaction)
 
   return reactions.findById(react.message.id, (err,doc) =>{
     if(err){
@@ -112,3 +113,22 @@ client.on("messageReactionAdd",async (react,user) =>{
 })
 
 client.login(config.token);
+
+//Gracefull exit
+process.on( 'SIGINT', function() {
+  gracefulExit()
+})
+process.on( 'SIGTERM', function() {
+  gracefulExit()
+})
+
+
+async function gracefulExit(){
+  console.log( "\nGracefully shutting down" );
+  await reactions.deleteMany({}, () => {
+    console.log("Deleting all pending reactions")
+  })
+
+  console.log('Goodbye')
+  process.exit( );
+}

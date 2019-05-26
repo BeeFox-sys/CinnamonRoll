@@ -167,7 +167,7 @@ Removes a reference from \`<location>\``,
 										response.channel.send(utils.errorEmbed("Timed out"))
 					        })
 								})
-							}, 10000, response, reactResponse);
+							}, 60000, response, reactResponse);
 							return response.react("✅")
 						})
 					})
