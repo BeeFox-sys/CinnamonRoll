@@ -3,7 +3,13 @@ const config = require('./config.json');
 const utils = require('./util.js')
 const fs = require('fs');
 const mongoose = require('mongoose');
-mongoose.connect(config.db, {useNewUrlParser: true});
+mongoose.connect(config.db, {
+        useNewUrlParser: true,
+        // retry to connect for 60 times
+        reconnectTries: 60,
+        // wait 1 second before retrying
+        reconnectInterval: 1000
+    });
 const db = mongoose.connection
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function() {
