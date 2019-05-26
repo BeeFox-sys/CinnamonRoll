@@ -3,6 +3,8 @@ const mongoose = require('mongoose');
 const utils = require('../util.js');
 const schemas = require('../schemas.js');
 const locationsModel = mongoose.model('locations', schemas.location)
+const reactResponse = mongoose.model('reactions', schemas.reaction)
+
 
 module.exports = {
 	name: 'location',
@@ -10,7 +12,7 @@ module.exports = {
 	description: `Location Command`,
 	args: false,
 	argsMin: 0,
-	usage: [`[location]`,`<location> colour <hex|word>`,`<location> description <description>`],
+	usage: [`[location]`,`add <name>`,`<location> colour <hex|word>`,`<location> description <description>`],
 	example: '',
 	async execute(client, guildSettings, msg, args) {
     const locationsList = await locationsModel.find({guild: guildSettings._id})
@@ -28,7 +30,7 @@ module.exports = {
       return msg.channel.send(response)
     }
 
-    else if (args[0] == "new") {
+    else if (args[0] == "add") {
       if(args.length > 1){
         var newLocation = await new locationsModel()
         newLocation.name = args.splice(1).join(" ")
@@ -94,6 +96,42 @@ module.exports = {
 				})
 			}
 
+			if(args[1] == "reference"){
+				if(args[2] == "add"){
+					if(args.length < 5) return msg.channel.send(utils.errorEmbed("A reference must have a name and a link"))
+					var name = utils.quoteFinder(args.slice(3))[0]
+					var url = utils.quoteFinder(args.slice(3))[1]
+					if(name.length > 30) return msg.channel.send(utils.errorEmbed("Name cannot be longer then 30 characters"))
+					var find = location.references.filter(ref => ref.name == name)
+					if(find.length != 0) return msg.channel.send(utils.errorEmbed("That reference already exists!"))
+					location.references.push({
+						name: name,
+						url: url
+					})
+					return location.save((err,  doc)=>{
+						if(err) {
+							console.log(err)
+							return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
+						}
+						return msg.channel.send(utils.passEmbed(`Added reference!`))
+					})
+				} else if(args[2] == "remove"){
+					if(args.length < 4) return msg.channel.send(utils.errorEmbed("Must supply a reference to delete"))
+					var name = utils.quoteFinder(args.slice(3))[0]
+					var find = location.references.filter(ref => ref.name == name)
+					if(find.length == 0) return msg.channel.send(utils.errorEmbed("That reference doesn't exist!"))
+					var index = location.references.indexOf(find[0])
+					location.references.splice(index,1)
+					return location.save((err) => {
+						if(err){
+							console.log(err)
+						  return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
+						}
+						return msg.channel.send(utils.passEmbed(`Removed reference!`))
+					})
+				}
+			}
+
 			return msg.channel.send(utils.errorEmbed("That is not a valid subcommand"))
 		}
 
@@ -108,7 +146,7 @@ module.exports = {
 		for (var i = 0; i < location.references.length; i++) {
 			references += `\n[${location.references[i].name}](${location.references[i].url})`
 		}
-		if(references != "") embed.addField("references",references)
+		if(references != "") embed.addField("References:",references)
 		return msg.channel.send(embed)
 
 	},
