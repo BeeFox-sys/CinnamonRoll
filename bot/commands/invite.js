@@ -1,7 +1,9 @@
+const utils = require('../util');
+
 module.exports = {
-  name: 'invite',
+  name: 'info',
   decription: 'Generates an invite link for the bot',
-  perms: [''],
+  perms: ['invite', 'github', 'support', 'server'],
   guildOnly: false,
   args: false,
   usage:'',
@@ -23,8 +25,14 @@ module.exports = {
     const permissions = '536996928';
 
     // Construct the URL with proper client ID and permissions integer
-    const url = `https://discordapp.com/oauth2/authorize?client_id=${client_id}&scope=bot&permissions=${permissions}`;
+    const inviteUrl = `https://discordapp.com/oauth2/authorize?client_id=${client_id}&scope=bot&permissions=${permissions}`;
+    //Misc links
+    const githubUrl = "https://github.com/PlatypodeCode/CinnamonRP"
+    // Generate Embed
+    const embed = utils.passEmbed()
+      .addField("Add the bot!",`[Click here to add CinnamonRP to your server](${inviteUrl})`)
+      .addField("See the code!",`[Click here to view the github for CinnamonRP](${githubUrl})`)
     // Finally, send the message with the invite link
-    return msg.channel.send(`\u2705 Use this link to add CinnamonRP to your server:\n${url}`);
+    return msg.channel.send(embed);
   },
 };
