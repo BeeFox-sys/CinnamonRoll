@@ -40,7 +40,12 @@ client.once('ready', async () => {
   console.log(`Logged in as ${client.user.tag} (ID: ${client.user.id})!`);
   console.log(`${client.guilds.size} servers`);
   // console.log(`${client.shard.count} shards`); // for future use once sharding becomes necessary
-  client.user.setActivity('!!help', { type: 'LISTENING'});
+  if(client.guilds.size < 2) {
+    client.user.setActivity(`!!help`, { type: 'LISTENING'});
+  }
+  else {
+    client.user.setActivity(`!!help | in ${client.guilds.size} servers`, { type: 'LISTENING'});
+  }
 });
 
 client.on('message',async msg => {
@@ -103,6 +108,22 @@ client.on("messageReactionAdd",async (react,user) =>{
           return react.message.channel.send(utils.errorEmbed("Something went wrong with that reaction"))
         }
         react.message.channel.send(utils.passEmbed(`Deleted location`))
+        reactions.deleteOne({_id: doc._id}, err =>{
+          if(err) return console.log(err)
+        })
+      })
+    }
+
+    if(doc.settings.type == "deleteCharacter"){
+      if(react.emoji != "✅") return
+      const characters = mongoose.model('characters', schemas.character)
+
+      return characters.deleteOne({_id: doc.settings.id}, (err) =>{
+        if(err) {
+          console.log(err)
+          return react.message.channel.send(utils.errorEmbed("Something went wrong with that reaction"))
+        }
+        react.message.channel.send(utils.passEmbed(`Deleted character`))
         reactions.deleteOne({_id: doc._id}, err =>{
           if(err) return console.log(err)
         })
