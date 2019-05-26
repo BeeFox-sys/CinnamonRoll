@@ -20,7 +20,7 @@ module.exports = {
   //Webhook Finder
   async getGuildSettings(guild, collection) {
 
-    var doc = await collection.findById(guild).exec()
+    var doc = await collection.findById(guild).populate('locations').exec()
     if(doc) return doc
     var newSettings = await new collection({
             _id: guild,
