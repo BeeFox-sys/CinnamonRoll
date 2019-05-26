@@ -7,8 +7,8 @@ module.exports = {
   guildSettings: new mongoose.Schema({
     _id: String,
     prefix: String,
-    locations: [{ type: Schema.Types.ObjectId, ref:'location' }],
-    characters: [{ type: Schema.Types.ObjectId, ref:'character' }],
+    locations: [{ type: String, ref: 'locations' }],
+    characters: [{ type: String, ref:'characters' }],
     admin: [String],
     colour: Number,
     gameName: String
@@ -38,7 +38,7 @@ module.exports = {
       suffix: String
     },
     birthday: String,
-    colour: Number,
+    colour: String,
     avatar: String,
     description: String,
     inventory: [{
@@ -54,6 +54,12 @@ module.exports = {
   reaction: new mongoose.Schema({
     _id: String,
     user: String,
-    settings: Object
-  }) //Settings object must have Type tag
+    settings: Object   //Settings object must have `type` tag
+  }),
+
+  message: new mongoose.Schema({
+    _id: String,
+    owner: String,
+    character: { type: String, ref:'characters' },
+  })
 }

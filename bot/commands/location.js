@@ -27,7 +27,7 @@ Removes a reference from \`<location>\``,
 	usage: [`[location]`,`add <name>`,`<location> remove`,`<location> colour <hex|word>`,`<location> description <description>`, `<location> reference add <name> <url>`,`<location> reference remove <name>`],
 	example: '',
 	async execute(client, guildSettings, msg, args) {
-    const locationsList = await locationsModel.find({guild: guildSettings._id})
+    const locationsList = guildSettings.locations
     if(args.length == 0){
       if(locationsList.length == 0){
         return msg.channel.send(utils.errorEmbed(`This server has no locations\nCreate one with \`${guildSettings.prefix}location add <name>\``))
@@ -48,11 +48,13 @@ Removes a reference from \`<location>\``,
         newLocation.name = args.splice(1).join(" ")
         newLocation._id = await utils.generateID(locationsModel)
         newLocation.guild = guildSettings._id
-        return await newLocation.save((err,  doc)=>{
+        return await newLocation.save(async (err,  doc)=>{
           if(err) {
             console.log(err)
             return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
           }
+					await guildSettings.locations.push(doc._id)
+					await guildSettings.save()
           return msg.channel.send(utils.passEmbed(`Created **${doc.name}** \`(${doc._id})\``))
         })
       }
