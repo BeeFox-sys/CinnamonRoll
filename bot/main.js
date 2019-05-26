@@ -37,7 +37,9 @@ for (const file of commandFiles) {
 
 
 client.once('ready', async () => {
-  console.log(`Logged in as ${client.user.tag}!`);
+  console.log(`Logged in as ${client.user.tag} (ID: ${client.user.id})!`);
+  console.log(`${client.guilds.size} servers`);
+  // console.log(`${client.shard.count} shards`); // for future use once sharding becomes necessary
   client.user.setActivity('!!help', { type: 'LISTENING'});
 });
 
