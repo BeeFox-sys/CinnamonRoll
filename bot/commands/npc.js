@@ -14,7 +14,7 @@ module.exports = {
     if(!msg.member.hasPermission(this.perms)) return;
 
 		if(args.length < 2) return msg.channel.send(utils.errorEmbed("Message cannot be empty"))
-		hook = await utils.webhookCheck(client, msg)
+		hook = await utils.getWebhook(client, msg.channel)
 		await hook.edit(args.shift()+" [NPC]", "./bot/transparent.png")
 		await hook.send(args.join(" "))
 
