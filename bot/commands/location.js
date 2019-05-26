@@ -150,14 +150,24 @@ Removes a reference from \`<location>\``,
 						newReact = await new reactResponse()
 						newReact._id = response.id
 						newReact.user = msg.member.id
-						newReact.type = "deleteLocation"
-						newReact.id = location._id
-
-						return newReact.save( err => {
+						newReact.settings = {
+							type: "deleteLocation",
+							id: location._id
+						}
+						return newReact.save( (err,doc) => {
 							if(err) {
 								console.log(err)
 								return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
 							}
+							setTimeout((response, reactions) => {
+								reactions.findById(response.id, (err, doc) => {
+									response.clearReactions()
+									reactions.deleteOne({_id: doc._id}, err =>{
+					          if(err) return console.log(err)
+										response.channel.send(utils.errorEmbed("Timed out"))
+					        })
+								})
+							}, 10000, response, reactResponse);
 							return response.react("✅")
 						})
 					})

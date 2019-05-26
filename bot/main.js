@@ -90,10 +90,11 @@ client.on("messageReactionAdd",async (react,user) =>{
 
     if(doc == null) return
 
-    if(doc.type == "deleteLocation"){
+    if(doc.settings.type == "deleteLocation"){
+      if(react.emoji != "✅") return
       const locations = mongoose.model('locations', schemas.location)
 
-      return locations.deleteOne({_id: doc.id}, (err) =>{
+      return locations.deleteOne({_id: doc.settings.id}, (err) =>{
         if(err) {
           console.log(err)
           return react.message.channel.send(utils.errorEmbed("Something went wrong with that reaction"))
@@ -107,8 +108,6 @@ client.on("messageReactionAdd",async (react,user) =>{
 
     return react.message.channel.send(utils.errorEmbed("Something went wrong with that reaction"))
   })
-
-
 
 })
 
