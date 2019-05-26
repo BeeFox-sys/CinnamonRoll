@@ -30,6 +30,7 @@ for (const file of commandFiles) {
 
 client.once('ready', async () => {
   console.log(`Logged in as ${client.user.tag}!`);
+  client.user.setActivity('!!help', { type: 'LISTENING'});
 });
 
 client.on('message',async msg => {
