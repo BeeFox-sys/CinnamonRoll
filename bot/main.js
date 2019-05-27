@@ -115,7 +115,7 @@ client.on("messageReactionAdd",async (react,user) =>{
     }
 
     if(doc.settings.type == "deleteCharacter"){
-      if(react.emoji != "✅") return
+      if(react.emoji != "✅" || doc.user != user.id) return
       const characters = mongoose.model('characters', schemas.character)
 
       return characters.deleteOne({_id: doc.settings.id}, (err) =>{
