@@ -129,7 +129,9 @@ Removes a reference from \`<character>\``,
 						}
 						return msg.channel.send(utils.passEmbed(`Added reference \"${name}\"!`))
 					})
-				} else if(args[2] == "remove" || args[2] == "delete"){
+				}
+
+         else if(args[2] == "remove" || args[2] == "delete"){
 					if(args.length < 4) return msg.channel.send(utils.errorEmbed("Must supply a reference to delete"))
 					var name = utils.quoteFinder(args.slice(3))[0]
 					var find = character.references.filter(ref => ref.name == name)
@@ -145,6 +147,19 @@ Removes a reference from \`<character>\``,
 					})
 				}
 			}
+
+      else if (args[1] == "avatar") {
+        attachments = utils.attachmentsToFileOptions(msg.attachments)
+        if(!attachments){character.avatar = args[2] || undefined}
+				else {character.avatar = attachments[0].attachment}
+				return await character.save((err,  doc)=>{
+					if(err) {
+						console.log(err)
+						return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
+					}
+					return msg.channel.send(utils.passEmbed(`Updataed avatar!`))
+				})
+      }
 
 			else if(args[1] == "remove" || args[1] == "delete" || args[1] == "destroy"){
 				return msg.channel.send(utils.passEmbed(`React ✅ to delete ${character.name}`))
@@ -191,6 +206,7 @@ Removes a reference from \`<character>\``,
 			references += `\n[${character.references[i].name}](${character.references[i].url})`
 		}
 		if(references != "") embed.addField("References:",references)
+    if(character.avatar) embed.setThumbnail(character.avatar)
 		return msg.channel.send(embed)
 
 	},

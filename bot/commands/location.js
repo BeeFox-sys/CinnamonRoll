@@ -109,7 +109,7 @@ Removes a reference from \`<location>\``,
 					return msg.channel.send(utils.passEmbed(`Set new description!`))
 				})
 			}
-
+			//reference commands
 			else if(args[1] == "reference" || args[1] == "ref"){
 				if(args[2] == "add" || args[2] == "new"){
 					if(args.length < 5) return msg.channel.send(utils.errorEmbed("A reference must have a name and a link"))
@@ -129,7 +129,9 @@ Removes a reference from \`<location>\``,
 						}
 						return msg.channel.send(utils.passEmbed(`Added reference \"${name}\"!`))
 					})
-				} else if(args[2] == "remove" || args[2] == "delete"){
+				}
+				//remove command
+				else if(args[2] == "remove" || args[2] == "delete"){
 					if(args.length < 4) return msg.channel.send(utils.errorEmbed("Must supply a reference to delete"))
 					var name = utils.quoteFinder(args.slice(3))[0]
 					var find = location.references.filter(ref => ref.name == name)
