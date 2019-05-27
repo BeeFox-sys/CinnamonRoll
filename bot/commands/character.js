@@ -36,7 +36,7 @@ Removes a reference from \`<character>\``,
       response.description = ""
       for (var index = 0; index < charactersList.length; index++) {
         var character = charactersList[index]
-        response.description += `\n**${character.name}** \`(${character._id})\` `
+        response.description += `\n**${character.name}** \`(${character._id})\`<@${character.owner}>`
       }
       return msg.channel.send(response)
     }
@@ -163,6 +163,7 @@ Removes a reference from \`<character>\``,
 							}
 							setTimeout((response, reactions) => {
 								reactions.findById(response.id, (err, doc) => {
+                  if(doc == null) return
 									response.clearReactions()
 									reactions.deleteOne({_id: doc._id}, err =>{
 					          if(err) return console.log(err)

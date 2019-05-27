@@ -163,6 +163,7 @@ Removes a reference from \`<location>\``,
 							}
 							setTimeout((response, reactions) => {
 								reactions.findById(response.id, (err, doc) => {
+									if(doc == null) return
 									response.clearReactions()
 									reactions.deleteOne({_id: doc._id}, err =>{
 					          if(err) return console.log(err)
