@@ -132,6 +132,7 @@ Removes a reference from \`<location>\``,
 					})
 				}
 				//reference remove command
+
 				else if(args[2] == "remove" || args[2] == "delete"){
 					if(args.length < 4) return msg.channel.send(utils.errorEmbed("Must supply a reference to delete"))
 					var name = utils.quoteFinder(args.slice(3))[0]
