@@ -31,7 +31,7 @@ module.exports.execute = async (client, guildSettings, msg) => {
       hook = await utils.getWebhook(client, msg.channel)
       avatar = character.avatar || undefined
       name = character.displayName || character.name
-      content = msg.content.substring(prefix.length, msg.content.length-prefix.length-suffix.length)
+      content = msg.content.slice(prefix.length, -suffix.length)
       attachments = utils.attachmentsToFileOptions(msg.attachments)
       if(!attachments && content == "")  return
       await hook.send(content, {
