@@ -62,5 +62,6 @@ module.exports = {
     _id: String,
     owner: String,
     character: { type: String, ref:'characters' },
+    timestamp: {type: Date, default: Date.now}
   })
 }
