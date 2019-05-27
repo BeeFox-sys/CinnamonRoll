@@ -33,6 +33,7 @@ module.exports = {
     guild: String,
     name: String,
     displayName: String,
+    avatar: String,
     proxy:{
       prefix: String,
       suffix: String

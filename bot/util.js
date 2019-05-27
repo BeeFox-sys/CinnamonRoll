@@ -133,5 +133,16 @@ module.exports = {
       array.splice(start, del, quote)
     }
     return array
+  },
+  attachmentsToFileOptions(attatchments){
+    if(attatchments.size == 0) return undefined
+    var fileOptions = []
+    attatchments.tap((attachment)=>{
+      fileOptions.push({
+        attachment: attachment.url,
+        name: attachment.filename
+      })
+    })
+    return fileOptions;
   }
 }

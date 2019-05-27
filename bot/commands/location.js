@@ -24,7 +24,7 @@ Adds a reference to \`<location>\`
 Removes a reference from \`<location>\``,
 	args: false,
 	argsMin: 0,
-	usage: [`[location]`,`add <name>`,`<location> remove`,`<location> colour <hex|word>`,`<location> description <description>`, `<location> reference add <name> <url>`,`<location> reference remove <name>`],
+	usage: [`[location]`,`add <name>`,`<location> remove`,`<location> colour <hex|word>`,`<location> description <description>`, `<location> reference add <name> <url>`,`<location> reference remove <name>`, `<character> rename <New name>`],
 	example: '',
 	async execute(client, guildSettings, msg, args) {
     const locationsList = guildSettings.locations
@@ -109,8 +109,9 @@ Removes a reference from \`<location>\``,
 					return msg.channel.send(utils.passEmbed(`Set new description!`))
 				})
 			}
-
+			//reference commands
 			else if(args[1] == "reference" || args[1] == "ref"){
+				//reference add command
 				if(args[2] == "add" || args[2] == "new"){
 					if(args.length < 5) return msg.channel.send(utils.errorEmbed("A reference must have a name and a link"))
 					var name = utils.quoteFinder(args.slice(3))[0]
@@ -129,7 +130,10 @@ Removes a reference from \`<location>\``,
 						}
 						return msg.channel.send(utils.passEmbed(`Added reference \"${name}\"!`))
 					})
-				} else if(args[2] == "remove" || args[2] == "delete"){
+				}
+				//reference remove command
+
+				else if(args[2] == "remove" || args[2] == "delete"){
 					if(args.length < 4) return msg.channel.send(utils.errorEmbed("Must supply a reference to delete"))
 					var name = utils.quoteFinder(args.slice(3))[0]
 					var find = location.references.filter(ref => ref.name == name)
@@ -145,7 +149,20 @@ Removes a reference from \`<location>\``,
 					})
 				}
 			}
-
+			//rename
+      else if(args[1] == "rename"){
+				if(args.length < 3) return msg.channel.send(utils.errorEmbed("A location must have a name!"))
+        newName = args.slice(2).join(" ")
+        location.name = newName
+        return await location.save(err => {
+            if(err){
+              console.log(err)
+              return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
+            }
+            return msg.channel.send(utils.passEmbed(`Updataed name to ${location.name}!`))
+          })
+      }
+			//remove command
 			else if(args[1] == "remove" || args[1] == "delete" || args[1] == "destroy"){
 				return msg.channel.send(utils.passEmbed(`React ✅ to delete ${location.name}`))
 					.then(async response => {

@@ -8,15 +8,25 @@ module.exports = {
 	description: 'Summon an extra',
   perms: [''],
 	args: true,
-	argsMin: 2,
+	argsMin: 1,
 	usage: '<name> <text>',
 	async execute(client, guildSettings, msg, args) {
-    if(!msg.member.hasPermission(this.perms)) return;
+		var attachments = utils.attachmentsToFileOptions(msg.attachments)
 
-		if(args.length < 2) return msg.channel.send(utils.errorEmbed("Message cannot be empty"))
+		var argLength = 2
+		if(attachments) argLength = 1
+
+		if(args.length < argLength) return msg.channel.send(utils.errorEmbed("Message cannot be empty"))
+
 		hook = await utils.getWebhook(client, msg.channel)
-		await hook.edit(args.shift()+" [NPC]", "./bot/transparent.png")
-		await hook.send(args.join(" "))
+		un = args.shift()
+
+		await hook.send(args.join(" "), {
+			username: un,
+			avatarURL: "./bot/transparent.png",
+			disableEveryone: true,
+			files: attachments
+		})
 
 		await msg.delete()
 	},
