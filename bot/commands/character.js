@@ -137,6 +137,7 @@ Renames \`<character>\``,
 						return msg.channel.send(utils.passEmbed(`Added reference \"${name}\"!`))
 					})
 				}
+
         //reference delete
         else if(args[2] == "remove" || args[2] == "delete"){
 					if(args.length < 4) return msg.channel.send(utils.errorEmbed("Must supply a reference to delete"))
@@ -155,6 +156,7 @@ Renames \`<character>\``,
 				}
 			}
       //avatar command
+
       else if (args[1] == "avatar") {
         attachments = utils.attachmentsToFileOptions(msg.attachments)
         if(!attachments){character.avatar = args[2] || undefined}
@@ -167,6 +169,7 @@ Renames \`<character>\``,
 					return msg.channel.send(utils.passEmbed(`Updataed avatar!`))
 				})
       }
+
       //rename
       else if(args[1] == "rename"){
         if(args.length < 3) return msg.channel.send(utils.errorEmbed("A character must have a name!"))
@@ -185,6 +188,7 @@ Renames \`<character>\``,
         proxy = args.slice(2).join(" ")
         if(!args.length < 3){
           proxy = proxy.split("text")
+
           prefix = proxy[0].trim() || ""
           suffix = proxy[1].trim() || ""
           objReturn = {
@@ -209,6 +213,7 @@ Renames \`<character>\``,
           })
       }
       //delete command
+
 			else if(args[1] == "remove" || args[1] == "delete" || args[1] == "destroy"){
 				return msg.channel.send(utils.passEmbed(`React ✅ to delete ${character.name}`))
 					.then(async response => {
@@ -255,7 +260,9 @@ Renames \`<character>\``,
 		}
 		if(references != "") embed.addField("References:",references)
     if(character.avatar) embed.setThumbnail(character.avatar)
+
     if(character.proxy.prefix != ""||character.proxy.suffix != "")embed.addField("Proxy:",`\`${character.proxy.prefix}text${character.proxy.suffix}\``)
+
 		return msg.channel.send(embed)
 
 	},
