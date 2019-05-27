@@ -185,7 +185,6 @@ Renames \`<character>\``,
         proxy = args.slice(2).join(" ")
         if(!args.length < 3){
           proxy = proxy.split("text")
-          console.log(proxy)
           prefix = proxy[0].trim() || ""
           suffix = proxy[1].trim() || ""
           objReturn = {
