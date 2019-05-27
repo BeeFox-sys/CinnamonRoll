@@ -2,6 +2,7 @@ const Discord = require('discord.js');
 const config = require('./config.json');
 const utils = require('./util.js')
 const fs = require('fs');
+const proxyMethod = require('./proxy.js')
 const mongoose = require('mongoose');
 mongoose.connect(config.db, {
         useNewUrlParser: true,
@@ -53,6 +54,7 @@ client.on('message',async msg => {
   if(msg.channel.type !== 'text')	return await msg.channel.send(utils.errorEmbed('I only work in servers!'));
 
   settings = await utils.getGuildSettings(msg.guild.id, guildSettings)
+  proxyMethod.execute(client, settings, msg)
 	if (!(msg.content.startsWith(settings.prefix) || msg.content.startsWith(`<@${client.user.id}>`))) return;
 
   var args
