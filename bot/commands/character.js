@@ -20,10 +20,12 @@ Sets \`<character>\`'s description to \`<description>\`
 **<character> reference add <name> <url>**
 Adds a reference to \`<character>\`
 **<character> reference remove <name>**
-Removes a reference from \`<character>\``,
+Removes a reference from \`<character>\`
+**<character> rename <name>**
+Renames \`<character>\``,
   args: false,
   argsMin: 0,
-  usage: [`[character]`,`add <name>`,`<character> remove`,`<character> colour <hex|word>`,`<character> description <description>`, `<character> reference add <name> <url>`,`<character> reference remove <name>`],
+  usage: [`[character]`,`add <name>`,`<character> remove`,`<character> colour <hex|word>`,`<character> description <description>`, `<character> reference add <name> <url>`,`<character> reference remove <name>`, `<character> rename <New name>`,`<character> avatar <url|attatchment>`],
   example: '',
 	async execute(client, guildSettings, msg, args) {
     const charactersList = guildSettings.characters
@@ -48,6 +50,10 @@ Removes a reference from \`<character>\``,
         newCharacter._id = await utils.generateID(charactersModel)
         newCharacter.guild = guildSettings._id
         newCharacter.owner = msg.member.id
+        newCharacter.proxy = {
+          prefix:"",
+          suffix:""
+        }
         return await newCharacter.save(async (err,  doc)=>{
           if(err) {
             console.log(err)
@@ -109,8 +115,9 @@ Removes a reference from \`<character>\``,
 					return msg.channel.send(utils.passEmbed(`Set new description!`))
 				})
 			}
-
+      //reference Command
 			else if(args[1] == "reference" || args[1] == "ref"){
+        //reference add
 				if(args[2] == "add" || args[2] == "new"){
 					if(args.length < 5) return msg.channel.send(utils.errorEmbed("A reference must have a name and a link"))
 					var name = utils.quoteFinder(args.slice(3))[0]
@@ -131,7 +138,9 @@ Removes a reference from \`<character>\``,
 					})
 				}
 
-         else if(args[2] == "remove" || args[2] == "delete"){
+        //reference delete
+        else if(args[2] == "remove" || args[2] == "delete"){
+
 					if(args.length < 4) return msg.channel.send(utils.errorEmbed("Must supply a reference to delete"))
 					var name = utils.quoteFinder(args.slice(3))[0]
 					var find = character.references.filter(ref => ref.name == name)
@@ -148,6 +157,8 @@ Removes a reference from \`<character>\``,
 				}
 			}
 
+      //avatar command
+
       else if (args[1] == "avatar") {
         attachments = utils.attachmentsToFileOptions(msg.attachments)
         if(!attachments){character.avatar = args[2] || undefined}
@@ -160,6 +171,50 @@ Removes a reference from \`<character>\``,
 					return msg.channel.send(utils.passEmbed(`Updataed avatar!`))
 				})
       }
+
+      //rename
+      else if(args[1] == "rename"){
+        if(args.length < 3) return msg.channel.send(utils.errorEmbed("A character must have a name!"))
+        newName = args.slice(2).join(" ")
+        character.name = newName
+        return await character.save(err => {
+            if(err){
+              console.log(err)
+              return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
+            }
+            return msg.channel.send(utils.passEmbed(`Updataed name to ${character.name}!`))
+          })
+      }
+      //proxy
+      else if (args[1] == "proxy") {
+        proxy = args.slice(2).join(" ")
+        if(!args.length < 3){
+          proxy = proxy.split("text")
+          console.log(proxy)
+          prefix = proxy[0].trim() || ""
+          suffix = proxy[1].trim() || ""
+          objReturn = {
+            prefix: prefix,
+            suffix: suffix
+          }
+          response = `Updated proxy\nExample message :\`${prefix}Hello World${suffix}\``
+        } else {
+          objReturn = {
+            prefix:"",
+            suffix:""
+          }
+          response = `Disabled proxy`
+        }
+        character.proxy = objReturn
+        return await character.save(err => {
+            if(err){
+              console.log(err)
+              return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
+            }
+            return msg.channel.send(utils.passEmbed(response))
+          })
+      }
+      //delete command
 
 			else if(args[1] == "remove" || args[1] == "delete" || args[1] == "destroy"){
 				return msg.channel.send(utils.passEmbed(`React ✅ to delete ${character.name}`))
@@ -207,6 +262,9 @@ Removes a reference from \`<character>\``,
 		}
 		if(references != "") embed.addField("References:",references)
     if(character.avatar) embed.setThumbnail(character.avatar)
+
+    if(character.proxy.prefix != ""||character.proxy.suffix != "")embed.addField("Proxy:",`\`${character.proxy.prefix}text${character.proxy.suffix}\``)
+
 		return msg.channel.send(embed)
 
 	},
