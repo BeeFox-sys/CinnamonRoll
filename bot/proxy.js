@@ -2,6 +2,8 @@ const Discord = require('discord.js');
 const mongoose = require('mongoose');
 const utils = require('./util.js')
 const schemas = require('./schemas.js')
+const messages = mongoose.model('messages', schemas.message)
+
 
 module.exports.execute = async (client, guildSettings, msg) => {
   //Get sender and their characters
@@ -29,17 +31,21 @@ module.exports.execute = async (client, guildSettings, msg) => {
     suffix = character.proxy.suffix || ""
     if(msg.content.startsWith(prefix) && msg.content.endsWith(suffix)){
       hook = await utils.getWebhook(client, msg.channel)
-      avatar = character.avatar || undefined
       name = character.displayName || character.name
-      content = msg.content.slice(prefix.length, -suffix.length)
+      content = msg.content.slice(prefix.length, -suffix.length).trim()
       attachments = utils.attachmentsToFileOptions(msg.attachments)
       if(!attachments && content == "")  return
-      await hook.send(content, {
+      newMessage = await hook.send(content, {
   			username: name,
-  			avatar: avatar,
+  			avatarURL: character.avatar,
   			disableEveryone: true,
   			files: attachments
   		})
+      messageRecord = new messages({
+        _id: newMessage.id,
+        owner: msg.member.id,
+        character: character._id
+      }).save()
       msg.delete()
       break
     }

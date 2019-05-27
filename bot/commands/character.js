@@ -140,7 +140,6 @@ Renames \`<character>\``,
 
         //reference delete
         else if(args[2] == "remove" || args[2] == "delete"){
-
 					if(args.length < 4) return msg.channel.send(utils.errorEmbed("Must supply a reference to delete"))
 					var name = utils.quoteFinder(args.slice(3))[0]
 					var find = character.references.filter(ref => ref.name == name)
@@ -156,7 +155,6 @@ Renames \`<character>\``,
 					})
 				}
 			}
-
       //avatar command
 
       else if (args[1] == "avatar") {
@@ -190,7 +188,7 @@ Renames \`<character>\``,
         proxy = args.slice(2).join(" ")
         if(!args.length < 3){
           proxy = proxy.split("text")
-          console.log(proxy)
+
           prefix = proxy[0].trim() || ""
           suffix = proxy[1].trim() || ""
           objReturn = {

@@ -23,7 +23,7 @@ module.exports = {
 
 		await hook.send(args.join(" "), {
 			username: un,
-			avatar: "./bot/transparent.png",
+			avatarURL: "./bot/transparent.png",
 			disableEveryone: true,
 			files: attachments
 		})
