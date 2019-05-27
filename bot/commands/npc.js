@@ -1,6 +1,9 @@
 const Discord = require('discord.js');
 const utils = require('../util.js');
 const config = require('../config.json')
+const mongoose = require('mongoose');
+const schemas = require('../schemas.js')
+const messages = mongoose.model('messages', schemas.message)
 
 module.exports = {
 	name: 'npc',
@@ -21,13 +24,17 @@ module.exports = {
 		hook = await utils.getWebhook(client, msg.channel)
 		un = args.shift()
 
-		await hook.send(args.join(" "), {
+		newMessage = await hook.send(args.join(" "), {
 			username: un,
-			avatarURL: "./bot/transparent.png",
+			avatarURL: "https://cdn.discordapp.com/avatars/582243614030299136/fe639cfe01e197860599ff347eed9998.png?size=256",
 			disableEveryone: true,
 			files: attachments
 		})
-
+		messageRecord = new messages({
+			_id: newMessage.id,
+			owner: msg.member.id,
+			character: undefined
+		}).save()
 		await msg.delete()
 	},
 };
