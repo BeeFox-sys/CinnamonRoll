@@ -1,4 +1,5 @@
 const utils = require('../util');
+const config = require("../config.json")
 
 module.exports = {
   name: 'info',
@@ -37,6 +38,7 @@ module.exports = {
       .addField("Add the bot!",`[Click here to add CinnamonRP to your server](${inviteUrl})`)
       .addField("See the code!",`[Click here to view the GitHub for CinnamonRP](${githubUrl})`)
       .addField("Get help!", `[Click here to join our support server](${serverUrl})`);
+      if(config.owner != "") embed.setFooter(`Instance Owner: ${config.owner}`)
     // Finally, send the message with the invite link
     return msg.channel.send(embed);
   },

@@ -1,4 +1,3 @@
-const { prefix } = require('../config.json');
 const Discord = require('discord.js');
 const utils = require('../util.js')
 
@@ -10,6 +9,7 @@ module.exports = {
 	args: false,
 	usage: ['[command]'],
 	execute(client, guildSettings, msg, args) {
+		const {prefix} = guildSettings
     const data = [];
     const { commands } = msg.client;
 

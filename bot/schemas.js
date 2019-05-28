@@ -1,12 +1,13 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema
+const config = require('./config.json')
 
 
 module.exports = {
 
   guildSettings: new mongoose.Schema({
     _id: String,
-    prefix: String,
+    prefix: {type:String, default: config.defaultPrefix},
     locations: [{ type: String, ref: 'locations' }],
     characters: [{ type: String, ref:'characters' }],
     admin: [String],

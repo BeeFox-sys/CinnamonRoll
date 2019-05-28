@@ -23,8 +23,7 @@ module.exports = {
     var doc = await collection.findById(guild).populate('locations').populate('characters').exec()
     if(doc) return doc
     var newSettings = await new collection({
-            _id: guild,
-            prefix: config.prefix
+            _id: guild
           })
     await newSettings.save((err, newDoc)=>{
         if (err) return console.error(err)
