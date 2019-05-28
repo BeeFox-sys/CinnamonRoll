@@ -6,12 +6,13 @@ module.exports = {
 	name: 'help',
 	aliases: ['h', 'commands'],
 	description: 'List all of my commands or info about a specific command.',
+	hidden: false,
 	args: false,
 	usage: ['[command]'],
 	execute(client, guildSettings, msg, args) {
 		const {prefix} = guildSettings
     const data = [];
-    const { commands } = msg.client;
+    const commands = msg.client.commands.filter(command => !command.hidden)
 
     if (!args.length) {
 

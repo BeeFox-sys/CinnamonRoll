@@ -23,6 +23,7 @@ Adds a reference to \`<character>\`
 Removes a reference from \`<character>\`
 **<character> rename <name>**
 Renames \`<character>\``,
+  hidden: false,
   args: false,
   argsMin: 0,
   usage: [`[character]`,`add <name>`,`<character> remove`,`<character> colour <hex|word>`,`<character> description <description>`, `<character> reference add <name> <url>`,`<character> reference remove <name>`, `<character> rename <New name>`,`<character> avatar <url|attatchment>`],

@@ -3,9 +3,9 @@ const config = require("../config.json")
 
 module.exports = {
   name: 'info',
+  aliases: ['invite', 'github', 'support', 'server'],
   decription: 'Shows information about the bot',
-  perms: ['invite', 'github', 'support', 'server'],
-  guildOnly: false,
+  hidden: false,
   args: false,
   usage:'',
   async execute(client, guildSettings, msg, args) {
