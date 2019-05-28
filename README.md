@@ -5,7 +5,7 @@ This is a discord bot for roleplay. Inspired by [PluralKit](https://github.com/x
 # How to run!
 You can add the bot to the server with [this link](https://discordapp.com/oauth2/authorize?client_id=582106406069600256&scope=bot&permissions=536996928)
 
-And you can [join our support sever](discord.gg/PrKWQP2) too!
+And you can [join our support sever](https://discord.gg/PrKWQP2) too!
 
 Or keep reading for self hosting options
 
