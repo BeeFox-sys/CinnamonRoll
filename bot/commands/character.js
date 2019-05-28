@@ -260,7 +260,7 @@ Renames \`<character>\``,
 			references += `\n[${character.references[i].name}](${character.references[i].url})`
 		}
 		if(references != "") embed.addField("References:",references)
-    if(character.avatar) embed.setThumbnail(character.avatar)
+    if(character.avatar || character.references.length > 0) embed.setThumbnail(character.avatar || character.references[0].url)
 
     if(character.proxy.prefix != ""||character.proxy.suffix != "")embed.addField("Proxy:",`\`${character.proxy.prefix}text${character.proxy.suffix}\``)
 

@@ -208,6 +208,7 @@ Removes a reference from \`<location>\``,
 			references += `\n[${location.references[i].name}](${location.references[i].url})`
 		}
 		if(references != "") embed.addField("References:",references)
+	  if(location.references.length > 0) embed.setThumbnail(location.references[0].url)
 		return msg.channel.send(embed)
 
 	},
