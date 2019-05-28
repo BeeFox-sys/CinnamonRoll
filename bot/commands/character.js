@@ -77,176 +77,200 @@ Renames \`<character>\``,
 
 		//Character editing commands
 		if(args.length > 1 && character.owner == msg.member.id){
-			//Colour: <character> colour <hex|word>
-			if(args[1] == "colour" || args[1] == "color"){
-				var colour = args.splice(2).join("_").toUpperCase()
-				if(utils.valadateColour(colour)){
-					character.colour = colour
-					if(colour == "DEFAULT") character.colour = ""
-					return await character.save((err,  doc)=>{
-						if(err) {
-							console.log(err)
-							return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
-						}
-						return msg.channel.send(utils.passEmbed(`Set colour to **${doc.colour.toLowerCase() || "default"}**`))
-					})
-				}
-				embed = utils.errorEmbed()
-				embed.setTitle("Colour must be a hex code or one of these:")
-				embed.description = "```"
-				for (var colour in Discord.Constants.Colors) {
-					if (Discord.Constants.Colors.hasOwnProperty(colour)) {
-						embed.description += `\n${utils.toTitleCase(colour.replace(/_/g, " "))}`
-					}
-				}
-				embed.description += "```"
-				return msg.channel.send(embed)
-			}
+      switch (args[1].toLowerCase()) {
 
-			//Description: <character> description <description>
-			else if(args[1] == "description" || args[1] == "desc"){
-				desc = args.splice(2).join(" ")
-				character.description = desc
-				return await character.save((err,  doc)=>{
-					if(err) {
-						console.log(err)
-						return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
-					}
-					return msg.channel.send(utils.passEmbed(`Set new description!`))
-				})
-			}
-      //reference Command
-			else if(args[1] == "reference" || args[1] == "ref"){
-        //reference add
-				if(args[2] == "add" || args[2] == "new"){
-					if(args.length < 5) return msg.channel.send(utils.errorEmbed("A reference must have a name and a link"))
-					var name = utils.quoteFinder(args.slice(3))[0]
-					var url = utils.quoteFinder(args.slice(3))[1]
-					if(name.length > 30) return msg.channel.send(utils.errorEmbed("Name cannot be longer then 30 characters"))
-					var find = character.references.filter(ref => ref.name == name)
-					if(find.length != 0) return msg.channel.send(utils.errorEmbed("That reference already exists!"))
-					character.references.push({
-						name: name,
-						url: url
-					})
-					return character.save((err,  doc)=>{
-						if(err) {
-							console.log(err)
-							return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
-						}
-						return msg.channel.send(utils.passEmbed(`Added reference \"${name}\"!`))
-					})
-				}
 
-        //reference delete
-        else if(args[2] == "remove" || args[2] == "delete"){
-					if(args.length < 4) return msg.channel.send(utils.errorEmbed("Must supply a reference to delete"))
-					var name = utils.quoteFinder(args.slice(3))[0]
-					var find = character.references.filter(ref => ref.name == name)
-					if(find.length == 0) return msg.channel.send(utils.errorEmbed(`Reference \"${name}\" doesn't exist!`))
-					var index = character.references.indexOf(find[0])
-					character.references.splice(index,1)
-					return character.save((err) => {
-						if(err){
-							console.log(err)
-						  return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
-						}
-						return msg.channel.send(utils.passEmbed(`Removed reference \"${name}\"!`))
-					})
-				}
-			}
-      //avatar command
 
-      else if (args[1] == "avatar") {
-        attachments = utils.attachmentsToFileOptions(msg.attachments)
-        if(!attachments){character.avatar = args[2] || undefined}
-				else {character.avatar = attachments[0].attachment}
-				return await character.save((err,  doc)=>{
-					if(err) {
-						console.log(err)
-						return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
-					}
-					return msg.channel.send(utils.passEmbed(`Updataed avatar!`))
-				})
-      }
+        //Colour: <character> colour <hex|word>
+        case "colour":
+        case "color":
+          var colour = args.splice(2).join("_").toUpperCase()
+  				if(utils.valadateColour(colour)){
+  					character.colour = colour
+  					if(colour == "DEFAULT") character.colour = ""
+  					return await character.save((err,  doc)=>{
+  						if(err) {
+  							console.log(err)
+  							return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
+  						}
+  						return msg.channel.send(utils.passEmbed(`Set colour to **${doc.colour.toLowerCase() || "default"}**`))
+  					})
+  				}
+  				var embed = utils.errorEmbed()
+  				embed.setTitle("Colour must be a hex code or one of these:")
+  				embed.description = "```"
+  				for (var colour in Discord.Constants.Colors) {
+  					if (Discord.Constants.Colors.hasOwnProperty(colour)) {
+  						embed.description += `\n${utils.toTitleCase(colour.replace(/_/g, " "))}`
+  					}
+  				}
+  				embed.description += "```"
+  				return msg.channel.send(embed)
+        break;
 
-      //rename
-      else if(args[1] == "rename"){
-        if(args.length < 3) return msg.channel.send(utils.errorEmbed("A character must have a name!"))
-        newName = args.slice(2).join(" ")
-        character.name = newName
-        return await character.save(err => {
-            if(err){
+
+
+        //Description: <character> description <description>
+        case "description":
+        case "desc":
+          var desc = args.splice(2).join(" ")
+          character.description = desc
+          return await character.save((err,  doc)=>{
+            if(err) {
               console.log(err)
               return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
             }
-            return msg.channel.send(utils.passEmbed(`Updataed name to ${character.name}!`))
+            return msg.channel.send(utils.passEmbed(`Set new description!`))
           })
-      }
-      //proxy
-      else if (args[1] == "proxy") {
-        proxy = args.slice(2).join(" ")
-        if(args.length > 2){
-          proxy = proxy.split("text")
+        break;
 
-          prefix = proxy[0].trim() || ""
-          suffix = proxy[1].trim() || ""
-          if(prefix == "" && suffix == "") return msg.channel.send(utils.errorEmbed("Cannot have an empty proxy!\nExample proxy setting: `-text-`"))
-          objReturn = {
-            prefix: prefix,
-            suffix: suffix
+
+
+        case "reference":
+        case "ref":
+          switch (args[2].toLowerCase()) {
+            case 'add':
+            case 'new':
+              if(args.length < 5) return msg.channel.send(utils.errorEmbed("A reference must have a name and a link"))
+              var name = utils.quoteFinder(args.slice(3))[0]
+              var url = utils.quoteFinder(args.slice(3))[1]
+              if(name.length > 30) return msg.channel.send(utils.errorEmbed("Name cannot be longer then 30 characters"))
+              var find = character.references.filter(ref => ref.name == name)
+              if(find.length != 0) return msg.channel.send(utils.errorEmbed("That reference already exists!"))
+              character.references.push({
+                name: name,
+                url: url
+              })
+              return character.save((err,  doc)=>{
+                if(err) {
+                  console.log(err)
+                  return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
+                }
+                return msg.channel.send(utils.passEmbed(`Added reference \"${name}\"!`))
+              })
+            break;
+
+            case "remove":
+            case "delete":
+              if(args.length < 4) return msg.channel.send(utils.errorEmbed("Must supply a reference to delete"))
+              var name = utils.quoteFinder(args.slice(3))[0]
+              var find = character.references.filter(ref => ref.name == name)
+              if(find.length == 0) return msg.channel.send(utils.errorEmbed(`Reference \"${name}\" doesn't exist!`))
+              var index = character.references.indexOf(find[0])
+              character.references.splice(index,1)
+              return character.save((err) => {
+                if(err){
+                  console.log(err)
+                  return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
+                }
+                return msg.channel.send(utils.passEmbed(`Removed reference \"${name}\"!`))
+              })
+            break;
+
+            default:
+              break;
           }
-          response = `Updated proxy\nExample message :\`${prefix}Hello World${suffix}\``
-        } else {
-          objReturn = {
-            prefix:"",
-            suffix:""
-          }
-          response = `Disabled proxy`
-        }
-        character.proxy = objReturn
-        return await character.save(err => {
-            if(err){
+        break;
+
+
+        case "avatar":
+        case "icon":
+          var attachments = utils.attachmentsToFileOptions(msg.attachments)
+          if(!attachments){character.avatar = args[2] || undefined}
+          else {character.avatar = attachments[0].attachment}
+          return await character.save((err,  doc)=>{
+            if(err) {
               console.log(err)
               return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
             }
-            return msg.channel.send(utils.passEmbed(response))
+            return msg.channel.send(utils.passEmbed(`Updataed avatar!`))
           })
+        break;
+
+        case "rename":
+          if(args.length < 3) return msg.channel.send(utils.errorEmbed("A character must have a name!"))
+          var newName = args.slice(2).join(" ")
+          character.name = newName
+          return await character.save(err => {
+              if(err){
+                console.log(err)
+                return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
+              }
+              return msg.channel.send(utils.passEmbed(`Updataed name to ${character.name}!`))
+            })
+        break;
+
+
+
+        case "proxy":
+          var proxy = args.slice(2).join(" ");
+          var response;
+          if(args.length > 2){
+            proxy = proxy.split("text")
+
+            var prefix = proxy[0].trim() || ""
+            var suffix = proxy[1].trim() || ""
+            if(prefix == "" && suffix == "") return msg.channel.send(utils.errorEmbed("Cannot have an empty proxy!\nExample proxy setting: `-text-`"))
+            objReturn = {
+              prefix: prefix,
+              suffix: suffix
+            }
+            response = `Updated proxy\nExample message :\`${prefix}Hello World${suffix}\``
+          } else {
+            objReturn = {
+              prefix:"",
+              suffix:""
+            }
+            response = `Disabled proxy`
+          }
+          character.proxy = objReturn
+          return await character.save(err => {
+              if(err){
+                console.log(err)
+                return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
+              }
+              return msg.channel.send(utils.passEmbed(response))
+            })
+        break;
+
+
+        case "remove":
+        case "delete":
+          return msg.channel.send(utils.passEmbed(`React ✅ to delete ${character.name}`))
+            .then(async response => {
+              newReact = await new reactResponse()
+              newReact._id = response.id
+              newReact.user = msg.member.id
+              newReact.settings = {
+                type: "deleteCharacter",
+                id: character._id
+              }
+              return newReact.save( (err,doc) => {
+                if(err) {
+                  console.log(err)
+                  return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
+                }
+                setTimeout((response, reactions) => {
+                  reactions.findById(response.id, (err, doc) => {
+                    if(doc == null) return
+                    response.clearReactions()
+                    reactions.deleteOne({_id: doc._id}, err =>{
+                      if(err) return console.log(err)
+                      response.channel.send(utils.errorEmbed("Timed out"))
+                    })
+                  })
+                }, 60000, response, reactResponse);
+                return response.react("✅")
+              })
+            })
+        break;
+
+
+        default:
+          return msg.channel.send(utils.errorEmbed("That is not a valid subcommand"))
       }
-      //delete command
+    }
 
-			else if(args[1] == "remove" || args[1] == "delete" || args[1] == "destroy"){
-				return msg.channel.send(utils.passEmbed(`React ✅ to delete ${character.name}`))
-					.then(async response => {
-						newReact = await new reactResponse()
-						newReact._id = response.id
-						newReact.user = msg.member.id
-						newReact.settings = {
-							type: "deleteCharacter",
-							id: character._id
-						}
-						return newReact.save( (err,doc) => {
-							if(err) {
-								console.log(err)
-								return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
-							}
-							setTimeout((response, reactions) => {
-								reactions.findById(response.id, (err, doc) => {
-                  if(doc == null) return
-									response.clearReactions()
-									reactions.deleteOne({_id: doc._id}, err =>{
-					          if(err) return console.log(err)
-										response.channel.send(utils.errorEmbed("Timed out"))
-					        })
-								})
-							}, 60000, response, reactResponse);
-							return response.react("✅")
-						})
-					})
-			}
-
-			return msg.channel.send(utils.errorEmbed("That is not a valid subcommand"))
-		}
 
 
 		//return character
