@@ -22,6 +22,7 @@ Sets \`<location>\`'s description to \`<description>\`
 Adds a reference to \`<location>\`
 **<location> reference remove <name>**
 Removes a reference from \`<location>\``,
+	hidden: false,
 	args: false,
 	argsMin: 0,
 	usage: [`[location]`,`add <name>`,`<location> remove`,`<location> colour <hex|word>`,`<location> description <description>`, `<location> reference add <name> <url>`,`<location> reference remove <name>`, `<character> rename <New name>`],
