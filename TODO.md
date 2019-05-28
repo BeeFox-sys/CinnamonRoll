@@ -39,3 +39,4 @@
   - [x] Message logging
   - [ ] Message info getting
 - [x] Dice command
+- [ ] Better Commenting
