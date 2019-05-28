@@ -10,8 +10,7 @@ module.exports = {
 	aliases: ['n'],
 	description: 'Summon an extra',
   perms: [''],
-	hidden: false,
-	args: false,
+	args: true,
 	argsMin: 1,
 	usage: '<name> <text>',
 	async execute(client, guildSettings, msg, args) {
