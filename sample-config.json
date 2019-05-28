@@ -1,7 +1,8 @@
 {
-  "prefix": "!!",
+  "defaultPrefix": "!!",
   "token": "",
   "db": "mongodb://db/CinnamonRP",
   "idCharacters": "abcdefghijklmnopqrstuvwxyz",
-  "idLength": 5
+  "idLength": 5,
+  "owner": ""
 }

@@ -4,11 +4,24 @@ const utils = require('../util.js')
 module.exports = {
 	name: 'settings',
 	aliases: ['setting', 'set'],
+<<<<<<< Updated upstream
 	description: 'Changes server prefix, admin only',
+=======
+	description:
+`Show or edit sever settings, Admin Only
+
+**prefix <prefix>**
+Changes server prefix to \`<prefix>\`
+**role <add|remove> <role name>**
+Adds or removes \`<role name>\` from the list of roles that can edit locations
+**name <name>**
+Sets the server's game name`,
+	hidden: false,
+>>>>>>> Stashed changes
 	args: false,
 	argsMin: 0,
-	usage: ['[prefix <new prefix>]'],
-	example: 'prefix rp!',
+	usage: ['prefix <new prefix>',`role add <role>`, `role remove <role>`, `name <new name>`],
+	example: '',
 	execute(client, guildSettings, msg, args) {
 		if(msg.member.hasPermission("MANAGE_GUILD")){
 			if(args.length == 0){

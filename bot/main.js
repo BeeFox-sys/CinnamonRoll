@@ -42,10 +42,10 @@ client.once('ready', async () => {
   console.log(`${client.guilds.size} servers`);
   // console.log(`${client.shard.count} shards`); // for future use once sharding becomes necessary
   if(client.guilds.size < 2) {
-    client.user.setActivity(`!!help`, { type: 'LISTENING'});
+    client.user.setActivity(`Mention me for help!`, { type: 'LISTENING'});
   }
   else {
-    client.user.setActivity(`!!help | in ${client.guilds.size} servers`, { type: 'LISTENING'});
+    client.user.setActivity(`Mention for help! | in ${client.guilds.size} servers`, { type: 'LISTENING'});
   }
 });
 
