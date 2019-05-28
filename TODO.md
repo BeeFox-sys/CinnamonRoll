@@ -35,6 +35,9 @@
 - [ ] Try out [Eris](https://abal.moe/Eris/)
 - [ ] PluralKit import function
 - [ ] Rewrite commands to use switch statements
+  - [x] Character Command
+  - [ ] Settings Command
+  - [ ] Location Command
 - [x] Proxies
   - [x] Message logging
   - [ ] Message info getting
