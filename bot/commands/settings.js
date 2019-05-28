@@ -4,9 +4,6 @@ const utils = require('../util.js')
 module.exports = {
 	name: 'settings',
 	aliases: ['setting', 'set'],
-<<<<<<< Updated upstream
-	description: 'Changes server prefix, admin only',
-=======
 	description:
 `Show or edit sever settings, Admin Only
 
@@ -17,7 +14,9 @@ Adds or removes \`<role name>\` from the list of roles that can edit locations
 **name <name>**
 Sets the server's game name`,
 	hidden: false,
->>>>>>> Stashed changes
+=======
+	hidden: false,
+>>>>>>> Nothing hidden here 😉
 	args: false,
 	argsMin: 0,
 	usage: ['prefix <new prefix>',`role add <role>`, `role remove <role>`, `name <new name>`],
