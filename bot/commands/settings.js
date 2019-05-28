@@ -14,9 +14,6 @@ Adds or removes \`<role name>\` from the list of roles that can edit locations
 **name <name>**
 Sets the server's game name`,
 	hidden: false,
-=======
-	hidden: false,
->>>>>>> Nothing hidden here 😉
 	args: false,
 	argsMin: 0,
 	usage: ['prefix <new prefix>',`role add <role>`, `role remove <role>`, `name <new name>`],
