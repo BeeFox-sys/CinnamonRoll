@@ -7,6 +7,7 @@ module.exports = {
 	name: 'roll',
 	aliases: ['r', 'dice', 'd'],
 	description: 'Ping!',
+	hidden: false,
 	args: true,
 	argsMin: 1,
 	usage: ['<standard dice notation>'],
