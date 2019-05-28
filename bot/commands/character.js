@@ -186,11 +186,12 @@ Renames \`<character>\``,
       //proxy
       else if (args[1] == "proxy") {
         proxy = args.slice(2).join(" ")
-        if(!args.length < 3){
+        if(args.length > 2){
           proxy = proxy.split("text")
 
           prefix = proxy[0].trim() || ""
           suffix = proxy[1].trim() || ""
+          if(prefix == "" && suffix == "") return msg.channel.send(utils.errorEmbed("Cannot have an empty proxy!\nExample proxy setting: `-text-`"))
           objReturn = {
             prefix: prefix,
             suffix: suffix
