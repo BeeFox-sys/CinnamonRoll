@@ -49,7 +49,7 @@ Sets the server's game name`,
 					guildSettings.prefix = args.slice(1).join(" ")
 					return guildSettings.save((err, doc) => {
 						if(err){
-							console.log(err)
+							console.warn(err)
 							return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command!"))
 						} else {
 							return msg.channel.send(utils.passEmbed(`Prefix changed to \`${doc.prefix}\``))
@@ -69,7 +69,7 @@ Sets the server's game name`,
 							guildSettings.admin.push(role.id)
 							return guildSettings.save((err, doc) => {
 								if(err){
-									console.log(err)
+									console.warn(err)
 									return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command!"))
 								} else {
 									return msg.channel.send(utils.passEmbed(role.name+" has been added to manager roles"))
@@ -84,7 +84,7 @@ Sets the server's game name`,
 							guildSettings.admin.splice(pos, 1)
 							return guildSettings.save((err, doc) => {
 					      if(err){
-					        console.log(err)
+					        console.warn(err)
 					        return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command!"))
 					      } else {
 					        return msg.channel.send(utils.passEmbed(role.name+" has been removed from manager roles"))
@@ -111,7 +111,7 @@ Sets the server's game name`,
 					}
 					return guildSettings.save((err, doc) => {
 			      if(err){
-			        console.log(err)
+			        console.warn(err)
 			        return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command!"))
 			      } else {
 			        return msg.channel.send(utils.passEmbed(response))

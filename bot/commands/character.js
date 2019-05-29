@@ -76,7 +76,7 @@ Renames \`<character>\``,
         }
         return await newCharacter.save(async (err,  doc)=>{
           if(err) {
-            console.log(err)
+            console.warn(err)
             return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
           }
           await guildSettings.characters.push(doc._id)
@@ -110,7 +110,7 @@ Renames \`<character>\``,
   					if(colour == "DEFAULT") character.colour = ""
   					return await character.save((err,  doc)=>{
   						if(err) {
-  							console.log(err)
+  							console.warn(err)
   							return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
   						}
   						return msg.channel.send(utils.passEmbed(`Set colour to **${doc.colour.toLowerCase() || "default"}**`))
@@ -137,7 +137,7 @@ Renames \`<character>\``,
           character.description = desc
           return await character.save((err,  doc)=>{
             if(err) {
-              console.log(err)
+              console.warn(err)
               return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
             }
             if(!character.description) {
@@ -168,7 +168,7 @@ Renames \`<character>\``,
               })
               return character.save((err,  doc)=>{
                 if(err) {
-                  console.log(err)
+                  console.warn(err)
                   return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
                 }
                 return msg.channel.send(utils.passEmbed(`Added reference \"${name}\"!`))
@@ -185,7 +185,7 @@ Renames \`<character>\``,
               character.references.splice(index,1)
               return character.save((err) => {
                 if(err){
-                  console.log(err)
+                  console.warn(err)
                   return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
                 }
                 return msg.channel.send(utils.passEmbed(`Removed reference \"${name}\"!`))
@@ -205,7 +205,7 @@ Renames \`<character>\``,
           else {character.avatar = attachments[0].attachment}
           return await character.save((err,  doc)=>{
             if(err) {
-              console.log(err)
+              console.warn(err)
               return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
             }
             if(character.avatar == undefined) {
@@ -224,7 +224,7 @@ Renames \`<character>\``,
           character.name = newName
           return await character.save(err => {
               if(err){
-                console.log(err)
+                console.warn(err)
                 return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
               }
               return msg.channel.send(utils.passEmbed(`Updated name to ${character.name}!`))
@@ -257,7 +257,7 @@ Renames \`<character>\``,
           character.proxy = objReturn
           return await character.save(err => {
               if(err){
-                console.log(err)
+                console.warn(err)
                 return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
               }
               return msg.channel.send(utils.passEmbed(response))
@@ -278,7 +278,7 @@ Renames \`<character>\``,
               }
               return newReact.save( (err,doc) => {
                 if(err) {
-                  console.log(err)
+                  console.warn(err)
                   return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
                 }
                 setTimeout((response, reactions) => {
@@ -286,7 +286,7 @@ Renames \`<character>\``,
                     if(doc == null) return
                     response.clearReactions()
                     reactions.deleteOne({_id: doc._id}, err =>{
-                      if(err) return console.log(err)
+                      if(err) return console.warn(err)
                       response.channel.send(utils.errorEmbed("Timed out"))
                     })
                   })

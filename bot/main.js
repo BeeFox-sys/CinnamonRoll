@@ -14,7 +14,7 @@ mongoose.connect(config.db, {
 const db = mongoose.connection
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function() {
-  console.log("Connected to database")
+  console.warn("Connected to database")
 });
 
 //Create setting schema
@@ -38,9 +38,9 @@ for (const file of commandFiles) {
 
 
 client.once('ready', async () => {
-  console.log(`Logged in as ${client.user.tag} (ID: ${client.user.id})!`);
-  console.log(`${client.guilds.size} servers`);
-  // console.log(`${client.shard.count} shards`); // for future use once sharding becomes necessary
+  console.warn(`Logged in as ${client.user.tag} (ID: ${client.user.id})!`);
+  console.warn(`${client.guilds.size} servers`);
+  // console.warn(`${client.shard.count} shards`); // for future use once sharding becomes necessary
   if(client.guilds.size < 2) {
     client.user.setActivity(`Mention me for help!`, { type: 'LISTENING'});
   }
@@ -107,7 +107,7 @@ client.on("messageReactionAdd",async (react,user) =>{
 
   return reactions.findById(react.message.id, (err,doc) =>{
     if(err){
-      console.log(err)
+      console.warn(err)
       return react.message.channel.send(utils.errorEmbed("Something went wrong with that reaction"))
     }
 
@@ -119,12 +119,12 @@ client.on("messageReactionAdd",async (react,user) =>{
 
       return locations.deleteOne({_id: doc.settings.id}, (err) =>{
         if(err) {
-          console.log(err)
+          console.warn(err)
           return react.message.channel.send(utils.errorEmbed("Something went wrong with that reaction"))
         }
         react.message.channel.send(utils.passEmbed(`Deleted location`))
         reactions.deleteOne({_id: doc._id}, err =>{
-          if(err) return console.log(err)
+          if(err) return console.warn(err)
         })
       })
     }
@@ -135,12 +135,12 @@ client.on("messageReactionAdd",async (react,user) =>{
 
       return characters.deleteOne({_id: doc.settings.id}, (err) =>{
         if(err) {
-          console.log(err)
+          console.warn(err)
           return react.message.channel.send(utils.errorEmbed("Something went wrong with that reaction"))
         }
         react.message.channel.send(utils.passEmbed(`Deleted character`))
         reactions.deleteOne({_id: doc._id}, err =>{
-          if(err) return console.log(err)
+          if(err) return console.warn(err)
         })
       })
     }
@@ -180,11 +180,11 @@ process.on( 'SIGTERM', function() {
 
 
 async function gracefulExit(){
-  console.log( "\nGracefully shutting down" );
+  console.warn( "\nGracefully shutting down" );
   await reactions.deleteMany({}, () => {
-    console.log("Deleting all pending reactions")
+    console.warn("Deleting all pending reactions")
   })
 
-  console.log('Goodbye')
+  console.warn('Goodbye')
   process.exit( );
 }
