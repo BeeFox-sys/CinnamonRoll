@@ -13,7 +13,13 @@ module.exports = {
 Adds a new character with the name \`<name>\`
 **<character> remove**
 Removes the character \`<character>\`
-**<character> colour <hex|word>**
+**<character> proxy [example match]**
+Sets the proxy tags for \`<character>\` by the example match given.
+Proxy tags enable you to speak as your character by typing text between the set tags.
+Try out square brackets as proxy tags by using \`[text]\` as the example match.
+**<character> avatar [attachment | url]**
+Sets the avatar for \`<character>\` to the attached image or the image at the URL
+**<character> colour <hex | word>**
 Sets \`<character>\`'s colour to a hex code or a word
 **<character> description <description>**
 Sets \`<character>\`'s description to \`<description>\`
@@ -26,7 +32,7 @@ Renames \`<character>\``,
   hidden: false,
   args: false,
   argsMin: 0,
-  usage: [`[character]`,`add <name>`,`<character> remove`,`<character> colour <hex|word>`,`<character> description <description>`, `<character> reference add <name> <url>`,`<character> reference remove <name>`, `<character> rename <New name>`,`<character> avatar <url|attatchment>`],
+  usage: [`[character]`,`add <name>`,`<character> remove`,`<character> colour <hex | word>`,`<character> description <description>`, `<character> reference add <name> <url>`,`<character> reference remove <name>`, `<character> rename <New name>`,`<character> avatar <url | attatchment>`],
   example: '',
 	async execute(client, guildSettings, msg, args) {
     const charactersList = guildSettings.characters.sort((a,b)=>{
@@ -44,7 +50,7 @@ Renames \`<character>\``,
     })
     if(args.length == 0){
       if(charactersList.length == 0){
-        return msg.channel.send(utils.errorEmbed(`This server has no characters\nCreate one with \`${guildSettings.prefix}character add <name>\``))
+        return msg.channel.send(utils.errorEmbed(`This server has no characters\nCreate one with \`${guildSettings.prefix || `@${client.user.username}${client.user.tag} `}character add <name>\``))
       }
       response = utils.passEmbed()
       response.setTitle(`Characters for ${guildSettings.gameName || msg.guild.name}`)
@@ -134,7 +140,12 @@ Renames \`<character>\``,
               console.log(err)
               return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
             }
+            if(!character.description) {
+              return msg.channel.send(utils.passEmbed(`Cleared description!`))
+            }
+            else {
             return msg.channel.send(utils.passEmbed(`Set new description!`))
+            }
           })
         break;
 
@@ -197,11 +208,17 @@ Renames \`<character>\``,
               console.log(err)
               return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
             }
-            return msg.channel.send(utils.passEmbed(`Updataed avatar!`))
+            if(character.avatar == undefined) {
+              return msg.channel.send(utils.passEmbed(`Cleared avatar!`))
+            }
+            else {
+            return msg.channel.send(utils.passEmbed(`Updated avatar!`))
+            }
           })
         break;
 
         case "rename":
+        case "name":
           if(args.length < 3) return msg.channel.send(utils.errorEmbed("A character must have a name!"))
           var newName = args.slice(2).join(" ")
           character.name = newName
@@ -210,7 +227,7 @@ Renames \`<character>\``,
                 console.log(err)
                 return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
               }
-              return msg.channel.send(utils.passEmbed(`Updataed name to ${character.name}!`))
+              return msg.channel.send(utils.passEmbed(`Updated name to ${character.name}!`))
             })
         break;
 

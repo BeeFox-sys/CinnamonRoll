@@ -46,7 +46,7 @@ Sets the server's game name`,
 					if(args.length < 2){
 						return msg.channel.send(utils.errorEmbed('You must supply a prefix to change to'))
 					}
-					guildSettings.prefix = args[1]
+					guildSettings.prefix = args.slice(1).join(" ")
 					return guildSettings.save((err, doc) => {
 						if(err){
 							console.log(err)
