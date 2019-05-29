@@ -119,7 +119,13 @@ Sets the server's game name`,
 			    })
 				break;
 
-
+				case "reset":
+					if(args[1] == guildSettings._id){
+						return utils.eraseGuild(msg, guildSettings._id)
+					} else {
+						return msg.channel.send(utils.errorEmbed(`Are you absolutely sure you want to do this?\nTo reset the server, run this command again with the servers id as an argument\n\`${guildSettings.prefix}settings reset ${guildSettings._id}\``))
+					}
+				break;
 
 				default:
 					return msg.channel.send(utils.errorEmbed('That is not a subcommand'))

@@ -1,8 +1,11 @@
 const Discord = require("discord.js")
 const mongoose = require('mongoose');
 const config = require("./config.json")
+const schemas = require('./schemas.js');
+const guildSettings = mongoose.model('guildSettings', schemas.guildSettings)
 
-module.exports = {
+
+utils = {
 
   //Webhook Finder
   async getWebhook(client, channel) {
@@ -25,7 +28,7 @@ module.exports = {
     var newSettings = await new collection({
             _id: guild
           })
-    await newSettings.save((err, newDoc)=>{
+    return await newSettings.save((err, newDoc)=>{
         if (err) return console.error(err)
         return newDoc;
       });
@@ -143,5 +146,19 @@ module.exports = {
       })
     })
     return fileOptions;
+  },
+  async eraseGuild(msg, guildID){
+    msg.channel.send(utils.errorEmbed("Reseting your guild, this may take some time"))
+    var guild = await guildSettings.findById(guildID).populate('locations').populate('characters').exec()
+    for(var ci = 0; ci < guild.characters.length; ci++){
+      guild.characters[ci].delete()
+    }
+    for(var li = 0; li < guild.locations.length; li++){
+      guild.locations[li].delete()
+    }
+    guild.delete()
+    return msg.channel.send(utils.errorEmbed("Guild Reset, default prefix is `!!`"))
   }
 }
+
+module.exports = utils

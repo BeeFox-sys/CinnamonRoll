@@ -57,7 +57,7 @@ client.on('message',async msg => {
   msg.content = msg.content.replace(/[\u200B-\u200D\uFEFF]/g, '')
 
   settings = await utils.getGuildSettings(msg.guild.id, guildSettings)
-  proxyMethod.execute(client, settings, msg)
+  await proxyMethod.execute(client, settings, msg)
 	if (!(msg.content.startsWith(settings.prefix) || msg.content.startsWith(`<@${client.user.id}>`) || msg.content.startsWith(`<@!${client.user.id}>`))) return;
 
   var args
@@ -79,8 +79,8 @@ client.on('message',async msg => {
 
 	const commandName = args.shift().toLowerCase();
 
-  const command = client.commands.get(commandName)
-    || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
+  const command = await client.commands.get(commandName)
+    || await client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
   if(!command) return
   if (command.args && args.length < command.argsMin) {
     let reply = `You didn't provide enough arguments!`;
