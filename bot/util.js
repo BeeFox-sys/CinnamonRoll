@@ -11,7 +11,7 @@ module.exports = {
   		var hook
   		webhooks = webhooks.filter(hook => hook.channelID === channel.id)
   		if(webhooks.find(hook => hook.owner.id === client.user.id) == null){
-  			hook = await channel.createWebhook("CinnamonRP")
+  			hook = await channel.createWebhook("CinnamonRoll")
   		} else {
   			hook = await webhooks.find(hook => hook.owner.id === client.user.id)
   		}
