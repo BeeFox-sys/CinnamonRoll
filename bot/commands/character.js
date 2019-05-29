@@ -50,7 +50,7 @@ Renames \`<character>\``,
     })
     if(args.length == 0){
       if(charactersList.length == 0){
-        return msg.channel.send(utils.errorEmbed(`This server has no characters\nCreate one with \`${guildSettings.prefix}character add <name>\``))
+        return msg.channel.send(utils.errorEmbed(`This server has no characters\nCreate one with \`${guildSettings.prefix || `@${client.user.username}${client.user.tag} `}character add <name>\``))
       }
       response = utils.passEmbed()
       response.setTitle(`Characters for ${guildSettings.gameName || msg.guild.name}`)
@@ -140,7 +140,12 @@ Renames \`<character>\``,
               console.log(err)
               return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
             }
+            if(!character.description) {
+              return msg.channel.send(utils.passEmbed(`Cleared description!`))
+            }
+            else {
             return msg.channel.send(utils.passEmbed(`Set new description!`))
+            }
           })
         break;
 
@@ -213,6 +218,7 @@ Renames \`<character>\``,
         break;
 
         case "rename":
+        case "name":
           if(args.length < 3) return msg.channel.send(utils.errorEmbed("A character must have a name!"))
           var newName = args.slice(2).join(" ")
           character.name = newName
