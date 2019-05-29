@@ -58,15 +58,22 @@ client.on('message',async msg => {
 
   settings = await utils.getGuildSettings(msg.guild.id, guildSettings)
   proxyMethod.execute(client, settings, msg)
-	if (!(msg.content.startsWith(settings.prefix) || msg.content.startsWith(`<@${client.user.id}>`))) return;
+	if (!(msg.content.startsWith(settings.prefix) || msg.content.startsWith(`<@${client.user.id}>`) || msg.content.startsWith(`<@!${client.user.id}>`))) return;
 
   var args
-  if(msg.content.startsWith(`<@${client.user.id}>`)){
+  if(msg.content.startsWith(`<@${client.user.id}>`)) {
     args = msg.content.slice(`<@${client.user.id}> `.length).split(/ +/);
     if(args[0] == '') {
       args[0] = 'help'
     }
-  } else {
+  }
+  else if (msg.content.startsWith(`<@!${client.user.id}>`)) {
+    args = msg.content.slice(`<@!${client.user.id}> `.length).split(/ +/);
+    if(args[0] == '') {
+      args[0] = 'help'
+    }
+  }
+  else {
     args = msg.content.slice(settings.prefix.length).split(/ +/);
   }
 
@@ -138,6 +145,24 @@ client.on("messageReactionAdd",async (react,user) =>{
     return react.message.channel.send(utils.errorEmbed("Something went wrong with that reaction"))
   })
 
+})
+
+client.on("guildCreate", ()=> {
+  if(client.guilds.size < 2) {
+  client.user.setActivity(`Mention me for help!`, { type: 'LISTENING'});
+}
+else {
+  client.user.setActivity(`Mention for help! | in ${client.guilds.size} servers`, { type: 'LISTENING'});
+}
+})
+
+client.on("guildDelete", ()=> {
+  if(client.guilds.size < 2) {
+  client.user.setActivity(`Mention me for help!`, { type: 'LISTENING'});
+}
+else {
+  client.user.setActivity(`Mention for help! | in ${client.guilds.size} servers`, { type: 'LISTENING'});
+}
 })
 
 client.login(config.token);
