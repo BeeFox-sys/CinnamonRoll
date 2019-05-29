@@ -37,6 +37,7 @@ utils = {
     })
   },
 
+<<<<<<< HEAD
   async checkGameAdmin(guildSettings, msg){
     return new Promise(async (resolve) =>{
       if(guildSettings.admin.length == 0) return true;
@@ -48,6 +49,28 @@ utils = {
       }
       return resolve(false)
     })
+=======
+    var doc = await collection.findById(guild).populate('locations').populate('characters').exec()
+    if(doc) return doc
+    var newSettings = await new collection({
+            _id: guild
+          })
+    return await newSettings.save((err, newDoc)=>{
+        if (err) return console.error(err)
+        return newDoc;
+      });
+    },
+
+  checkGameAdmin(guildSettings, msg){
+    if(guildSettings.admin.length == 0) return true;
+    for (var i = 0; i < guildSettings.admin.length; i++) {
+      if(msg.member.roles.get(guildSettings.admin[i]) != undefined) {
+         return true;
+         break;
+       }
+    }
+    return false
+>>>>>>> Added reset command
   },
 
   errorEmbed(text){
