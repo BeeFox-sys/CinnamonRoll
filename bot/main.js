@@ -53,6 +53,9 @@ client.on('message',async msg => {
   if(msg.author.bot) return
   if(msg.channel.type !== 'text')	return await msg.channel.send(utils.errorEmbed('I only work in servers!'));
 
+  //Remove 0 Width spaces
+  msg.content = msg.content.replace(/[\u200B-\u200D\uFEFF]/g, '')
+
   settings = await utils.getGuildSettings(msg.guild.id, guildSettings)
   proxyMethod.execute(client, settings, msg)
 	if (!(msg.content.startsWith(settings.prefix) || msg.content.startsWith(`<@${client.user.id}>`))) return;
