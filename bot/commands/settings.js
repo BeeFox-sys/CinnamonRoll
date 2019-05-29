@@ -36,8 +36,30 @@ module.exports = {
 
 				case "name":
 				case "rename":
-					await setName(guildSettings, msg, args)
-					return;
+					if(args.length > 1){
+						guildSettings.gameName = args.slice(1).join(" ")
+						var response = `Name set to **${guildSettings.gameName}**`
+					} else {
+						guildSettings.gameName = ""
+						var response = "Name Cleared"
+					}
+					return guildSettings.save((err, doc) => {
+			      if(err){
+			        console.log(err)
+			        return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command!"))
+			      } else {
+			        return msg.channel.send(utils.passEmbed(response))
+			      }
+			    })
+				break;
+
+				case "reset":
+					if(args[1] == guildSettings._id){
+						return utils.eraseGuild(msg, guildSettings._id)
+					} else {
+						return msg.channel.send(utils.errorEmbed(`Are you absolutely sure you want to do this?\nTo reset the server, run this command again with the servers id as an argument\n\`${guildSettings.prefix}settings reset ${guildSettings._id}\``))
+					}
+				break;
 
 				default:
 					return msg.channel.send(utils.errorEmbed('That is not a subcommand'))
