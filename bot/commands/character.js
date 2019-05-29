@@ -322,7 +322,7 @@ async function setProxy(character, msg, args) {
     proxy = proxy.split("text")
 
     var prefix = proxy[0].trim() || ""
-    var suffix = proxy[1].trim() || "" // throws an error if no suffix: "proxy[1]" is undefined
+    var suffix = proxy[1].trim() || ""
     if(prefix == "" && suffix == "") return msg.channel.send(utils.errorEmbed("Cannot have an empty proxy!\nExample proxy setting: `-text-`"))
     objReturn = {
       prefix: prefix,
