@@ -29,7 +29,19 @@ Renames \`<character>\``,
   usage: [`[character]`,`add <name>`,`<character> remove`,`<character> colour <hex|word>`,`<character> description <description>`, `<character> reference add <name> <url>`,`<character> reference remove <name>`, `<character> rename <New name>`,`<character> avatar <url|attatchment>`],
   example: '',
 	async execute(client, guildSettings, msg, args) {
-    const charactersList = guildSettings.characters
+    const charactersList = guildSettings.characters.sort((a,b)=>{
+      var nameA = a.name
+      var nameB = b.name
+      if(nameA) nameA = nameA.toUpperCase()
+      if(nameB) nameB = nameB.toUpperCase()
+      if (nameA < nameB) {
+        return -1;
+      }
+      if (nameA > nameB) {
+        return 1;
+      }
+      return 0;
+    })
     if(args.length == 0){
       if(charactersList.length == 0){
         return msg.channel.send(utils.errorEmbed(`This server has no characters\nCreate one with \`${guildSettings.prefix}character add <name>\``))
@@ -37,6 +49,7 @@ Renames \`<character>\``,
       response = utils.passEmbed()
       response.setTitle(`Characters for ${guildSettings.gameName || msg.guild.name}`)
       response.description = ""
+
       for (var index = 0; index < charactersList.length; index++) {
         var character = charactersList[index]
         response.description += `\n**${character.name}** \`(${character._id})\`<@${character.owner}>`

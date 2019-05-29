@@ -28,7 +28,19 @@ Removes a reference from \`<location>\``,
 	usage: [`[location]`,`add <name>`,`<location> remove`,`<location> colour <hex|word>`,`<location> description <description>`, `<location> reference add <name> <url>`,`<location> reference remove <name>`, `<character> rename <New name>`],
 	example: '',
 	async execute(client, guildSettings, msg, args) {
-    const locationsList = guildSettings.locations
+    const locationsList = guildSettings.locations.sort((a,b)=>{
+      var nameA = a.name
+      var nameB = b.name
+      if(nameA) nameA = nameA.toUpperCase()
+      if(nameB) nameB = nameB.toUpperCase()
+      if (nameA < nameB) {
+        return -1;
+      }
+      if (nameA > nameB) {
+        return 1;
+      }
+      return 0;
+    })
     if(args.length == 0){
       if(locationsList.length == 0){
         return msg.channel.send(utils.errorEmbed(`This server has no locations\nCreate one with \`${guildSettings.prefix}location add <name>\``))
