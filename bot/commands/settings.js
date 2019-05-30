@@ -60,7 +60,6 @@ async function displaySettings(guildSettings, msg) {
 
 
 	embed = utils.warnEmbed()
-		.setColor('#ffaa00')
 		.addField('Current Prefix:', guildSettings.prefix, true)
 		.addField('Game Manager Roles:', rolesMsg, true)
 		.addField('Game Name:', guildSettings.gameName || "`Unset`", true)

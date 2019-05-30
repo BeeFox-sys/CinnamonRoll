@@ -63,7 +63,7 @@ module.exports = {
 
   warnEmbed(text){
     embed = new Discord.RichEmbed()
-      .setColor('#43b581')
+      .setColor('#ffaa00')
       .setDescription(text || "")
     return embed
   },
