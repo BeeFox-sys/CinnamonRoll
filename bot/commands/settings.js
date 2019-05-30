@@ -47,22 +47,6 @@ module.exports = {
 	}
 }
 
-			switch (args[0]) {
-				case "prefix":
-					if(args.length < 2){
-						return msg.channel.send(utils.errorEmbed('You must supply a prefix to change to'))
-					}
-					guildSettings.prefix = args[1]
-					return guildSettings.save((err, doc) => {
-						if(err){
-							console.log(err)
-							return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command!"))
-						} else {
-							return msg.channel.send(utils.passEmbed(`Prefix changed to \`${doc.prefix}\``))
-						}
-					})
-				break;
-
 
 // Display current settings
 async function displaySettings(guildSettings, msg) {
@@ -74,24 +58,6 @@ async function displaySettings(guildSettings, msg) {
 	if(roles.size == 0){rolesMsg = "`None`"}
 	else{roles.tap(role => {rolesMsg += `\n${role.name}`})}
 
-				case "role":
-					var guildRoles = msg.guild.roles
-					var roleName = args.slice(2).join(" ")
-					var role = guildRoles.find(roleFind => roleFind.name === roleName);
-					switch (args[1]) {
-						case "add":
-							if(role == null) return msg.channel.send(utils.errorEmbed("That role was not found"))
-							if(guildSettings.admin.find((roleID)=>{return roleID == role.id})) return msg.channel.send(utils.errorEmbed("That role is already a manager!"))
-							guildSettings.admin.push(role.id)
-							return guildSettings.save((err, doc) => {
-								if(err){
-									console.log(err)
-									return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command!"))
-								} else {
-									return msg.channel.send(utils.passEmbed(role.name+" has been added to manager roles"))
-								}
-							})
-						break;
 
 	embed = utils.warnEmbed()
 		.setColor('#ffaa00')
