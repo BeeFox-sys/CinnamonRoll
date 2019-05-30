@@ -4,7 +4,7 @@ const config = require('../config.json');
 
 module.exports = {
 	name: 'say',
-	aliases: [],
+	aliases: undefined,
 	description: 'Owner Only fun times',
 	hidden: true,
 	args: false,

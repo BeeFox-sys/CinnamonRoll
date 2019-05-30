@@ -3,7 +3,7 @@ const utils = require('../util.js')
 
 module.exports = {
 	name: 'ping',
-	aliases: [],
+	aliases: undefined,
 	description: 'Ping!',
 	hidden: true,
 	args: false,
