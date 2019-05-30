@@ -44,7 +44,7 @@ async function tupperboxImport(importJson, msg, guildSettings){
 }
 
 async function cinnamonrollImport(importJson, msg, guildSettings){
-	var importMessage = msg.channel.send(utils.warnEmbed(`Begining import... This may take some time`))
+	var importMessage = await msg.channel.send(utils.warnEmbed(`Begining import... This may take some time`))
 	var newDoc;
 	if(importJson.inventory) {
 		newDoc = new characterModel()
