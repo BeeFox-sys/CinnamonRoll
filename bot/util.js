@@ -155,6 +155,7 @@ utils = {
     return fileOptions;
   },
   async eraseGuild(msg, guildID){
+    return new Promise(async resolve => {
     msg.channel.send(utils.errorEmbed("Reseting your guild, this may take some time"))
     var guild = await guildSettings.findById(guildID).populate('locations').populate('characters').exec()
     for(var ci = 0; ci < guild.characters.length; ci++){
@@ -164,8 +165,9 @@ utils = {
       guild.locations[li].delete()
     }
     guild.delete()
-    return msg.channel.send(utils.errorEmbed(`Guild Reset, default prefix is \`${config.defaultPrefix}\``))
-  }
+    return resolve(msg.channel.send(utils.errorEmbed(`Guild Reset, default prefix is \`${config.defaultPrefix}\``)))
+  })
+}
 }
 
 module.exports = utils
