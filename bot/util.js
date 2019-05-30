@@ -6,40 +6,45 @@ module.exports = {
 
   //Webhook Finder
   async getWebhook(client, channel) {
-    var webhooks = await channel.guild.fetchWebhooks()
-		var hook
-		webhooks = webhooks.filter(hook => hook.channelID === channel.id)
-		if(webhooks.find(hook => hook.owner.id === client.user.id) == null){
-			hook = await channel.createWebhook("CinnamonRP")
-		} else {
-			hook = await webhooks.find(hook => hook.owner.id === client.user.id)
-		}
-    return hook
+    return new Promise(async (resolve) =>{
+      var webhooks = await channel.guild.fetchWebhooks()
+  		var hook
+  		webhooks = webhooks.filter(hook => hook.channelID === channel.id)
+  		if(webhooks.find(hook => hook.owner.id === client.user.id) == null){
+  			hook = await channel.createWebhook("CinnamonRoll")
+  		} else {
+  			hook = await webhooks.find(hook => hook.owner.id === client.user.id)
+  		}
+      return resolve(hook)
+    })
   },
 
   //Webhook Finder
   async getGuildSettings(guild, collection) {
+    return new Promise(async (resolve) => {
+      var doc = await collection.findById(guild).populate('locations').populate('characters').exec()
+      if(doc) return resolve(doc)
+      var newSettings = await new collection({
+              _id: guild
+            })
+      return await newSettings.save((err, newDoc)=>{
+          if (err) return console.error(err)
+          return resolve(newDoc);
+        });
+    })
+  },
 
-    var doc = await collection.findById(guild).populate('locations').populate('characters').exec()
-    if(doc) return doc
-    var newSettings = await new collection({
-            _id: guild
-          })
-    await newSettings.save((err, newDoc)=>{
-        if (err) return console.error(err)
-        return newDoc;
-      });
-    },
-
-  checkGameAdmin(guildSettings, msg){
-    if(guildSettings.admin.length == 0) return true;
-    for (var i = 0; i < guildSettings.admin.length; i++) {
-      if(msg.member.roles.get(guildSettings.admin[i]) != undefined) {
-         return true;
-         break;
-       }
-    }
-    return false
+  async checkGameAdmin(guildSettings, msg){
+    return new Promise(async (resolve) =>{
+      if(guildSettings.admin.length == 0) return true;
+      for (var i = 0; i < guildSettings.admin.length; i++) {
+        if(msg.member.roles.get(guildSettings.admin[i]) != undefined) {
+           return resolve(true);
+           break;
+         }
+      }
+      return resolve(false)
+    })
   },
 
   errorEmbed(text){
@@ -64,20 +69,22 @@ module.exports = {
   },
 
   async generateID(collection){
-    var result = '';
-    var foundEmpty = false
-    while (!foundEmpty) {
-      result = ''
-      for ( var i = 0; i < config.idLength; i++ ) {
-         result += config.idCharacters.charAt(Math.floor(Math.random() * config.idCharacters.length));
-      }
-      await collection.findById(result,(err, doc)=>{
-        if(doc == null){
-          foundEmpty = true
+    return new Promise(async (resolve, reject) => {
+      var result = '';
+      var foundEmpty = false
+      while (!foundEmpty) {
+        result = ''
+        for ( var i = 0; i < config.idLength; i++ ) {
+           result += config.idCharacters.charAt(Math.floor(Math.random() * config.idCharacters.length));
         }
-      })
-    }
-    return result;
+        await collection.findById(result,(err, doc)=>{
+          if(doc == null){
+            foundEmpty = true
+          }
+        })
+      }
+      return resolve(result);
+    })
   },
 
   //Find by ID/Name

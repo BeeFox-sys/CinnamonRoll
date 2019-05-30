@@ -13,7 +13,13 @@ module.exports = {
 Adds a new character with the name \`<name>\`
 **<character> remove**
 Removes the character \`<character>\`
-**<character> colour <hex|word>**
+**<character> proxy [example match]**
+Sets the proxy tags for \`<character>\` by the example match given.
+Proxy tags enable you to speak as your character by typing text between the set tags.
+Try out square brackets as proxy tags by using \`[text]\` as the example match.
+**<character> avatar [attachment | url]**
+Sets the avatar for \`<character>\` to the attached image or the image at the URL
+**<character> colour <hex | word>**
 Sets \`<character>\`'s colour to a hex code or a word
 **<character> description <description>**
 Sets \`<character>\`'s description to \`<description>\`
@@ -26,17 +32,30 @@ Renames \`<character>\``,
   hidden: false,
   args: false,
   argsMin: 0,
-  usage: [`[character]`,`add <name>`,`<character> remove`,`<character> colour <hex|word>`,`<character> description <description>`, `<character> reference add <name> <url>`,`<character> reference remove <name>`, `<character> rename <New name>`,`<character> avatar <url|attatchment>`],
+  usage: [`[character]`,`add <name>`,`<character> remove`,`<character> colour <hex | word>`,`<character> description <description>`, `<character> reference add <name> <url>`,`<character> reference remove <name>`, `<character> rename <New name>`,`<character> avatar <url | attatchment>`],
   example: '',
 	async execute(client, guildSettings, msg, args) {
-    const charactersList = guildSettings.characters
+    const charactersList = guildSettings.characters.sort((a,b)=>{
+      var nameA = a.name
+      var nameB = b.name
+      if(nameA) nameA = nameA.toUpperCase()
+      if(nameB) nameB = nameB.toUpperCase()
+      if (nameA < nameB) {
+        return -1;
+      }
+      if (nameA > nameB) {
+        return 1;
+      }
+      return 0;
+    })
     if(args.length == 0){
       if(charactersList.length == 0){
-        return msg.channel.send(utils.errorEmbed(`This server has no characters\nCreate one with \`${guildSettings.prefix}character add <name>\``))
+        return msg.channel.send(utils.errorEmbed(`This server has no characters\nCreate one with \`${guildSettings.prefix || `@${client.user.username}${client.user.tag} `}character add <name>\``))
       }
       response = utils.passEmbed()
       response.setTitle(`Characters for ${guildSettings.gameName || msg.guild.name}`)
       response.description = ""
+
       for (var index = 0; index < charactersList.length; index++) {
         var character = charactersList[index]
         response.description += `\n**${character.name}** \`(${character._id})\`<@${character.owner}>`
@@ -57,7 +76,7 @@ Renames \`<character>\``,
         }
         return await newCharacter.save(async (err,  doc)=>{
           if(err) {
-            console.log(err)
+            console.warn(err)
             return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
           }
           await guildSettings.characters.push(doc._id)
@@ -91,7 +110,7 @@ Renames \`<character>\``,
   					if(colour == "DEFAULT") character.colour = ""
   					return await character.save((err,  doc)=>{
   						if(err) {
-  							console.log(err)
+  							console.warn(err)
   							return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
   						}
   						return msg.channel.send(utils.passEmbed(`Set colour to **${doc.colour.toLowerCase() || "default"}**`))
@@ -118,10 +137,15 @@ Renames \`<character>\``,
           character.description = desc
           return await character.save((err,  doc)=>{
             if(err) {
-              console.log(err)
+              console.warn(err)
               return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
             }
+            if(!character.description) {
+              return msg.channel.send(utils.passEmbed(`Cleared description!`))
+            }
+            else {
             return msg.channel.send(utils.passEmbed(`Set new description!`))
+            }
           })
         break;
 
@@ -144,7 +168,7 @@ Renames \`<character>\``,
               })
               return character.save((err,  doc)=>{
                 if(err) {
-                  console.log(err)
+                  console.warn(err)
                   return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
                 }
                 return msg.channel.send(utils.passEmbed(`Added reference \"${name}\"!`))
@@ -161,7 +185,7 @@ Renames \`<character>\``,
               character.references.splice(index,1)
               return character.save((err) => {
                 if(err){
-                  console.log(err)
+                  console.warn(err)
                   return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
                 }
                 return msg.channel.send(utils.passEmbed(`Removed reference \"${name}\"!`))
@@ -181,23 +205,29 @@ Renames \`<character>\``,
           else {character.avatar = attachments[0].attachment}
           return await character.save((err,  doc)=>{
             if(err) {
-              console.log(err)
+              console.warn(err)
               return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
             }
-            return msg.channel.send(utils.passEmbed(`Updataed avatar!`))
+            if(character.avatar == undefined) {
+              return msg.channel.send(utils.passEmbed(`Cleared avatar!`))
+            }
+            else {
+            return msg.channel.send(utils.passEmbed(`Updated avatar!`))
+            }
           })
         break;
 
         case "rename":
+        case "name":
           if(args.length < 3) return msg.channel.send(utils.errorEmbed("A character must have a name!"))
           var newName = args.slice(2).join(" ")
           character.name = newName
           return await character.save(err => {
               if(err){
-                console.log(err)
+                console.warn(err)
                 return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
               }
-              return msg.channel.send(utils.passEmbed(`Updataed name to ${character.name}!`))
+              return msg.channel.send(utils.passEmbed(`Updated name to ${character.name}!`))
             })
         break;
 
@@ -227,7 +257,7 @@ Renames \`<character>\``,
           character.proxy = objReturn
           return await character.save(err => {
               if(err){
-                console.log(err)
+                console.warn(err)
                 return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
               }
               return msg.channel.send(utils.passEmbed(response))
@@ -248,7 +278,7 @@ Renames \`<character>\``,
               }
               return newReact.save( (err,doc) => {
                 if(err) {
-                  console.log(err)
+                  console.warn(err)
                   return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
                 }
                 setTimeout((response, reactions) => {
@@ -256,7 +286,7 @@ Renames \`<character>\``,
                     if(doc == null) return
                     response.clearReactions()
                     reactions.deleteOne({_id: doc._id}, err =>{
-                      if(err) return console.log(err)
+                      if(err) return console.warn(err)
                       response.channel.send(utils.errorEmbed("Timed out"))
                     })
                   })

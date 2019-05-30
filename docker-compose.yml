@@ -2,7 +2,7 @@ version: '3'
 
 services:
   bot:
-    container_name: CinnamonRP-bot
+    container_name: CinnamonRoll-bot
     build: .
     entrypoint:
       - node
@@ -11,7 +11,7 @@ services:
       - db
     restart: always
   db:
-    container_name: CinnamonRP-db
+    container_name: CinnamonRoll-db
     image: mongo
     volumes:
       - "data:/data/db"

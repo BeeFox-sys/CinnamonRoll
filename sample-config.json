@@ -1,7 +1,7 @@
 {
   "defaultPrefix": "!!",
   "token": "aisojwiooajf-dokxjmawiojciokwj-aiodnxoiawnuonfcwuoas",
-  "db": "mongodb://db/CinnamonRP",
+  "db": "mongodb://db/CinnamonRoll",
   "idCharacters": "abcdefghijklmnopqrstuvwxyz",
   "idLength": 5,
   "owner": {"id":"123456789101112131", "name": "This can be left blank"}

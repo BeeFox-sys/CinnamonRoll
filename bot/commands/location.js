@@ -28,7 +28,19 @@ Removes a reference from \`<location>\``,
 	usage: [`[location]`,`add <name>`,`<location> remove`,`<location> colour <hex|word>`,`<location> description <description>`, `<location> reference add <name> <url>`,`<location> reference remove <name>`, `<character> rename <New name>`],
 	example: '',
 	async execute(client, guildSettings, msg, args) {
-    const locationsList = guildSettings.locations
+    const locationsList = guildSettings.locations.sort((a,b)=>{
+      var nameA = a.name
+      var nameB = b.name
+      if(nameA) nameA = nameA.toUpperCase()
+      if(nameB) nameB = nameB.toUpperCase()
+      if (nameA < nameB) {
+        return -1;
+      }
+      if (nameA > nameB) {
+        return 1;
+      }
+      return 0;
+    })
     if(args.length == 0){
       if(locationsList.length == 0){
         return msg.channel.send(utils.errorEmbed(`This server has no locations\nCreate one with \`${guildSettings.prefix}location add <name>\``))
@@ -51,7 +63,7 @@ Removes a reference from \`<location>\``,
         newLocation.guild = guildSettings._id
         return await newLocation.save(async (err,  doc)=>{
           if(err) {
-            console.log(err)
+            console.warn(err)
             return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
           }
 					await guildSettings.locations.push(doc._id)
@@ -80,7 +92,7 @@ Removes a reference from \`<location>\``,
 					if(colour == "DEFAULT") location.colour = ""
 					return await location.save((err,  doc)=>{
 						if(err) {
-							console.log(err)
+							console.warn(err)
 							return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
 						}
 						return msg.channel.send(utils.passEmbed(`Set colour to **${doc.colour.toLowerCase() || "default"}**`))
@@ -104,7 +116,7 @@ Removes a reference from \`<location>\``,
 				location.description = desc
 				return await location.save((err,  doc)=>{
 					if(err) {
-						console.log(err)
+						console.warn(err)
 						return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
 					}
 					return msg.channel.send(utils.passEmbed(`Set new description!`))
@@ -126,7 +138,7 @@ Removes a reference from \`<location>\``,
 					})
 					return location.save((err,  doc)=>{
 						if(err) {
-							console.log(err)
+							console.warn(err)
 							return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
 						}
 						return msg.channel.send(utils.passEmbed(`Added reference \"${name}\"!`))
@@ -143,7 +155,7 @@ Removes a reference from \`<location>\``,
 					location.references.splice(index,1)
 					return location.save((err) => {
 						if(err){
-							console.log(err)
+							console.warn(err)
 						  return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
 						}
 						return msg.channel.send(utils.passEmbed(`Removed reference \"${name}\"!`))
@@ -157,7 +169,7 @@ Removes a reference from \`<location>\``,
         location.name = newName
         return await location.save(err => {
             if(err){
-              console.log(err)
+              console.warn(err)
               return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
             }
             return msg.channel.send(utils.passEmbed(`Updataed name to ${location.name}!`))
@@ -176,7 +188,7 @@ Removes a reference from \`<location>\``,
 						}
 						return newReact.save( (err,doc) => {
 							if(err) {
-								console.log(err)
+								console.warn(err)
 								return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
 							}
 							setTimeout((response, reactions) => {
@@ -184,7 +196,7 @@ Removes a reference from \`<location>\``,
 									if(doc == null) return
 									response.clearReactions()
 									reactions.deleteOne({_id: doc._id}, err =>{
-					          if(err) return console.log(err)
+					          if(err) return console.warn(err)
 										response.channel.send(utils.errorEmbed("Timed out"))
 					        })
 								})

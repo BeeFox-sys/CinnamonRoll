@@ -1,4 +1,4 @@
-# CinnamonRP
+# CinnamonRoll
 
 This is a discord bot for roleplay. Inspired by [PluralKit](https://github.com/xSke/PluralKit)!
 
@@ -10,13 +10,13 @@ And you can [join our support sever](https://discord.gg/PrKWQP2) too!
 Or keep reading for self hosting options
 
 ## With Docker
-1. Clone the repo: `git clone https://github.com/PlatypodeCode/CinnamonRP.git`
+1. Clone the repo: `git clone https://github.com/PlatypodeCode/CinnamonRoll.git`
 2. Create `config.json` in the `bot` directory (see `sample-config.json` for the layout), and set bot token
 4. Build the bot: `docker-compose build`
 5. Run it: `docker-compose up -d`
 
 ## Manually
-1. Clone the repo: `git clone https://github.com/PlatypodeCode/CinnamonRP.git`
+1. Clone the repo: `git clone https://github.com/PlatypodeCode/CinnamonRoll.git`
 2. Run `npm install` to install dependencies
 3. Create `config.json` in the `bot` directory (see `sample-config.json` for the layout), and set bot token
 4. Run a mongo database on localhost and set the database URI in config.json to `mongo://localhost` (or wherever your mongo instance is running)
