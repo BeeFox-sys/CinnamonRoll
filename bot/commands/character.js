@@ -125,13 +125,22 @@ async function listCharacters(guildSettings, charactersList, msg) {
   if(charactersList.length == 0){
     return msg.channel.send(utils.errorEmbed(`This server has no characters\nCreate one with \`${guildSettings.prefix}character add <name>\``))
   }
-  response = utils.passEmbed()
+  var response = utils.passEmbed()
   response.setTitle(`Characters for ${guildSettings.gameName || msg.guild.name}`)
   response.description = ""
+
+  var part = 1
 
   for (var index = 0; index < charactersList.length; index++) {
     var character = charactersList[index]
     response.description += `\n**${character.name}** \`(${character._id})\`<@${character.owner}>`
+    if(response.description.length > 1800){
+      part += 1
+      await msg.channel.send(response)
+      response = utils.passEmbed()
+      response.setTitle(`Characters for ${guildSettings.gameName || msg.guild.name} part ${part}`)
+      response.description = ""
+    }
   }
   return msg.channel.send(response)
 }
