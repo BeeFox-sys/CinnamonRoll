@@ -29,14 +29,14 @@ module.exports = {
 			}
 			if(importJson.members) return pluralkitImport(importJson, msg, guildSettings)
 			if(importJson.tuppers) return tupperboxImport(importJson, msg, guildSettings)
-			if(importJson.references) return cinnamonrollImport(importJson, msg, guildSettings)
+			if(importJson.characters || importJson.locations) return cinnamonrollImport(importJson, msg, guildSettings)
 			return msg.channel.send(utils.errorEmbed("That doesn't seem to be a valid file"))
 		})
 	},
 };
 
 async function pluralkitImport(importJson, msg, guildSettings){
-	var importMessage = await msg.channel.send(utils.warnEmbed(`Begining import...`).setTitle(`Import from Pluralkit for ${msg.member.nickname}`).setFooter("This may take some time"))
+	var importMessage = await msg.channel.send(utils.warnEmbed(`Begining import...`).setTitle(`Importing characters from Pluralkit for ${msg.member.nickname}`).setFooter("This may take some time"))
 	var updated = "";
 	for (let ci = 0; ci < importJson.members.length; ci++) {
 		const member = importJson.members[ci];
@@ -65,16 +65,17 @@ async function pluralkitImport(importJson, msg, guildSettings){
 			}
 			updated += `Sucessfuly imported the character: ${doc.name} \`(${doc._id})\`\n`
 			if(ci%3==0){ //rateLimit Prevention
-				await importMessage.edit(utils.warnEmbed(updated).setTitle(`Import from Pluralkit for ${msg.member.nickname}`).setFooter("This may take some time"))
+				await importMessage.edit(utils.warnEmbed(updated).setTitle(`Importing characters from Pluralkit for ${msg.member.nickname}`).setFooter("This may take some time"))
+			}
+			if(ci == importJson.members.length-1){
+				await importMessage.edit(utils.passEmbed(updated).setTitle(`Importing characters from Pluralkit for ${msg.member.nickname}`).setFooter(`Import complete!`))
 			}
 		})
 	}
-	await importMessage.edit(utils.passEmbed(updated).setTitle(`Import from Pluralkit for ${msg.member.nickname}`).setFooter(`Import complete!`))
-
 }
 
 async function tupperboxImport(importJson, msg, guildSettings){
-	var importMessage = await msg.channel.send(utils.warnEmbed(`Begining import...`).setTitle(`Import from TupperBox for ${msg.member.nickname}`).setFooter("This may take some time"))
+	var importMessage = await msg.channel.send(utils.warnEmbed(`Begining import...`).setTitle(`Importing characters from TupperBox for ${msg.member.nickname}`).setFooter("This may take some time"))
 	var updated = "";
 	for (let ci = 0; ci < importJson.tuppers.length; ci++) {
 		const tulpa = importJson.tuppers[ci];
@@ -101,49 +102,91 @@ async function tupperboxImport(importJson, msg, guildSettings){
 			}
 			updated += `Sucessfuly imported the character: ${doc.name} \`(${doc._id})\`\n`
 			if(ci%3==0){ //rateLimit Prevention
-				await importMessage.edit(utils.warnEmbed(updated).setTitle(`Import from TupperBox for ${msg.member.nickname}`).setFooter("This may take some time"))
+				await importMessage.edit(utils.warnEmbed(updated).setTitle(`Importing characters from TupperBox for ${msg.member.nickname}`).setFooter("This may take some time"))
+			}
+			if(ci == importJson.tuppers.length-1){
+				await importMessage.edit(utils.passEmbed(updated).setTitle(`Importing characters from TupperBox for ${msg.member.nickname}`).setFooter(`Import complete!`))
 			}
 		})
 	}
-	await importMessage.edit(utils.passEmbed(updated).setTitle(`Import from TupperBox for ${msg.member.nickname}`).setFooter(`Import complete!`))
 
 }
 
 async function cinnamonrollImport(importJson, msg, guildSettings){
-	var importMessage = await msg.channel.send(utils.warnEmbed(`Begining import...`).setTitle(`Import from CinnamonRoll for ${msg.member.nickname}`).setFooter("This may take some time"))
-	var newDoc;
-	var updated = ""
-	if(importJson.inventory) {
-		newDoc = new characterModel()
-		newDoc._id = await utils.generateID(characterModel)
-		guildSettings.characters.push(newDoc._id)
-		var importType = "character"
-	} else {
-		newDoc = new locationModel()
-		newDoc._id = await utils.generateID(locationModel)
-		guildSettings.locations.push(newDoc._id)
-		var importType = "location"
-	}
-	guildSettings.save()
-	newDoc.inventory = importJson.inventory
-	newDoc.references = importJson.references
-	newDoc.name = importJson.name
-	newDoc.displayName = importJson.displayName
-	newDoc.proxy = importJson.proxy
-	newDoc.avatar = importJson.avatar
-	newDoc.birthday = importJson.birthday
-	newDoc.colour = importJson.colour
-	newDoc.avatar = importJson.avatar
-	newDoc.description = importJson.description
-	newDoc.owner = msg.member.id
-	newDoc.guild = guildSettings._id
-	await newDoc.save(async (err, doc)=>{
-		if(err){
-			console.warn(err)
-			return msg.channel.send(utils.errorEmbed("Something Went Wrong"))
-		}
-		updated += `Sucessfuly imported the character: ${doc.name} \`(${doc._id})\`\n`
+	
+	if(importJson.characters != undefined){
+		var importMessage = await msg.channel.send(utils.warnEmbed(`Begining import...`).setTitle(`Importing characters from CinnamonRoll for ${msg.member.nickname}`).setFooter("This may take some time"))
+		var updated = ""
 
-		await importMessage.edit(utils.passEmbed(updated).setTitle(`Import from CinnamonRoll for ${msg.member.nickname}`).setFooter(`Import complete!`))
+		for (let ci = 0; ci < importJson.characters.length; ci++) {
+			await importCharacter(importJson.characters[ci], msg, guildSettings)
+		}	
+		await importMessage.edit(utils.passEmbed("Success!").setTitle(`Importing characters from CinnamonRoll for ${msg.member.nickname}`))
+	}
+	if(importJson.locations != undefined){
+		var importMessage = await msg.channel.send(utils.warnEmbed(`Begining import...`).setTitle(`Importing locations from CinnamonRoll for ${msg.member.nickname}`).setFooter("This may take some time"))
+		var updated = ""
+
+		for (let ci = 0; ci < importJson.locations.length; ci++) {
+			await importLocation(importJson.locations[ci], msg, guildSettings)			
+		}
+		await importMessage.edit(utils.passEmbed("Success!").setTitle(`Importing locations from CinnamonRoll for ${msg.member.nickname}`))
+	}
+}
+
+async function importCharacter(character, msg, guildSettings) {
+	return new Promise(async resolve => {		
+			var newDoc;
+			newDoc = new characterModel()
+			newDoc._id = await utils.generateID(characterModel)
+			newDoc.owner = msg.member.id
+			newDoc.guild = guildSettings._id
+			guildSettings.characters.push(newDoc._id)
+			guildSettings.save()
+
+			newDoc.inventory = character.inventory
+			newDoc.references = character.references
+			newDoc.name = character.name
+			newDoc.displayName = character.displayName
+			newDoc.proxy = character.proxy
+			newDoc.avatar = character.avatar
+			newDoc.birthday = character.birthday
+			newDoc.colour = character.colour
+			newDoc.avatar = character.avatar
+			newDoc.description = character.description
+			newDoc.pronouns = character.pronouns
+			
+			await newDoc.save(async (err, doc)=>{
+				if(err){
+					console.warn(err)
+					return msg.channel.send(utils.errorEmbed("Something Went Wrong"))
+				}
+				resolve()
+			})
+		})
+}
+
+async function importLocation(location, msg, guildSettings) {
+	return new Promise(async resolve => {
+		var newDoc;
+		newDoc = await new locationModel()
+		newDoc._id = await utils.generateID(characterModel)
+		newDoc.owner = msg.member.id
+		newDoc.guild = guildSettings._id
+		guildSettings.locations.push(newDoc._id)
+		guildSettings.save()
+
+		newDoc.references = location.references
+		newDoc.name = location.name
+		newDoc.colour = location.colour
+		newDoc.description = location.description
+		
+		await newDoc.save(async (err, doc)=>{
+			if(err){
+				console.warn(err)
+				return msg.channel.send(utils.errorEmbed("Something Went Wrong"))
+			}
+			resolve()
+		})
 	})
 }
