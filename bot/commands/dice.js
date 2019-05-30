@@ -6,7 +6,7 @@ const utils = require('../util.js')
 module.exports = {
 	name: 'roll',
 	aliases: ['r', 'dice', 'd'],
-	description: 'Ping!',
+	description: 'Roll a dice',
 	hidden: false,
 	args: true,
 	argsMin: 1,
