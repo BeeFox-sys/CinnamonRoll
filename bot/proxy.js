@@ -26,24 +26,26 @@ module.exports.execute = async (client, guildSettings, msg) => {
 
 
   for (var i = 0; i < characters.length; i++) {
-    character = characters[i]
-    prefix = character.proxy.prefix || ""
-    suffix = character.proxy.suffix || ""
+    var character = characters[i]
+    var prefix = character.proxy.prefix || ""
+    var suffix = character.proxy.suffix || ""
     if(msg.content.startsWith(prefix) && msg.content.endsWith(suffix)){
-      hook = await utils.getWebhook(client, msg.channel)
-      name = character.displayName || character.name
-      content = msg.content.slice(prefix.length, -suffix.length).trim()
-      if(character.references.length>0) avatar = character.avatar || character.references[0].url
-      else avatar = character.avatar
-      attachments = utils.attachmentsToFileOptions(msg.attachments)
+      var hook = await utils.getWebhook(client, msg.channel)
+      var name = character.displayName || character.name
+      var suffixLength = -suffix.length
+      if(suffixLength == 0)suffixLength = msg.content.length
+      var content = msg.content.slice(prefix.length, suffixLength).trim()
+      if(character.references.length>0) var avatar = character.avatar || character.references[0].url
+      else var avatar = character.avatar
+      var attachments = utils.attachmentsToFileOptions(msg.attachments)
       if(!attachments && content == "")  return
-      newMessage = await hook.send(content, {
+      var newMessage = await hook.send(content, {
   			username: name,
   			avatarURL: avatar,
   			disableEveryone: true,
   			files: attachments
   		})
-      messageRecord = new messages({
+      var messageRecord = new messages({
         _id: newMessage.id,
         owner: msg.member.id,
         character: character._id

@@ -70,7 +70,6 @@ module.exports = {
 
   async generateID(collection){
     return new Promise(async (resolve, reject) => {
-      if(!colletion) return reject("No collection")
       var result = '';
       var foundEmpty = false
       while (!foundEmpty) {
