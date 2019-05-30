@@ -164,7 +164,7 @@ utils = {
       guild.locations[li].delete()
     }
     guild.delete()
-    return msg.channel.send(utils.errorEmbed("Guild Reset, default prefix is `!!`"))
+    return msg.channel.send(utils.errorEmbed(`Guild Reset, default prefix is \`${config.defaultPrefix}\``))
   }
 }
 

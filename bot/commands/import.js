@@ -27,7 +27,7 @@ module.exports = {
 			} catch (err) {
 				return msg.channel.send(utils.errorEmbed("There is something wrong with your JSON file"))
 			}
-			if(importJson.created) return pluralkitImport(importJson, msg, guildSettings)
+			if(importJson.members) return pluralkitImport(importJson, msg, guildSettings)
 			if(importJson.tuppers) return tupperboxImport(importJson, msg, guildSettings)
 			if(importJson.references) return cinnamonrollImport(importJson, msg, guildSettings)
 			return msg.channel.send(utils.errorEmbed("That doesn't seem to be a valid file"))
@@ -36,11 +36,45 @@ module.exports = {
 };
 
 async function pluralkitImport(importJson, msg, guildSettings){
-	return msg.channel.send(utils.passEmbed("Pluralkit"))
+	var importMessage = await msg.channel.send(utils.warnEmbed(`Begining import...`).setTitle(`Import from Pluralkit for ${msg.member.nickname}`).setFooter("This may take some time"))
+	var updated = "";
+	for (let ci = 0; ci < importJson.members.length; ci++) {
+		const member = importJson.members[ci];
+		var newDoc = await new characterModel()
+		newDoc._id = await utils.generateID(characterModel)
+		await guildSettings.characters.push(newDoc._id)
+		await guildSettings.save()
+		newDoc.owner = msg.member.id
+		newDoc.guild = guildSettings._id
+
+		newDoc.name = member.name
+		newDoc.colour = member.color
+		newDoc.avatar = member.avatar_url
+		newDoc.description = member.description
+		newDoc.birthday = member.birthday
+		newDoc.pronouns = member.pronouns
+		newDoc.proxy = {
+			"prefix":member.prefix || "",
+			"suffix":member.suffix || ""
+		}
+
+		await newDoc.save(async (err, doc)=>{
+			if(err){
+				console.warn(err)
+				return msg.channel.send(utils.errorEmbed("Something Went Wrong"))
+			}
+			updated += `Sucessfuly imported the character: ${doc.name} \`(${doc._id})\`\n`
+			if(ci%3==0){ //rateLimit Prevention
+				await importMessage.edit(utils.warnEmbed(updated).setTitle(`Import from Pluralkit for ${msg.member.nickname}`).setFooter("This may take some time"))
+			}
+		})
+	}
+	await importMessage.edit(utils.passEmbed(updated).setTitle(`Import from Pluralkit for ${msg.member.nickname}`).setFooter(`Import complete!`))
+
 }
 
 async function tupperboxImport(importJson, msg, guildSettings){
-	var importMessage = await msg.channel.send(utils.warnEmbed(`Begining import... This may take some time`))
+	var importMessage = await msg.channel.send(utils.warnEmbed(`Begining import...`).setTitle(`Import from TupperBox for ${msg.member.nickname}`).setFooter("This may take some time"))
 	var updated = "";
 	for (let ci = 0; ci < importJson.tuppers.length; ci++) {
 		const tulpa = importJson.tuppers[ci];
@@ -67,17 +101,18 @@ async function tupperboxImport(importJson, msg, guildSettings){
 			}
 			updated += `Sucessfuly imported the character: ${doc.name} \`(${doc._id})\`\n`
 			if(ci%3==0){ //rateLimit Prevention
-				await importMessage.edit(utils.warnEmbed(updated))
+				await importMessage.edit(utils.warnEmbed(updated).setTitle(`Import from TupperBox for ${msg.member.nickname}`).setFooter("This may take some time"))
 			}
 		})
 	}
-	await importMessage.edit(utils.passEmbed(`${updated}Completed import!`))
+	await importMessage.edit(utils.passEmbed(updated).setTitle(`Import from TupperBox for ${msg.member.nickname}`).setFooter(`Import complete!`))
 
 }
 
 async function cinnamonrollImport(importJson, msg, guildSettings){
-	var importMessage = await msg.channel.send(utils.warnEmbed(`Begining import... This may take some time`))
+	var importMessage = await msg.channel.send(utils.warnEmbed(`Begining import...`).setTitle(`Import from CinnamonRoll for ${msg.member.nickname}`).setFooter("This may take some time"))
 	var newDoc;
+	var updated = ""
 	if(importJson.inventory) {
 		newDoc = new characterModel()
 		newDoc._id = await utils.generateID(characterModel)
@@ -102,11 +137,13 @@ async function cinnamonrollImport(importJson, msg, guildSettings){
 	newDoc.description = importJson.description
 	newDoc.owner = msg.member.id
 	newDoc.guild = guildSettings._id
-	return newDoc.save((err, doc)=>{
+	await newDoc.save(async (err, doc)=>{
 		if(err){
 			console.warn(err)
 			return msg.channel.send(utils.errorEmbed("Something Went Wrong"))
 		}
-		return importMessage.edit(utils.passEmbed(`Sucessfuly imported the ${importType}: ${doc.name} \`(${doc._id})\``))
+		updated += `Sucessfuly imported the character: ${doc.name} \`(${doc._id})\`\n`
+
+		await importMessage.edit(utils.passEmbed(updated).setTitle(`Import from CinnamonRoll for ${msg.member.nickname}`).setFooter(`Import complete!`))
 	})
 }
