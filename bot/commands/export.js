@@ -40,18 +40,19 @@ async function exportObject(id, array, msg) {
 	exportObj.guild = undefined
 	exportObj.owner = undefined
 	exportObj.__v = undefined
-	var writeStream = await fs.createWriteStream(`${exportObj.name}.json`)
+	var randIdentifier =  Math.floor((Math.random() * 16777215) + 1).toString(16);; 
+	var writeStream = await fs.createWriteStream(`${exportObj.name}.json.${randIdentifier}`)
 	await writeStream.write(exportObj.toString())
 	await writeStream.end()
-	var attachment = await new Discord.Attachment(`${exportObj.name}.json`)
+	var attachment = await new Discord.Attachment(`${exportObj.name}.json.${randIdentifier}`, `${exportObj.name}.json`)
 
 	try{
-		await msg.author.send(utils.passEmbed(`Here is your export`).setTitle(`Export for ${exportObj.name}`))
+		await msg.author.send(utils.passEmbed(`This may take a second more to upload`).setTitle(`Export for ${exportObj.name}`))
 		await msg.author.send(attachment)
 		await msg.channel.send(utils.passEmbed("Sent you a DM!"))
 	} catch(e) {
-		await msg.channel.send(utils.passEmbed().setTitle(`Export for ${exportObj.name}`).setFooter("I couldn't send this in a DM, so I sent it in chat"))
+		await msg.channel.send(utils.passEmbed(`This may take a second more to upload`).setTitle(`Export for ${exportObj.name}`).setFooter("I couldn't send this in a DM, so I sent it in chat"))
 		await msg.channel.send(attachment)
 	}
-	await fs.unlink(`${exportObj.name}.json`, (err) => {if (err) throw err;})
+	await fs.unlink(`${exportObj.name}.json.${randIdentifier}`, (err) => {if (err) throw err;})
 }
