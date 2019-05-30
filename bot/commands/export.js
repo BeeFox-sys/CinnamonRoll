@@ -6,13 +6,12 @@ const fs = require("fs")
 
 module.exports = {
 	name: 'export',
-	aliases: [''],
-	description: 'Summon an extra',
-  perms: [''],
+	aliases: undefined,
+	description: 'Summon an Exports data',
 	hidden: false,
 	args: true,
 	argsMin: 1,
-	usage: '<location | character> <name | id>',
+	usage: ['<location | character> <name | id>','allCharacters','allLocations','everything'],
 	async execute(client, guildSettings, msg, args) {
 		args = utils.quoteFinder(args)
 		switch (args[0]) {

@@ -10,7 +10,7 @@ const locationModel = mongoose.model('locations', schemas.location)
 
 module.exports = {
 	name: 'import',
-	aliases: [],
+	aliases: undefined,
 	description: 'Imports a file provided by TupperBox, Pluralkit, or CinnamonRoll',
 	hidden: false,
 	args: false,
@@ -19,7 +19,7 @@ module.exports = {
 	example: '',
 	async execute(client, guildSettings, msg, args) {
 		var attachments = msg.attachments.array()
-		if(attachments.length != 1) return msg.channel.send(utils.errorEmbed("You must attach only one file from either Tupperbox OR Pluralkit"))
+		if(attachments.length != 1) return msg.channel.send(utils.errorEmbed("You must attach only one file from either Tupperbox, CinnamonRoll, or Pluralkit"))
 		
 		await request.get(attachments[0].url, (error, response, body) => {
 			try{
@@ -63,12 +63,8 @@ async function pluralkitImport(importJson, msg, guildSettings){
 				console.warn(err)
 				return msg.channel.send(utils.errorEmbed("Something Went Wrong"))
 			}
-			updated += `Sucessfuly imported the character: ${doc.name} \`(${doc._id})\`\n`
-			if(ci%3==0){ //rateLimit Prevention
-				await importMessage.edit(utils.warnEmbed(updated).setTitle(`Importing characters from Pluralkit for ${msg.member.nickname}`).setFooter("This may take some time"))
-			}
 			if(ci == importJson.members.length-1){
-				await importMessage.edit(utils.passEmbed(updated).setTitle(`Importing characters from Pluralkit for ${msg.member.nickname}`).setFooter(`Import complete!`))
+				await importMessage.edit(utils.passEmbed("Success!").setTitle(`Importing characters from Pluralkit for ${msg.member.nickname}`).setFooter(`Import complete!`))
 			}
 		})
 	}
@@ -100,12 +96,8 @@ async function tupperboxImport(importJson, msg, guildSettings){
 				console.warn(err)
 				return msg.channel.send(utils.errorEmbed("Something Went Wrong"))
 			}
-			updated += `Sucessfuly imported the character: ${doc.name} \`(${doc._id})\`\n`
-			if(ci%3==0){ //rateLimit Prevention
-				await importMessage.edit(utils.warnEmbed(updated).setTitle(`Importing characters from TupperBox for ${msg.member.nickname}`).setFooter("This may take some time"))
-			}
 			if(ci == importJson.tuppers.length-1){
-				await importMessage.edit(utils.passEmbed(updated).setTitle(`Importing characters from TupperBox for ${msg.member.nickname}`).setFooter(`Import complete!`))
+				await importMessage.edit(utils.passEmbed("Success!").setTitle(`Importing characters from TupperBox for ${msg.member.nickname}`).setFooter(`Import complete!`))
 			}
 		})
 	}
@@ -116,7 +108,6 @@ async function cinnamonrollImport(importJson, msg, guildSettings){
 	
 	if(importJson.characters != undefined){
 		var importMessage = await msg.channel.send(utils.warnEmbed(`Begining import...`).setTitle(`Importing characters from CinnamonRoll for ${msg.member.nickname}`).setFooter("This may take some time"))
-		var updated = ""
 
 		for (let ci = 0; ci < importJson.characters.length; ci++) {
 			await importCharacter(importJson.characters[ci], msg, guildSettings)
@@ -125,7 +116,6 @@ async function cinnamonrollImport(importJson, msg, guildSettings){
 	}
 	if(importJson.locations != undefined){
 		var importMessage = await msg.channel.send(utils.warnEmbed(`Begining import...`).setTitle(`Importing locations from CinnamonRoll for ${msg.member.nickname}`).setFooter("This may take some time"))
-		var updated = ""
 
 		for (let ci = 0; ci < importJson.locations.length; ci++) {
 			await importLocation(importJson.locations[ci], msg, guildSettings)			
