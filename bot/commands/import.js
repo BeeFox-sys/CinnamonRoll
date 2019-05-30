@@ -40,7 +40,39 @@ async function pluralkitImport(importJson, msg, guildSettings){
 }
 
 async function tupperboxImport(importJson, msg, guildSettings){
-	return msg.channel.send(utils.passEmbed("TupperBox"))
+	var importMessage = await msg.channel.send(utils.warnEmbed(`Begining import... This may take some time`))
+	var updated = "";
+	for (let ci = 0; ci < importJson.tuppers.length; ci++) {
+		const tulpa = importJson.tuppers[ci];
+		var newDoc = await new characterModel()
+		newDoc._id = await utils.generateID(characterModel)
+		await guildSettings.characters.push(newDoc._id)
+		await guildSettings.save()
+		newDoc.owner = msg.member.id
+		newDoc.guild = guildSettings._id
+
+		newDoc.name = tulpa.name
+		newDoc.avatar = tulpa.avatar_url
+		newDoc.description = tulpa.description
+		newDoc.birthday = tulpa.birthday
+		newDoc.proxy = {
+			"prefix":tulpa.brackets[0],
+			"suffix":tulpa.brackets[1]
+		}
+
+		await newDoc.save(async (err, doc)=>{
+			if(err){
+				console.warn(err)
+				return msg.channel.send(utils.errorEmbed("Something Went Wrong"))
+			}
+			updated += `Sucessfuly imported the character: ${doc.name} \`(${doc._id})\`\n`
+			if(ci%3==0){ //rateLimit Prevention
+				await importMessage.edit(utils.warnEmbed(updated))
+			}
+		})
+	}
+	await importMessage.edit(utils.passEmbed(`${updated}Completed import!`))
+
 }
 
 async function cinnamonrollImport(importJson, msg, guildSettings){
