@@ -106,9 +106,40 @@ client.on('message',async msg => {
 });
 
 //reaction stuff
-client.on("messageReactionAdd",async (react,user) =>{
-  if(user.id == client.user.id) return
 
+const messages = mongoose.model('messages', schemas.message)
+
+client.on("messageReactionAdd",async (react,user) =>{
+
+  //Message react stuff
+  if(react.emoji == "❓"){
+    messages.findOne({_id:react.message.id},async (err, doc) =>{
+      if(err){
+        console.warn(err)
+        return react.message.channel.send(utils.errorEmbed("Something went wrong with that reaction"))
+      }
+      if(doc == null) return
+      react.remove(user.id)
+      var owner = await client.fetchUser(doc.owner)
+      var response = utils.passEmbed()
+      response.addField("Owner Username:",owner.tag,true)
+      response.addField("Owner id:",owner.id,true)
+      response.setFooter(`Message sent at`)
+      response.setTimestamp(doc.timestamp)
+
+      try{
+        await user.send(response)
+      } catch(e) {
+        var failmsg = await react.message.channel.send(`Pst <@${user.id}>... I can't dm you`)
+        await utils.wait(5000)
+        console.log(failmsg)
+        failmsg.delete()
+      }
+    })
+  }
+
+  //Bot respone stuff
+  if(user.id == client.user.id) return
   return reactions.findById(react.message.id, async (err,doc) =>{
     if(err){
       console.warn(err)

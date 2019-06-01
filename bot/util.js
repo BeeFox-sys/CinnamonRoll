@@ -170,9 +170,7 @@ utils = {
   },
   async wait(ms){
     return new Promise(async resolve => {
-      setTimeout(() => {
-        resolve()
-      }, ms);
+      setTimeout(resolve, ms);
     })
   }
 }
