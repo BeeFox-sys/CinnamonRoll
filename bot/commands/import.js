@@ -15,7 +15,7 @@ module.exports = {
 	hidden: false,
 	args: false,
 	argsMin: 0,
-	usage: '',
+	usage: [],
 	example: '',
 	async execute(client, guildSettings, msg, args) {
 		var attachments = msg.attachments.array()

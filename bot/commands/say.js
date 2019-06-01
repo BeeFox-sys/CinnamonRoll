@@ -9,8 +9,8 @@ module.exports = {
 	hidden: true,
 	args: false,
 	argsMin: 0,
-	usage: '',
-	example: '',
+	usage: [],
+	example: [],
 	async execute(client, guildSettings, msg, args) {
     if(msg.member.id == config.owner.id){
 			var message = args.join(" ")
