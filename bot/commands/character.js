@@ -12,7 +12,7 @@ module.exports = {
   hidden: false,
   args: false,
   argsMin: 0,
-  usage: [`\nLists all characters`,
+  usage: [`**\nLists all characters`,
           `<character>**\nShows one character`,
           `add <name>**\nCreates a new character`,
           `<character> remove**\nDeletes a character`,
