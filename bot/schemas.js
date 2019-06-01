@@ -12,7 +12,8 @@ module.exports = {
     characters: [{ type: String, ref:'characters' }],
     admin: [String],
     gameName: String,
-    enableImport: {type: Boolean, default: true}
+    enableImport: {type: Boolean, default: true},
+    locationLock: {type: Boolean, default: false}
   }),
 
   location: new mongoose.Schema({

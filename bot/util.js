@@ -37,11 +37,12 @@ utils = {
     })
   },
 
-  async checkGameAdmin(guildSettings, msg){
+  async checkGameAdmin(guildSettings, member){
     return new Promise(async (resolve) =>{
       if(guildSettings.admin.length == 0) return true;
+      if(member.roles == undefined)
       for (var i = 0; i < guildSettings.admin.length; i++) {
-        if(msg.member.roles.get(guildSettings.admin[i]) != undefined) {
+        if(member.roles.get(guildSettings.admin[i]) != undefined) {
            return resolve(true);
            break;
          }

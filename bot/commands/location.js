@@ -41,11 +41,13 @@ module.exports = {
 			return
 		}
 
-    else if (args[0] == "add" || args[0] == "new" || args[0] == "create") {
-			await addLocation(guildSettings, msg, args)
+    else if ((args[0] == "add" || args[0] == "new" || args[0] == "create") && await utils.checkGameAdmin(guildSettings, msg.member)) {
+      await addLocation(guildSettings, msg, args)
 			return
     }
-
+    else if ((args[0] == "add" || args[0] == "new" || args[0] == "create") && !await utils.checkGameAdmin(guildSettings, msg.member)) {
+      return msg.channel.send(utils.errorEmbed("You are not a game manager"))
+    }
 
 		//Find Location
 		args = utils.quoteFinder(args)
@@ -54,43 +56,45 @@ module.exports = {
 		if(location == null) return msg.channel.send(utils.errorEmbed(`Location \"${name}\" does not exist`))
 
 		//Location editing commands
-		if(args.length > 1 && utils.checkGameAdmin(guildSettings, msg.member)){
-			switch (args[1].toLowerCase()) {
-			//Colour: <location> colour <hex | word>
-				case "colour":
-        case "color":
-          await setColour(location, msg, args)
-        return;
+		if(args.length > 1 && await utils.checkGameAdmin(guildSettings, msg.member)){
+      console.log(location.owner != msg.member.id)
+      if(guildSettings.locationLock && location.owner == msg.member.id){
+        switch (args[1].toLowerCase()) {
+        //Colour: <location> colour <hex | word>
+          case "colour":
+          case "color":
+            await setColour(location, msg, args)
+          return;
 
-				//Description: <location> description <description>
-				case "description":
-				case "describe":
-				case "desc":
-					await setDescription(location, msg, args)
-				return;
+          //Description: <location> description <description>
+          case "description":
+          case "describe":
+          case "desc":
+            await setDescription(location, msg, args)
+          return;
 
-			// Reference: <location> reference <add | remove>
-			case "reference":
-					case "ref":
-						await setReference(guildSettings, location, msg, args)
-					return;
+        // Reference: <location> reference <add | remove>
+        case "reference":
+            case "ref":
+              await setReference(guildSettings, location, msg, args)
+            return;
 
-			// Rename: <location> rename <new name>
-      case "rename":
-        case "name":
-          await setName(location, msg, args)
-				return;
+        // Rename: <location> rename <new name>
+        case "rename":
+          case "name":
+            await setName(location, msg, args)
+          return;
 
-			//remove command
-			case "remove":
-        case "delete":
-          await removeLocation(location, msg, guildSettings)
-				return;
-			}
+        //remove command
+        case "remove":
+          case "delete":
+            await removeLocation(location, msg, guildSettings)
+          return;
+        }
 
-			return msg.channel.send(utils.errorEmbed("That is not a valid subcommand"))
-		}
-
+        return msg.channel.send(utils.errorEmbed("That is not a valid subcommand"))
+      }
+    }
 
 		// Finally, if no extra args, show location card
 		await showLocation(location, msg)
@@ -137,7 +141,8 @@ async function addLocation(guildSettings, msg, args) {
 	if(args.length > 1){
 		var newLocation = await new locationsModel()
 		newLocation.name = args.splice(1).join(" ")
-		newLocation._id = await utils.generateID(locationsModel)
+    newLocation._id = await utils.generateID(locationsModel)
+    newLocation.owner = msg.member.id
 		newLocation.guild = guildSettings._id
 		return await newLocation.save(async (err,  doc)=>{
 			if(err) {

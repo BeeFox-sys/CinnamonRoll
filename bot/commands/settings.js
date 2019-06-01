@@ -13,7 +13,8 @@ module.exports = {
 					`role add <role>**\nAdds a role to the Game Manager roles`, 
 					`role remove <role>**\nRemoves a role from the Game Manager roles`, 
 					`name <new name>**\nChanges the name of the game`,
-					`import**\nToggles the import command`],
+					`import**\nToggles the import command`,
+					`locationlock**\nToggles location lock\n-Enabled: Game Managers can only edit their locations\n-Disabled: Game Managers can edit all locations`],
 	example: '',
 	async execute(client, guildSettings, msg, args) {
 		if(msg.member.hasPermission("MANAGE_GUILD")){
@@ -34,6 +35,10 @@ module.exports = {
 				case "import":
 					await toggleImport(guildSettings, msg, args)
 					return;
+
+				case "locationlock":
+					await toggleLocationLock(guildSettings, msg, args)
+				break;
 
 				case "name":
 				case "rename":
@@ -64,9 +69,10 @@ module.exports = {
 
 				default:
 					return msg.channel.send(utils.errorEmbed('That is not a subcommand'))
+				break
 			}
 		}
-    return msg.channel.send(utils.errorEmbed('You do not have the correct permissions'))
+		else return msg.channel.send(utils.errorEmbed('You do not have the correct permissions'))
 	}
 }
 
@@ -89,6 +95,9 @@ async function displaySettings(guildSettings, msg) {
 
 		if(guildSettings.enableImport) embed.addField('Importing:', "Enabled", true)
 		else embed.addField('Importing:', "Disabled", true)
+
+		if(guildSettings.locationLock) embed.addField('Location Lock:', "Enabled", true)
+		else embed.addField('Location Lock:', "Disabled", true)
 
 	return msg.channel.send(embed)
 }
@@ -183,5 +192,19 @@ function toggleImport(guildSettings, msg, args) {
 	}
 	if(doc.enableImport) return msg.channel.send(utils.passEmbed("Enabled importing"))
 	return msg.channel.send(utils.passEmbed("Disabled importing"))
+})
+}
+
+//Toggle Location Lock
+function toggleLocationLock(guildSettings, msg, args) {
+	var currentLock = guildSettings.locationLock
+	guildSettings.locationLock = !currentLock
+	return guildSettings.save((err,doc) => {
+		if(err){
+		console.log(err)
+		return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command!"))
+	}
+	if(doc.locationLock) return msg.channel.send(utils.passEmbed("Enabled Location Lock\nGame Managers can only edit locations created by them"))
+	return msg.channel.send(utils.passEmbed("Disabled Location Lock\nGame Managers can edit all locations"))
 })
 }
