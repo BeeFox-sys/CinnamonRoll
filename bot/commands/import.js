@@ -153,6 +153,7 @@ async function importCharacter(character, msg, guildSettings, imported) {
 			guildSettings.save()
 
 			newDoc.inventory = character.inventory
+			newDoc.stats = character.stats
 			newDoc.references = character.references
 			newDoc.name = character.name
 			newDoc.displayName = character.displayName
