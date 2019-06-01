@@ -373,13 +373,18 @@ async function setProxy(character, msg, args) {
 // Remove/delete character
 async function removeCharacter(character, msg) {
   var deleteMessage = await msg.channel.send(utils.passEmbed(`React ✅ to delete ${character.name}\`(${character.id})\``))
-  deleteMessage.react("✅")
+  await deleteMessage.react("✅")
+  await deleteMessage.react("❌")
   var filter = (reaction, user)=>{
-    return ['✅'].includes(reaction.emoji.name) && user.id === msg.author.id;
+    return ['✅',"❌"].includes(reaction.emoji.name) && user.id === msg.author.id;
   }
   deleteMessage.awaitReactions(filter,{max:1, time: 60000, errors:['time']})
     .then(collected => {
+      var reaction = collected.first().emoji.name
+
       deleteMessage.clearReactions()
+
+      if(reaction == "❌") return
 
       guildSettingsModel.updateOne({_id:settings.id}, {$pull: {characters: character.id}}, (err, doc) =>{
         if(err) {

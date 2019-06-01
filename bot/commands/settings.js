@@ -14,7 +14,8 @@ module.exports = {
 					`role remove <role>**\nRemoves a role from the Game Manager roles`, 
 					`name <new name>**\nChanges the name of the game`,
 					`import**\nToggles the import command`,
-					`locationlock**\nToggles location lock\n-Enabled: Game Managers can only edit their locations\n-Disabled: Game Managers can edit all locations`],
+					`locationlock**\nToggles location lock\n-Enabled: Game Managers can only edit their locations\n-Disabled: Game Managers can edit all locations`,
+					`remove <character | location> <id | name>**\nRemoves specified character/location from the serever\nUseful for deleting characters if a user leaves`],
 	example: '',
 	async execute(client, guildSettings, msg, args) {
 		if(msg.member.hasPermission("MANAGE_GUILD")){
@@ -59,6 +60,18 @@ module.exports = {
 			      }
 			    })
 				break;
+
+				case "delete":
+				case "remove":
+					switch (args[1]) {
+						case "location":
+							removeLocation(msg, guildSettings, args)
+						break;
+						case "character":
+							removeCharacter(msg, guildSettings, args)
+						break
+					}
+				break
 
 				case "reset":
 					if(args[1] == guildSettings._id){
@@ -209,3 +222,106 @@ function toggleLocationLock(guildSettings, msg, args) {
 	return msg.channel.send(utils.passEmbed("Disabled Location Lock\nGame Managers can edit all locations"))
 })
 }
+
+
+
+//Delete location
+const mongoose = require('mongoose')
+const schemas = require('../schemas.js');
+const locationsModel = mongoose.model('locations', schemas.location)
+const charactersModel = mongoose.model('locations', schemas.location)
+const guildSettingsModel = mongoose.model('guildsettings', schemas.guildSettings)
+
+async function removeLocation(msg, settings, args) {
+
+	//Find location
+	args = utils.quoteFinder(args)
+	var name = args[2]
+	var location = await utils.findObjInArray(name, settings.locations)
+	if(location == null) return msg.channel.send(utils.errorEmbed(`Location \"${name}\" does not exist`))
+
+	//Create Prompt
+  var deleteMessage = await msg.channel.send(utils.passEmbed(`React ✅ to delete location ${location.name}\`(${location.id})\``))
+	deleteMessage.react("✅")
+	
+	//Await reactions
+	var filter = (reaction, user)=>{
+    return ['✅'].includes(reaction.emoji.name) && user.id === msg.author.id;
+	}
+  deleteMessage.awaitReactions(filter,{max:1, time: 60000, errors:['time']})
+    .then(collected => {
+
+      deleteMessage.clearReactions()
+
+			//Remove from locations array
+      guildSettingsModel.updateOne({_id:settings.id}, {$pull: {locations: location.id}}, (err, doc) =>{
+        if(err) {
+          console.warn(err)
+          return msg.channel.send(utils.errorEmbed("Something went wrong with that reaction")
+          )}
+      });
+			
+			//delete location
+      return locationsModel.deleteOne({_id: location._id}, (err) =>{
+        if(err) {
+          console.warn(err)
+          return msg.channel.send(utils.errorEmbed("Something went wrong with that reaction"))
+        }
+        return msg.channel.send(utils.passEmbed(`Deleted location`))
+      })
+    })
+    .catch(collected => {
+      msg.channel.send(utils.errorEmbed("Timed Out"))
+      deleteMessage.clearReactions()
+    })
+}
+
+async function removeCharacter(msg, settings, args) {
+
+	//Find character
+	args = utils.quoteFinder(args)
+	var name = args[2]
+	var character = await utils.findObjInArray(name, settings.characters)
+	if(character == null) return msg.channel.send(utils.errorEmbed(`character \"${name}\" does not exist`))
+
+	//Create Prompt
+  var deleteMessage = await msg.channel.send(utils.passEmbed(`React ✅ to delete character ${character.name}\`(${character.id})\``))
+	deleteMessage.react("✅")
+	deleteMessage.react("❌")
+	
+	//Await reactions
+	var filter = (reaction, user)=>{
+    return ['✅','❌'].includes(reaction.emoji.name) && user.id === msg.author.id;
+	}
+  deleteMessage.awaitReactions(filter,{max:1, time: 60000, errors:['time']})
+    .then(collected => {
+
+			var reaction = collected.first().emoji.name
+
+			deleteMessage.clearReactions()
+			
+			if(reaction == "❌") return
+
+			//Remove from characters array
+      guildSettingsModel.updateOne({_id:settings.id}, {$pull: {characters: character.id}}, (err, doc) =>{
+        if(err) {
+          console.warn(err)
+          return msg.channel.send(utils.errorEmbed("Something went wrong with that reaction")
+          )}
+      });
+			
+			//delete character
+      return charactersModel.deleteOne({_id: character._id}, (err) =>{
+        if(err) {
+          console.warn(err)
+          return msg.channel.send(utils.errorEmbed("Something went wrong with that reaction"))
+        }
+        return msg.channel.send(utils.passEmbed(`Deleted character`))
+      })
+    })
+    .catch(collected => {
+      msg.channel.send(utils.errorEmbed("Timed Out"))
+      deleteMessage.clearReactions()
+    })
+}
+
