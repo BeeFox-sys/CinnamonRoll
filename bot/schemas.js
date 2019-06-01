@@ -11,8 +11,8 @@ module.exports = {
     locations: [{ type: String, ref: 'locations' }],
     characters: [{ type: String, ref:'characters' }],
     admin: [String],
-    colour: Number,
-    gameName: String
+    gameName: String,
+    enableImport: {type: Boolean, default: true}
   }),
 
   location: new mongoose.Schema({

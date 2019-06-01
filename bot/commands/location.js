@@ -59,7 +59,7 @@ module.exports = {
 		if(location == null) return msg.channel.send(utils.errorEmbed(`Location \"${name}\" does not exist`))
 
 		//Location editing commands
-		if(args.length > 1 && utils.checkGameAdmin(guildSettings, msg)){
+		if(args.length > 1 && utils.checkGameAdmin(guildSettings, msg.member)){
 			switch (args[1].toLowerCase()) {
 			//Colour: <location> colour <hex | word>
 				case "colour":

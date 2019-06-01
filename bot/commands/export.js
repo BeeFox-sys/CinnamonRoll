@@ -11,7 +11,7 @@ module.exports = {
 	hidden: false,
 	args: true,
 	argsMin: 1,
-	usage: ['<location | character> <name | id>','allCharacters','allLocations','everything'],
+	usage: ['<location | character> <name | id>','all [characters | locations]',],
 	async execute(client, guildSettings, msg, args) {
 		args = utils.quoteFinder(args)
 		switch (args[0]) {
@@ -23,16 +23,20 @@ module.exports = {
 				exportObject(args[1], guildSettings.characters, msg, "character")
 				break;
 		
-			case "allLocations":
-				exportArray(guildSettings.locations, msg, "location")
-				break;
+			case "all":
+				switch(args[1]){
+					case "locations":
+						exportArray(guildSettings.locations, msg, "location")
+						break;
 
-			case "allCharacters":
-				exportArray(guildSettings.characters, msg, "character")
-				break;
+					case "characters":
+						exportArray(guildSettings.characters, msg, "character")
+						break;
 
-			case "everything":
-				exportAll(guildSettings, msg)
+					default:
+						exportAll(guildSettings, msg)
+						break;
+				}
 				break;
 
 			default:
@@ -65,11 +69,9 @@ async function exportObject(id, array, msg, type) {
 
 async function exportArray(array, msg, type) {
 	var exportMsg = await msg.channel.send(utils.warnEmbed("Exporting... This may take a second"))
-	var exportArray = {
-		characters:[],
-		locations:[]
-	}
-	var updated = ""
+	var exportArray = {}
+	if(type == "character") exportArray.characters = []
+	else exportArray.locations = []
 	for (let i = 0; i < array.length; i++) {
 		const document = array[i];
 
@@ -121,7 +123,6 @@ async function exportAll(guildSettings, msg) {
 		characters:[],
 		locations:[]
 	}
-	var updated = ""
 	for (let i = 0; i < guildSettings.characters.length; i++) {
 		const document = guildSettings.characters[i];
 		exportArray.characters.push(await cleanObject(document))
