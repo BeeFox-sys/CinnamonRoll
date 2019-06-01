@@ -276,12 +276,17 @@ async function setName(location, msg, args) {
 async function removeLocation(location, msg, settings) {
   var deleteMessage = await msg.channel.send(utils.passEmbed(`React ✅ to delete ${location.name}\`(${location.id})\``))
   deleteMessage.react("✅")
+  deleteMessage.react("❌")
   var filter = (reaction, user)=>{
-    return ['✅'].includes(reaction.emoji.name) && user.id === msg.author.id;
+    return ['✅',"❌"].includes(reaction.emoji.name) && user.id === msg.author.id;
   }
   deleteMessage.awaitReactions(filter,{max:1, time: 60000, errors:['time']})
     .then(collected => {
+      var reaction = collected.first().emoji.name
+
       deleteMessage.clearReactions()
+
+      if(reaction == "❌")
 
       guildSettingsModel.updateOne({_id:settings.id}, {$pull: {locations: location.id}}, (err, doc) =>{
         if(err) {
