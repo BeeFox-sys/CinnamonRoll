@@ -147,7 +147,7 @@ async function importCharacter(character, msg, guildSettings, imported) {
 			var newDoc;
 			newDoc = new characterModel()
 			newDoc._id = await utils.generateID(characterModel)
-			newDoc.owner = msg.member.id
+			newDoc.owner = character.owner || msg.member.id
 			newDoc.guild = guildSettings._id
 			guildSettings.characters.push(newDoc._id)
 			guildSettings.save()
@@ -181,7 +181,7 @@ async function importLocation(location, msg, guildSettings, imported) {
 		var newDoc;
 		newDoc = await new locationModel()
 		newDoc._id = await utils.generateID(characterModel)
-		newDoc.owner = msg.member.id
+		newDoc.owner = location.owner || msg.member.id
 		newDoc.guild = guildSettings._id
 		guildSettings.locations.push(newDoc._id)
 		guildSettings.save()

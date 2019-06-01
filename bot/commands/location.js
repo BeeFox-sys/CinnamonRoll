@@ -57,7 +57,7 @@ module.exports = {
 
     //Location editing commands
 		if(args.length > 1 && await utils.checkGameAdmin(guildSettings, msg.member)){
-      if(guildSettings.locationLock && location.owner != msg.member.id) return showLocation(location, msg)
+      if(guildSettings.locationLock && location.owner != msg.member.id) return showLocation(location, msg, client)
         switch (args[1].toLowerCase()) {
         //Colour: <location> colour <hex | word>
           case "colour":
@@ -95,7 +95,7 @@ module.exports = {
     }
 
 		// Finally, if no extra args, show location card
-		await showLocation(location, msg)
+		await showLocation(location, msg, client)
 	},
 };
 
@@ -118,10 +118,14 @@ async function listLocations(guildSettings, locationsList, msg) {
 
 
 // Show location card
-async function showLocation(location, msg) {
-	embed = utils.passEmbed()
+async function showLocation(location, msg, client) {
+
+  if(location.owner) var user = await client.fetchUser(location.owner)
+  else user = {tag:"[Orphan Location, please export and import it to correct this error]"}
+
+	var embed = utils.passEmbed()
 		embed.setTitle(location.name)
-		embed.setFooter(`id: ${location._id}`)
+		embed.setFooter(`id: ${location._id} | creator: @${user.tag}`)
 		embed.setColor(location.colour)
 		embed.setDescription(location.description || "")
 		var references = ""

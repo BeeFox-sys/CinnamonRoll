@@ -40,6 +40,8 @@ module.exports = {
 				}
 				break;
 
+			case "backup":
+				exportBackup(guildSettings, msg)
 			default:
 				break;
 		}
@@ -89,11 +91,11 @@ async function exportArray(array, msg, type) {
 	
 }
 
-async function cleanObject(obj){
+async function cleanObject(obj, keepOwner){
 	return new Promise(async (resolve)=>{
 		obj._id = undefined
 		obj.guild = undefined
-		obj.owner = undefined
+		if(!keepOwner) obj.owner = undefined
 		obj.__v = undefined
 		return resolve(obj)
 	})
@@ -131,6 +133,25 @@ async function exportAll(guildSettings, msg) {
 	for (let i = 0; i < guildSettings.locations.length; i++) {
 		const document = guildSettings.locations[i];
 		exportArray.locations.push(await cleanObject(document))
+		if(i == guildSettings.locations.length-1){
+			createFile(exportArray, msg, exportMsg)
+		}
+	}
+}
+
+async function exportBackup(guildSettings, msg){
+	var exportMsg = await msg.channel.send(utils.warnEmbed("Exporting... This may take a second"))
+	var exportArray = {
+		characters:[],
+		locations:[]
+	}
+	for (let i = 0; i < guildSettings.characters.length; i++) {
+		const document = guildSettings.characters[i];
+		exportArray.characters.push(await cleanObject(document, true))
+		}
+	for (let i = 0; i < guildSettings.locations.length; i++) {
+		const document = guildSettings.locations[i];
+		exportArray.locations.push(await cleanObject(document, true))
 		if(i == guildSettings.locations.length-1){
 			createFile(exportArray, msg, exportMsg)
 		}
