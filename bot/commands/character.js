@@ -3,7 +3,6 @@ const mongoose = require('mongoose');
 const utils = require('../util.js');
 const schemas = require('../schemas.js');
 const charactersModel = mongoose.model('characters', schemas.character)
-const reactResponse = mongoose.model('reactions', schemas.reaction)
 
 module.exports = {
   name: 'character',

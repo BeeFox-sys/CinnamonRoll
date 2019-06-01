@@ -20,7 +20,6 @@ db.once('open', function() {
 //Create setting schema
 const schemas = require('./schemas.js');
 const guildSettings = mongoose.model('guildSettings', schemas.guildSettings)
-const reactions = mongoose.model('reactions', schemas.reaction)
 
 
 const client = new Discord.Client();
@@ -192,9 +191,6 @@ process.on( 'SIGTERM', function() {
 
 async function gracefulExit(){
   console.warn( "\nGracefully shutting down" );
-  await reactions.deleteMany({}, () => {
-    console.warn("Deleting all pending reactions")
-  })
 
   console.warn('Goodbye')
   process.exit( );
