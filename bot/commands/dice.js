@@ -1,6 +1,6 @@
-const DiceRoller = require('../Libs/DiceRoller.js');
 const Discord = require('discord.js');
 const utils = require('../util.js')
+const { DiceRoller } = require('rpg-dice-roller');
 
 
 module.exports = {
@@ -10,25 +10,28 @@ module.exports = {
 	hidden: false,
 	args: true,
 	argsMin: 1,
-	usage: ['<standard dice notation>**\nRolls the specified dice'],
+	usage: ['<standard dice notation>**\nRolls the specified dice\n[A indepth Guide](https://github.com/GreenImp/rpg-dice-roller#supported-notation)'],
 	example: '2d6+3',
-	execute(client, guildSettings, msg, args) {
-    if(!msg.member.hasPermission(this.perms)) return;
-		const roll = new DiceRoller()
-		if(!roll.validate(args[0])) return msg.channel.send(utils.errorEmbed("Somethings wrong with your notation, check the help command for an example"))
-		results = roll.roll(args[0])
+	async execute(client, guildSettings, msg, args) {
+		try{
+			const roll = new DiceRoller()
+			var results = await roll.roll(args.join(" "))
 
-		embed = utils.passEmbed()
-		if(results.rolls.join("+").length > 1800){
-			rolls = results.total - results.modifier
-			embed.addField(`Rolls Total:`,`\`${rolls}\``)
-			embed.setFooter(`Rolls added together to avoid message limit`)
-		} else {
-			embed.addField(`Rolls:`,`\`${results.rolls.join("+")}\``)
+			var embed = utils.passEmbed()
+			if(results.output.toString().length > 1800){
+				embed.setFooter(`Roll list reomved to avoid message limit`)
+				embed.addField(`Total:`,`${results.total}`,)
+			} else {
+				embed.setDescription(`\`${results.output.toString()}\``)
+				embed.setTitle('Rolls:')
+			}
+			embed.setAuthor(msg.member.displayName, msg.author.avatarURL)
+			return msg.channel.send(embed)
+		} catch (err) {
+			console.warn(err)
+			if(err.message.startsWith("Undefined symbol")){
+				msg.channel.send(utils.errorEmbed("There is something not quite right here, [Please check the guide](https://github.com/GreenImp/rpg-dice-roller#supported-notation)"))
+			}
 		}
-		embed.addField(`Modifier:`,`\`${results.modifier}\``)
-		embed.addField(`Total:`,`\`${results.total}\``,)
-		embed.setAuthor(msg.member.displayName, msg.author.avatarURL)
-		return msg.channel.send(embed)
 	},
 };
