@@ -372,33 +372,36 @@ async function setProxy(character, msg, args) {
 
 // Remove/delete character
 async function removeCharacter(character, msg) {
-  return msg.channel.send(utils.passEmbed(`React ✅ to delete ${character.name}`))
-  .then(async response => {
-    newReact = await new reactResponse()
-    newReact._id = response.id
-    newReact.user = msg.member.id
-    newReact.settings = {
-      type: "deleteCharacter",
-      id: character._id
-    }
-    return newReact.save( (err,doc) => {
-      if(err) {
-        console.warn(err)
-        return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
-      }
-      setTimeout((response, reactions) => {
-        reactions.findById(response.id, (err, doc) => {
-          if(doc == null) return
-          response.clearReactions()
-          reactions.deleteOne({_id: doc._id}, err =>{
-            if(err) return console.warn(err)
-            response.channel.send(utils.errorEmbed("Timed out"))
-          })
+  var deleteMessage = await msg.channel.send(utils.passEmbed(`React ✅ to delete ${character.name}`))
+  deleteMessage.react("✅")
+  var filter = (reaction, user)=>{
+    return ['✅'].includes(reaction.emoji.name) && user.id === msg.author.id;
+  }
+  deleteMessage.awaitReactions(filter,{max:1, time: 60000, errors:['time']})
+    .then(collected => {
+      deleteMessage.clearReactions()
+
+      var index = settings.characters.indexOf(character._id)
+      settings.characters.splice(index, 1)
+      settings.save(err => {
+        if(err) {
+          console.warn(err)
+          return msg.channel.send(utils.errorEmbed("Something went wrong with that reaction"))
+        }
+        
+        return charactersModel.deleteOne({_id: character._id}, (err) =>{
+          if(err) {
+            console.warn(err)
+            return msg.channel.send(utils.errorEmbed("Something went wrong with that reaction"))
+          }
+          return msg.channel.send(utils.passEmbed(`Deleted character`))
         })
-      }, 1000*60, response, reactResponse);
-      return response.react("✅")
+      })
     })
-  })
+    .catch(collected => {
+      msg.channel.send(utils.errorEmbed("Timed Out"))
+      deleteMessage.clearReactions()
+    })
 }
 
 async function setDisplayName(character, msg, args){

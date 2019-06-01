@@ -85,7 +85,7 @@ module.exports = {
 			//remove command
 			case "remove":
         case "delete":
-          await removeLocation(location, msg)
+          await removeLocation(location, msg, guildSettings)
 				return;
 			}
 
@@ -266,32 +266,35 @@ async function setName(location, msg, args) {
 
 
 // Remove/delete location
-async function removeLocation(location, msg) {
-  return msg.channel.send(utils.passEmbed(`React ✅ to delete ${location.name}`))
-  .then(async response => {
-    newReact = await new reactResponse()
-    newReact._id = response.id
-    newReact.user = msg.member.id
-    newReact.settings = {
-      type: "deleteLocation",
-      id: location._id
-    }
-    return newReact.save( (err,doc) => {
-      if(err) {
-        console.warn(err)
-        return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
-      }
-      setTimeout((response, reactions) => {
-        reactions.findById(response.id, (err, doc) => {
-          if(doc == null) return
-          response.clearReactions()
-          reactions.deleteOne({_id: doc._id}, err =>{
-            if(err) return console.warn(err)
-            response.channel.send(utils.errorEmbed("Timed out"))
-          })
+async function removeLocation(location, msg, settings) {
+  var deleteMessage = await msg.channel.send(utils.passEmbed(`React ✅ to delete ${location.name}`))
+  deleteMessage.react("✅")
+  var filter = (reaction, user)=>{
+    return ['✅'].includes(reaction.emoji.name) && user.id === msg.author.id;
+  }
+  deleteMessage.awaitReactions(filter,{max:1, time: 60000, errors:['time']})
+    .then(collected => {
+      deleteMessage.clearReactions()
+
+      var index = settings.locations.indexOf(location._id)
+      settings.locations.splice(index, 1)
+      settings.save(err => {
+        if(err) {
+          console.warn(err)
+          return msg.channel.send(utils.errorEmbed("Something went wrong with that reaction"))
+        }
+        
+        return locationsModel.deleteOne({_id: location._id}, (err) =>{
+          if(err) {
+            console.warn(err)
+            return msg.channel.send(utils.errorEmbed("Something went wrong with that reaction"))
+          }
+          return msg.channel.send(utils.passEmbed(`Deleted location`))
         })
-      }, 1000*60, response, reactResponse);
-      return response.react("✅")
+      })
     })
-  })
+    .catch(collected => {
+      msg.channel.send(utils.errorEmbed("Timed Out"))
+      deleteMessage.clearReactions()
+    })
 }
