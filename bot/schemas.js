@@ -33,17 +33,16 @@ module.exports = {
     owner: String,
     guild: String,
     name: String,
-    displayName: String,
-    pronouns: String,
-    avatar: String,
+    displayName: {type:String, default:""},
+    pronouns: {type:String, default:""},
+    avatar: {type:String, default:""},
     proxy:{
-      prefix: String,
-      suffix: String
+      prefix: {type:String, default:""},
+      suffix: {type:String, default:""}
     },
-    birthday: String,
-    colour: String,
-    avatar: String,
-    description: String,
+    birthday: {type:String, default:""},
+    colour: {type:String, default:""},
+    description: {type:String, default:""},
     inventory: [{
       itemName: String,
       quantity: Number

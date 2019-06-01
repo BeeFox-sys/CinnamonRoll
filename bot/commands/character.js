@@ -8,31 +8,24 @@ const reactResponse = mongoose.model('reactions', schemas.reaction)
 module.exports = {
   name: 'character',
   aliases: ['c', 'char'],
-  description: `
-  **Add <name>**
-  Adds a new character with the name \`<name>\`
-  **<character> remove**
-  Removes the character \`<character>\`
-  **<character> proxy [example match]**
-  Sets the proxy tags for \`<character>\` by the example match given.
-  Proxy tags enable you to speak as your character by typing text between the set tags.
-  Try out square brackets as proxy tags by using \`[text]\` as the example match.
-  **<character> avatar [attachment | url]**
-  Sets the avatar for \`<character>\` to the attached image or the image at the URL
-  **<character> colour <hex | word>**
-  Sets \`<character>\`'s colour to a hex code or a word
-  **<character> description <description>**
-  Sets \`<character>\`'s description to \`<description>\`
-  **<character> reference add <name> <url>**
-  Adds a reference to \`<character>\`
-  **<character> reference remove <name>**
-  Removes a reference from \`<character>\`
-  **<character> rename <name>**
-  Renames \`<character>\``,
+  description: `Lists characters, Shows a character, or edits one of your characters`,
   hidden: false,
   args: false,
   argsMin: 0,
-  usage: [`[character]`,`add <name>`,`<character> remove`,`<character> colour <hex | word>`,`<character> description <description>`, `<character> reference add <name> <url>`,`<character> reference remove <name>`, `<character> rename <New name>`,`<character> avatar <url | attatchment>`],
+  usage: [`\nLists all characters`,
+          `<character>**\nShows one character`,
+          `add <name>**\nCreates a new character`,
+          `<character> remove**\nDeletes a character`,
+          `<character> colour <hex | word>**\nSets a characters colour`,
+          `<character> description <description>**\nSets a characters description`, 
+          `<character> reference add <name> <url>**\nAdds a reference link to the character`,
+          `<character> reference remove <name>**\nRemoves a reference link from the character `, 
+          `<character> rename <New name>**\nRenames the character`,
+          `<character> avatar <url | attatchment>**\nSets the characters avatar`,
+          `<character> brithday <birthday>**\nSets the characters birthday`,
+          `<character> nickname <nickname>**\nSets the characters nickname`,
+          `<character> proxy <prefix>text<suffix>**\nSets the characters proxy`,
+          `<character> pronouns <pronouns>**\nSets the characters pronouns`],
   example: '',
 	async execute(client, guildSettings, msg, args) {
     const charactersList = guildSettings.characters.sort((a,b)=>{
@@ -85,6 +78,7 @@ module.exports = {
         // Reference: <character> reference <add | remove>
         case "reference":
         case "ref":
+        case "references":
           await setReference(guildSettings, character, msg, args)
         return;
 
@@ -98,6 +92,19 @@ module.exports = {
           await setName(character, msg, args)
         return;
 
+        case "displayname":
+        case "nickname":
+          await setDisplayName(character, msg, args)
+        return;
+
+        case "pronouns":
+          await setPronouns(character, msg, args)
+        return;
+
+        case "birthday":
+          await setBirthday(character, msg, args)
+        return;
+
         case "proxy":
         case "tags":
           await setProxy(character, msg, args)
@@ -109,12 +116,10 @@ module.exports = {
         return;
 
         default:
-          return msg.channel.send(utils.errorEmbed("That is not a valid subcommand"))
+            await showCharacter(character, msg, client)
       }
     }
-
-		// Finally, if no extra args, return character card
-		await showCharacter(character, msg)
+    else await showCharacter(character, msg, client)
 	},
 };
 
@@ -147,20 +152,29 @@ async function listCharacters(guildSettings, charactersList, msg) {
 
 
 // Show character card
-async function showCharacter(character, msg) {
+async function showCharacter(character, msg, client) {
+
+  user = await client.fetchUser(character.owner)
+
   embed = utils.passEmbed()
 		embed.setTitle(character.name)
-		embed.setFooter(character._id)
-		embed.setColor(character.colour)
-		embed.setDescription(character.description || "")
-		var references = ""
+		embed.setFooter(`id: ${character._id} | creator: @${user.tag}`)
+    embed.setColor(character.colour)
+    if(character.avatar || character.references.length > 0) embed.setThumbnail(character.avatar || character.references[0].url)
+
+    if(character.displayName != "") embed.addField("Display Name:",character.displayName, true)
+    if(character.pronouns != "") embed.addField("Pronouns:",character.pronouns, true)
+    if(character.birthday != "") embed.addField("Birthday:",character.birthday, true)
+
+    if(character.proxy.prefix != ""||character.proxy.suffix != "")embed.addField("Proxy:",`\`${character.proxy.prefix}text${character.proxy.suffix}\``, true)
+
+    if(character.description != "") embed.addField("Description:",character.description)
+
+    var references = ""
 		for (var i = 0; i < character.references.length; i++) {
 			references += `\n[${character.references[i].name}](${character.references[i].url})`
 		}
 		if(references != "") embed.addField("References:",references)
-    if(character.avatar || character.references.length > 0) embed.setThumbnail(character.avatar || character.references[0].url)
-
-    if(character.proxy.prefix != ""||character.proxy.suffix != "")embed.addField("Proxy:",`\`${character.proxy.prefix}text${character.proxy.suffix}\``)
 
 		return msg.channel.send(embed)
 }
@@ -385,4 +399,44 @@ async function removeCharacter(character, msg) {
       return response.react("✅")
     })
   })
+}
+
+async function setDisplayName(character, msg, args){
+  var newName = args.slice(2).join(" ")
+  character.displayName = newName
+  return await character.save((err, doc) => {
+      if(err){
+        console.warn(err)
+        return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
+      }
+      if(doc.displayName == "") return msg.channel.send(utils.passEmbed(`Cleared Display Name!`))
+
+      return msg.channel.send(utils.passEmbed(`Updated display name to ${doc.displayName}!`))
+    })
+}
+
+async function setPronouns(character, msg, args){
+  var pronouns = args.slice(2).join(" ")
+  character.pronouns = pronouns
+  return await character.save((err, doc) => {
+      if(err){
+        console.warn(err)
+        return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
+      }
+      if(doc.pronouns == "") return msg.channel.send(utils.passEmbed(`Cleared pronouns!`))
+      return msg.channel.send(utils.passEmbed(`Updated pronouns to ${doc.pronouns}!`))
+    })
+}
+
+async function setBirthday(character, msg, args){
+  var birthday = args.slice(2).join(" ")
+  character.birthday = birthday
+  return await character.save((err, doc) => {
+      if(err){
+        console.warn(err)
+        return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
+      }
+      if(doc.birthday == "") return msg.channel.send(utils.passEmbed(`Cleared birthday!`))
+      return msg.channel.send(utils.passEmbed(`Updated birthday to ${doc.birthday}!`))
+    })
 }
