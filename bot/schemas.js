@@ -44,18 +44,12 @@ module.exports = {
     birthday: {type:String, default:""},
     colour: {type:String, default:""},
     description: {type:String, default:""},
-    inventory: [{
-      itemName: String,
-      quantity: Number
-    }],
+    bag: {type: Object, default: {}},
     references: [{
       name: String,
       url: String
     }],
-    stats:[{
-      name: String,
-      value: Number
-    }]
+    stats: {type: Object, default: {}}
   }),
 
   reaction: new mongoose.Schema({
