@@ -93,7 +93,7 @@ client.on('message',async msg => {
 				reply += `\nThe proper usage would be: `;
         for (let i = 0; i < command.usage.length; i++) {
           const usage = command.usage[i];
-          reply += `\n\`${settings.prefix}${command.name} ${usage}\``
+          reply += `\n**${settings.prefix}${command.name} ${usage}`
         }
       }
 			return await msg.channel.send(utils.errorEmbed(reply));
