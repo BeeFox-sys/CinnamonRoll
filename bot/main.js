@@ -109,7 +109,7 @@ client.on('message',async msg => {
 client.on("messageReactionAdd",async (react,user) =>{
   if(user.id == client.user.id) return
 
-  return reactions.findById(react.message.id, (err,doc) =>{
+  return reactions.findById(react.message.id, async (err,doc) =>{
     if(err){
       console.warn(err)
       return react.message.channel.send(utils.errorEmbed("Something went wrong with that reaction"))
@@ -120,6 +120,17 @@ client.on("messageReactionAdd",async (react,user) =>{
     if(doc.settings.type == "deleteLocation"){
       if(react.emoji != "✅") return
       const locations = mongoose.model('locations', schemas.location)
+
+      var settings = await utils.getGuildSettings(react.message.guild.id, guildSettings)
+
+      var index = settings.locations.indexOf(doc.settings.id)
+      settings.locations.splice(index, 1)
+      settings.save(err => {
+        if(err) {
+          console.warn(err)
+          return react.message.channel.send(utils.errorEmbed("Something went wrong with that reaction"))
+        }
+      })
 
       return locations.deleteOne({_id: doc.settings.id}, (err) =>{
         if(err) {
@@ -136,6 +147,15 @@ client.on("messageReactionAdd",async (react,user) =>{
     if(doc.settings.type == "deleteCharacter"){
       if(react.emoji != "✅" || doc.user != user.id) return
       const characters = mongoose.model('characters', schemas.character)
+
+      var index = settings.characters.indexOf(doc.settings.id)
+      settings.characters.splice(index, 1)
+      settings.save(err => {
+        if(err) {
+          console.warn(err)
+          return react.message.channel.send(utils.errorEmbed("Something went wrong with that reaction"))
+        }
+      })
 
       return characters.deleteOne({_id: doc.settings.id}, (err) =>{
         if(err) {
