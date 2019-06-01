@@ -7,7 +7,7 @@ module.exports = {
   decription: 'Shows information about the bot',
   hidden: false,
   args: false,
-  usage:'',
+  usage:[],
   async execute(client, guildSettings, msg, args) {
     // Fetch the bot info and get the client ID
     const oauth_app = await client.fetchApplication();

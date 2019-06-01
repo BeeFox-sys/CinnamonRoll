@@ -16,7 +16,12 @@ module.exports = {
 	hidden: false,
 	args: false,
 	argsMin: 0,
-	usage: ['prefix <new prefix>',`role add <role>`, `role remove <role>`, `name <new name>`],
+	usage: [`**\nDisplays current settings`,
+					`prefix <new prefix>**\nChanges the bot's prefix`,
+					`role add <role>**\nAdds a role to the Game Manager roles`, 
+					`role remove <role>**\nRemoves a role from the Game Manager roles`, 
+					`name <new name>**\nChanges the name of the game`,
+					`import**\nToggles the import command`],
 	example: '',
 	async execute(client, guildSettings, msg, args) {
 		if(msg.member.hasPermission("MANAGE_GUILD")){

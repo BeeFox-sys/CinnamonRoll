@@ -13,7 +13,7 @@ module.exports = {
 	hidden: false,
 	args: false,
 	argsMin: 1,
-	usage: '<name> <text>',
+	usage: ['<name> <text>**\nProxies an npc'],
 	async execute(client, guildSettings, msg, args) {
 		var attachments = utils.attachmentsToFileOptions(msg.attachments)
 

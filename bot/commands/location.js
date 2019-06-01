@@ -25,7 +25,15 @@ module.exports = {
 	hidden: false,
 	args: false,
 	argsMin: 0,
-	usage: [`[location]`,`add <name>`,`<location> remove <name>`,`<location> colour <hex | word>`,`<location> description <description>`, `<location> reference add <name> <url>`,`<location> reference remove <name>`, `<location> rename <new name>`],
+  usage: [`**\nLists all locations`
+          `[location]**\nDisplays a single location`,
+          `add <name>**\nCreates a new location`,
+          `<location> remove**\nDeletes a location`,
+          `<location> colour <hex | word>**\nSets the colour for a location`,
+          `<location> description <description>**\nSets the description for a location`,
+          `<location> reference add <name> <url>**\nAdds a refrence link to a location`,
+          `<location> reference remove <name>**\nRemoves a refrence link from a location`,
+          `<location> rename <new name>**\nRenames a location`],
 	example: '',
 	async execute(client, guildSettings, msg, args) {
     const locationsList = guildSettings.locations.sort((a,b)=>{

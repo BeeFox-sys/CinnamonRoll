@@ -44,7 +44,7 @@ module.exports = {
     if (command.usage) {
 			usage = ""
 			for(var i = 0; i < command.usage.length; i++){
-				usage += `\n${prefix}${command.name}  ${command.usage[i]}`
+				usage += `\n**${prefix}${command.name}  ${command.usage[i]}`
 			}
 			embed.addField(`Usage:`,usage);
 		}
