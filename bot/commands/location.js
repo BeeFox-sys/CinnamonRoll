@@ -52,13 +52,12 @@ module.exports = {
 		//Find Location
 		args = utils.quoteFinder(args)
 		var name = args[0]
-		var location = utils.findObjInArray(name, locationsList)
+		var location = await utils.findObjInArray(name, locationsList)
 		if(location == null) return msg.channel.send(utils.errorEmbed(`Location \"${name}\" does not exist`))
 
-		//Location editing commands
+    //Location editing commands
 		if(args.length > 1 && await utils.checkGameAdmin(guildSettings, msg.member)){
-      console.log(location.owner != msg.member.id)
-      if(guildSettings.locationLock && location.owner == msg.member.id){
+      if(guildSettings.locationLock && location.owner != msg.member.id) return showLocation(location, msg)
         switch (args[1].toLowerCase()) {
         //Colour: <location> colour <hex | word>
           case "colour":
@@ -93,7 +92,6 @@ module.exports = {
         }
 
         return msg.channel.send(utils.errorEmbed("That is not a valid subcommand"))
-      }
     }
 
 		// Finally, if no extra args, show location card

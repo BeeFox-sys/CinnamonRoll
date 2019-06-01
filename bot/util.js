@@ -39,8 +39,8 @@ utils = {
 
   async checkGameAdmin(guildSettings, member){
     return new Promise(async (resolve) =>{
-      if(guildSettings.admin.length == 0) return true;
-      if(member.roles == undefined)
+      if(guildSettings.admin.length == 0) return resolve(true);
+
       for (var i = 0; i < guildSettings.admin.length; i++) {
         if(member.roles.get(guildSettings.admin[i]) != undefined) {
            return resolve(true);

@@ -29,6 +29,7 @@ module.exports = {
 					return;
 
 				case "role":
+				case "roles":
 					await setRole(guildSettings, msg, args)
 					return;
 
