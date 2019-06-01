@@ -120,7 +120,7 @@ async function listLocations(guildSettings, locationsList, msg) {
 async function showLocation(location, msg) {
 	embed = utils.passEmbed()
 		embed.setTitle(location.name)
-		embed.setFooter(location._id)
+		embed.setFooter(`id: ${location._id}`)
 		embed.setColor(location.colour)
 		embed.setDescription(location.description || "")
 		var references = ""
