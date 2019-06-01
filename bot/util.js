@@ -14,7 +14,7 @@ utils = {
   		var hook
   		webhooks = webhooks.filter(hook => hook.channelID === channel.id)
   		if(webhooks.find(hook => hook.owner.id === client.user.id) == null){
-  			hook = await channel.createWebhook("CinnamonRoll")
+  			hook = await channel.createWebhook("CinnamonRP")
   		} else {
   			hook = await webhooks.find(hook => hook.owner.id === client.user.id)
   		}
@@ -37,12 +37,13 @@ utils = {
     })
   },
 
-  async checkGameAdmin(guildSettings, member){
+  async checkGameAdmin(guildSettings, msg){
     return new Promise(async (resolve) =>{
       if(guildSettings.admin.length == 0) return true;
       for (var i = 0; i < guildSettings.admin.length; i++) {
-        if(member.roles.get(guildSettings.admin[i]) != undefined) {
+        if(msg.member.roles.get(guildSettings.admin[i]) != undefined) {
            return resolve(true);
+           break;
          }
       }
       return resolve(false)
@@ -71,7 +72,7 @@ utils = {
   },
 
   async generateID(collection){
-    return new Promise(async (resolve, reject) => {
+    return new Promise(async resolve => {
       var result = '';
       var foundEmpty = false
       while (!foundEmpty) {
