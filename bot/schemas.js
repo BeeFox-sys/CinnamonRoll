@@ -51,6 +51,10 @@ module.exports = {
     references: [{
       name: String,
       url: String
+    }],
+    stats:[{
+      name: String,
+      value: Number
     }]
   }),
 
