@@ -40,12 +40,7 @@ client.once('ready', async () => {
   console.warn(`Logged in as ${client.user.tag} (ID: ${client.user.id})!`);
   console.warn(`${client.guilds.size} servers`);
   // console.warn(`${client.shard.count} shards`); // for future use once sharding becomes necessary
-  if(client.guilds.size < 2) {
-    client.user.setActivity(`Mention me for help!`, { type: 'LISTENING'});
-  }
-  else {
-    client.user.setActivity(`Mention for help! | in ${client.guilds.size} servers`, { type: 'LISTENING'});
-  }
+  await setPresence()
 });
 
 client.on('message',async msg => {
@@ -114,22 +109,12 @@ reactions.execute(client)
 
 
 
-client.on("guildCreate", ()=> {
-  if(client.guilds.size < 2) {
-  client.user.setActivity(`Mention me for help!`, { type: 'LISTENING'});
-}
-else {
-  client.user.setActivity(`Mention for help! | in ${client.guilds.size} servers`, { type: 'LISTENING'});
-}
+client.on("guildCreate", async ()=> {
+  await setPresence()
 })
 
-client.on("guildDelete", ()=> {
-  if(client.guilds.size < 2) {
-  client.user.setActivity(`Mention me for help!`, { type: 'LISTENING'});
-}
-else {
-  client.user.setActivity(`Mention for help! | in ${client.guilds.size} servers`, { type: 'LISTENING'});
-}
+client.on("guildDelete", async ()=> {
+  await setPresence()
 })
 
 client.login(config.token);
@@ -141,6 +126,17 @@ process.on( 'SIGINT', function() {
 process.on( 'SIGTERM', function() {
   gracefulExit()
 })
+
+
+// Set presence status
+async function setPresence() {
+  if(client.guilds.size < 2) {
+    client.user.setActivity(`Mention me for help!`, { type: 'PLAYING'});
+  }
+  else {
+    client.user.setActivity(`Mention for help! | in ${client.guilds.size} servers`, { type: 'PLAYING'});
+  }
+}
 
 
 async function gracefulExit(){
