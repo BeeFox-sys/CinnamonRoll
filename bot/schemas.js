@@ -49,10 +49,7 @@ module.exports = {
       name: String,
       url: String
     }],
-    stats:[{
-      name: String,
-      value: Number
-    }]
+    stats: {type: Object, default: {}}
   }),
 
   reaction: new mongoose.Schema({
