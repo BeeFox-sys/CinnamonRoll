@@ -37,40 +37,16 @@ utils = {
     })
   },
 
-<<<<<<< HEAD
-  async checkGameAdmin(guildSettings, msg){
+  async checkGameAdmin(guildSettings, member){
     return new Promise(async (resolve) =>{
       if(guildSettings.admin.length == 0) return true;
       for (var i = 0; i < guildSettings.admin.length; i++) {
-        if(msg.member.roles.get(guildSettings.admin[i]) != undefined) {
+        if(member.roles.get(guildSettings.admin[i]) != undefined) {
            return resolve(true);
-           break;
          }
       }
       return resolve(false)
     })
-=======
-    var doc = await collection.findById(guild).populate('locations').populate('characters').exec()
-    if(doc) return doc
-    var newSettings = await new collection({
-            _id: guild
-          })
-    return await newSettings.save((err, newDoc)=>{
-        if (err) return console.error(err)
-        return newDoc;
-      });
-    },
-
-  checkGameAdmin(guildSettings, msg){
-    if(guildSettings.admin.length == 0) return true;
-    for (var i = 0; i < guildSettings.admin.length; i++) {
-      if(msg.member.roles.get(guildSettings.admin[i]) != undefined) {
-         return true;
-         break;
-       }
-    }
-    return false
->>>>>>> Added reset command
   },
 
   errorEmbed(text){
@@ -179,18 +155,25 @@ utils = {
   },
   async eraseGuild(msg, guildID){
     return new Promise(async resolve => {
-    msg.channel.send(utils.errorEmbed("Reseting your guild, this may take some time"))
-    var guild = await guildSettings.findById(guildID).populate('locations').populate('characters').exec()
-    for(var ci = 0; ci < guild.characters.length; ci++){
-      guild.characters[ci].delete()
-    }
-    for(var li = 0; li < guild.locations.length; li++){
-      guild.locations[li].delete()
-    }
-    guild.delete()
-    return resolve(msg.channel.send(utils.errorEmbed(`Guild Reset, default prefix is \`${config.defaultPrefix}\``)))
-  })
-}
+      msg.channel.send(utils.errorEmbed("Reseting your guild, this may take some time"))
+      var guild = await guildSettings.findById(guildID).populate('locations').populate('characters').exec()
+      for(var ci = 0; ci < guild.characters.length; ci++){
+        guild.characters[ci].delete()
+      }
+      for(var li = 0; li < guild.locations.length; li++){
+        guild.locations[li].delete()
+      }
+      guild.delete()
+      return resolve(msg.channel.send(utils.errorEmbed(`Guild Reset, default prefix is \`${config.defaultPrefix}\``)))
+    })
+  },
+  async wait(ms){
+    return new Promise(async resolve => {
+      setTimeout(() => {
+        resolve()
+      }, ms);
+    })
+  }
 }
 
 module.exports = utils

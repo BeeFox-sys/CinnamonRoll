@@ -88,8 +88,12 @@ client.on('message',async msg => {
   if (command.args && args.length < command.argsMin) {
     let reply = `You didn't provide enough arguments!`;
 			if (command.usage) {
-				reply += `\nThe proper usage would be: \`${settings.prefix}${command.name} ${command.usage}\``;
-			}
+				reply += `\nThe proper usage would be: `;
+        for (let i = 0; i < command.usage.length; i++) {
+          const usage = command.usage[i];
+          reply += `\n\`${settings.prefix}${command.name} ${usage}\``
+        }
+      }
 			return await msg.channel.send(utils.errorEmbed(reply));
     }
 

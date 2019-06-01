@@ -34,6 +34,10 @@ module.exports = {
 					await setRole(guildSettings, msg, args)
 					return;
 
+				case "import":
+					await toggleImport(guildSettings, msg, args)
+					return;
+
 				case "name":
 				case "rename":
 					if(args.length > 1){
@@ -86,6 +90,9 @@ async function displaySettings(guildSettings, msg) {
 		.addField('Game Manager Roles:', rolesMsg, true)
 		.addField('Game Name:', guildSettings.gameName || "`Unset`", true)
 
+		if(guildSettings.enableImport) embed.addField('Importing:', "Enabled", true)
+		else embed.addField('Importing:', "Disabled", true)
+
 	return msg.channel.send(embed)
 }
 
@@ -122,7 +129,7 @@ async function setRole(guildSettings, msg, args) {
 					console.log(err)
 					return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command!"))
 				} else {
-					return msg.channel.send(utils.passEmbed(role.name+" has been added to manager roles"))
+					return msg.channel.send(utils.passEmbed(role.name+" has been added to Game Manager roles"))
 				}
 			})
 		break;
@@ -137,7 +144,7 @@ async function setRole(guildSettings, msg, args) {
 		       console.log(err)
 		       return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command!"))
 		     } else {
-		       return msg.channel.send(utils.passEmbed(role.name+" has been removed from manager roles"))
+		       return msg.channel.send(utils.passEmbed(role.name+" has been removed from Game Manager roles"))
 		     }
 		   })
 		break;
@@ -168,3 +175,16 @@ async function setName(guildSettings, msg, args) {
 	})
 }
 
+//Toggle Import
+function toggleImport(guildSettings, msg, args) {
+	var currentImport = guildSettings.enableImport
+	guildSettings.enableImport = !currentImport
+	guildSettings.save((err,doc) => {
+		if(err){
+		console.log(err)
+		return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command!"))
+	}
+	if(doc.enableImport) return msg.channel.send(utils.passEmbed("Enabled importing"))
+	return msg.channel.send(utils.passEmbed("Disabled importing"))
+})
+}
