@@ -16,13 +16,11 @@ module.exports = {
 
     if (!args.length) {
 
-      data.push("```")
-      data.push(commands.map(command => command.name).join('\n'))
-      data.push("```")
+      data.push(commands.map(command => guildSettings.prefix+command.name).join('\n'))
 
       embed = new Discord.RichEmbed()
-        .setTitle("Commands:")
-        .setDescription(data)
+        .addField("Commands:",data,true)
+        .addField("Other things","You can also react to a proxied message with ❓ to get information on who sent it, and you can react to a proxied message you sent with a ❌ to delete it",true)
         .setFooter(`You can send \`${prefix}help [command name]\` to get info on a specific command!`)
         .setColor("#ffaa00")
 
