@@ -76,6 +76,8 @@ client.on('message',async msg => {
     args = msg.content.slice(settings.prefix.length).split(/ +/);
   }
 
+  if(args[0] == "") return
+
   var commandName = args.shift().toLowerCase();
   if(!commandName) {
     commandName = args.shift().toLowerCase();
