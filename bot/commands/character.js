@@ -92,6 +92,10 @@ module.exports = {
           await setName(character, msg, args)
         return;
 
+        case "bag":
+          updateBag(character, msg, args, client)
+        break;
+
         case "displayname":
         case "nickname":
           await setDisplayName(character, msg, args)
@@ -152,11 +156,11 @@ async function listCharacters(guildSettings, charactersList, msg) {
 
 
 // Show character card
-async function showCharacter(character, msg, client) {
+async function showCharacter(character, msg, client, message) {
 
   user = await client.fetchUser(character.owner)
 
-  embed = utils.passEmbed()
+  var embed = utils.passEmbed()
 		embed.setTitle(character.name)
 		embed.setFooter(`id: ${character._id} | creator: @${user.tag}`)
     embed.setColor(character.colour)
@@ -176,12 +180,122 @@ async function showCharacter(character, msg, client) {
 		}
 		if(references != "") embed.addField("References:",references)
 
-		return msg.channel.send(embed)
+		if(!message) message = await msg.channel.send(embed)
+    else await message.edit(embed)
+    console.log(Object.keys(character.stats).length)
+    if(Object.keys(character.bag).length > 0) await message.react("🎒")
+    if(Object.keys(character.stats).length > 0) await message.react("🎲")
+    var reactionFilter = (reaction, user) => {return ["🎒","🎲"].includes(reaction.emoji.name) && user.id === msg.author.id;}
+    message.awaitReactions(reactionFilter, {max:1,time:60000*2, errors:["time"]})
+      .then(async collection => {
+        var reaction = collection.first()
+        await message.clearReactions()
+        switch (reaction.emoji.name) {
+          case "🎒":
+              showCharacterBag(character, msg, client, message)
+            break;
+
+          case "🎲":
+              showCharacterStats(character, msg, client, message)
+            break;
+        
+          default:
+            break;
+        }
+      })
+      .catch(async err => {
+        await message.clearReactions()
+      })
 }
 
+async function showCharacterBag(character, msg, client, message) {
+
+  user = await client.fetchUser(character.owner)
+
+  var embed = utils.passEmbed()
+    .setTitle(`${character.displayName || character.name}'s Bag`)
+    .setFooter(`id: ${character._id} | creator: @${user.tag}`)
+    .setColor(character.colour)
+  if(character.avatar || character.references.length > 0) embed.setThumbnail(character.avatar || character.references[0].url)
+  
+  invString = ``
+  for (const item in character.bag) {
+    if (character.bag.hasOwnProperty(item)) {
+      const quantity = character.bag[item];
+        invString += `${quantity} | ${item}`
+    }
+  }
+
+  embed.setDescription(invString || `Their bag is empty!`)
+
+  if(!message) message = await msg.channel.send(embed)
+    else await message.edit(embed)  
+
+    await message.react("👤")
+    if(Object.keys(character.stats).length > 0)await message.react("🎲")
+    var reactionFilter = (reaction, user) => {return ["👤","🎲"].includes(reaction.emoji.name) && user.id === msg.author.id;}
+    message.awaitReactions(reactionFilter, {max:1,time:60000*2, errors:["time"]})
+      .then(async collection => {
+        var reaction = collection.first()
+        await message.clearReactions()
+        switch (reaction.emoji.name) {
+          case "👤":
+              showCharacter(character, msg, client, message)
+            return;
+
+          case "🎲":
+              showCharacterStats(character, msg, client, message)
+            return;
+        
+          default:
+            return;
+        }
+      })
+      .catch(async err => {
+        await message.clearReactions()
+      })
+}
+
+async function showCharacterStats(character, msg, client, message) {
+
+  user = await client.fetchUser(character.owner)
+
+  var embed = utils.passEmbed()
+    .setTitle(`${character.displayName || character.name}'s Stats`)
+    .setFooter(`id: ${character._id} | creator: @${user.tag}`)
+    .setColor(character.colour)
+  if(character.avatar || character.references.length > 0) embed.setThumbnail(character.avatar || character.references[0].url)
+  
+  if(!message) message = await msg.channel.send(embed)
+    else await message.edit(embed)  
+
+    await message.react("👤")
+    if(Object.keys(character.bag).length > 0) await message.react("🎒")
+    var reactionFilter = (reaction, user) => {return ["👤","🎒"].includes(reaction.emoji.name) && user.id === msg.author.id;}
+    message.awaitReactions(reactionFilter, {max:1,time:60000*2, errors:["time"]})
+      .then(async collection => {
+        var reaction = collection.first()
+        await message.clearReactions()
+        switch (reaction.emoji.name) {
+          case "👤":
+              showCharacter(character, msg, client, message)
+            break;
+
+          case "🎒":
+              showCharacterInv(character, msg, client, message)
+            break;
+        
+          default:
+            break;
+        }
+      })
+      .catch(async err => {
+        await message.clearReactions()
+      })
+}
 
 // Add a character
-async function addCharacter(guildSettings, msg, args) {
+async function addCharacter(guildSettings, msg, args, message) {
   if(args.length > 1) {
     var newCharacter = await new charactersModel()
     newCharacter.name = args.splice(1).join(" ")
@@ -445,4 +559,17 @@ async function setBirthday(character, msg, args){
       if(doc.birthday == "") return msg.channel.send(utils.passEmbed(`Cleared birthday!`))
       return msg.channel.send(utils.passEmbed(`Updated birthday to ${doc.birthday}!`))
     })
+}
+
+//inv <item> <quantity>
+async function updateBag(character, msg, args, client){
+  var item = args[2]
+  if(item == undefined) return showCharacterBag(character, msg, client)
+  item = item.toLowerCase()
+  var quantity = args[3]
+  if(quantity == "clear") return msg.channel.send(utils.passEmbed(`Removed ${item} from ${character.displayName || character.name}'s bag`))
+  if(quantity == undefined)   return msg.channel.send(utils.passEmbed(`${character.displayName || character.name} has ${character.bag[item] || "no"} ${item}`))
+  quantity = +quantity
+  if(quantity + 0 != quantity) return msg.channel.send(utils.errorEmbed("Quantity must be a number!"))
+  return msg.channel.send(utils.passEmbed(`Put ${quantity} ${item} item ${character.displayName || character.name}'s bag\nNow they have ${character.bag[item].quantity} of ${item}`))
 }
