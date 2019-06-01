@@ -128,7 +128,8 @@ process.on( 'SIGTERM', function() {
 })
 
 
-// Set presence status
+
+// Set bot user presence status
 async function setPresence() {
   if(client.guilds.size < 2) {
     client.user.setActivity(`Mention me for help!`, { type: 'PLAYING'});
@@ -139,9 +140,10 @@ async function setPresence() {
 }
 
 
-async function gracefulExit(){
+// Close client connection and exit gracefully
+function gracefulExit() {
   console.warn( "\nGracefully shutting down" );
-
+  client.destroy()
   console.warn('Goodbye')
   process.exit( );
 }
