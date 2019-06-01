@@ -111,7 +111,7 @@ const messages = mongoose.model('messages', schemas.message)
 
 client.on("messageReactionAdd",async (react,user) =>{
 
-  //Message react stuff
+  //Get Message data
   if(react.emoji == "❓"){
     messages.findOne({_id:react.message.id},async (err, doc) =>{
       if(err){
@@ -138,6 +138,28 @@ client.on("messageReactionAdd",async (react,user) =>{
     })
   }
 })
+
+//React to old messages
+const events = {
+	MESSAGE_REACTION_ADD: 'messageReactionAdd'
+};
+
+client.on('raw', async event => {
+	if (!events.hasOwnProperty(event.t)) return;
+  const { d: data } = event;
+  const user = client.users.get(data.user_id);
+  const channel = client.channels.get(data.channel_id) || await user.createDM();
+  
+  if (channel.messages.has(data.message_id)) return;
+  
+  const message = await channel.fetchMessage(data.message_id);
+  const emojiKey = (data.emoji.id) ? `${data.emoji.name}:${data.emoji.id}` : data.emoji.name;
+  const reaction = message.reactions.get(emojiKey);
+  client.emit(events[event.t], reaction, user);
+});
+
+
+
 
 client.on("guildCreate", ()=> {
   if(client.guilds.size < 2) {
