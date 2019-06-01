@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const utils = require('../util.js');
 const schemas = require('../schemas.js');
 const charactersModel = mongoose.model('characters', schemas.character)
+const guildSettingsModel = mongoose.model('guildsettings', schemas.guildSettings)
 
 module.exports = {
   name: 'character',
@@ -371,7 +372,7 @@ async function setProxy(character, msg, args) {
 
 // Remove/delete character
 async function removeCharacter(character, msg) {
-  var deleteMessage = await msg.channel.send(utils.passEmbed(`React ✅ to delete ${character.name}`))
+  var deleteMessage = await msg.channel.send(utils.passEmbed(`React ✅ to delete ${character.name}\`(${character.id})\``))
   deleteMessage.react("✅")
   var filter = (reaction, user)=>{
     return ['✅'].includes(reaction.emoji.name) && user.id === msg.author.id;
@@ -380,21 +381,19 @@ async function removeCharacter(character, msg) {
     .then(collected => {
       deleteMessage.clearReactions()
 
-      var index = settings.characters.indexOf(character._id)
-      settings.characters.splice(index, 1)
-      settings.save(err => {
+      guildSettingsModel.updateOne({_id:settings.id}, {$pull: {characters: character.id}}, (err, doc) =>{
+        if(err) {
+          console.warn(err)
+          return msg.channel.send(utils.errorEmbed("Something went wrong with that reaction")
+          )}
+      });
+      
+      return charactersModel.deleteOne({_id: character._id}, (err) =>{
         if(err) {
           console.warn(err)
           return msg.channel.send(utils.errorEmbed("Something went wrong with that reaction"))
         }
-        
-        return charactersModel.deleteOne({_id: character._id}, (err) =>{
-          if(err) {
-            console.warn(err)
-            return msg.channel.send(utils.errorEmbed("Something went wrong with that reaction"))
-          }
-          return msg.channel.send(utils.passEmbed(`Deleted character`))
-        })
+        return msg.channel.send(utils.passEmbed(`Deleted character`))
       })
     })
     .catch(collected => {
