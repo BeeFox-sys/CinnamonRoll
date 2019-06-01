@@ -4,15 +4,7 @@ const utils = require('../util.js')
 module.exports = {
 	name: 'settings',
 	aliases: ['setting', 'set'],
-	description:
-	`Show or edit sever settings, Admin Only
-
-	**prefix <prefix>**
-	Changes server prefix to \`<prefix>\`
-	**role <add|remove> <role name>**
-	Adds or removes \`<role name>\` from the list of roles that can edit locations
-	**name <name>**
-	Sets the server's game name`,
+	description:`Show or edit sever settings, Admin Only`,
 	hidden: false,
 	args: false,
 	argsMin: 0,
