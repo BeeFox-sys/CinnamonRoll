@@ -76,12 +76,13 @@ client.on('message',async msg => {
     args = msg.content.slice(settings.prefix.length).split(/ +/);
   }
 
-  if(args[0] == "") return
 
-  var commandName = args.shift().toLowerCase();
+  var commandName = args.shift()
   if(!commandName) {
-    commandName = args.shift().toLowerCase();
+    commandName = args.shift()
   }
+  if(!commandName) return
+  commandName = commandName.toLowerCase()
 
   const command = await client.commands.get(commandName)
     || await client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
