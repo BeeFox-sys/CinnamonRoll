@@ -9,19 +9,7 @@ const reactResponse = mongoose.model('reactions', schemas.reaction)
 module.exports = {
 	name: 'location',
 	aliases: ['l'],
-	description: `
-	**Add <name>**
-	Adds a new location with the name \`<name>\`
-	**<location> remove**
-	Removes the location \`<location>\`
-	**<location> colour <hex|word>**
-	Sets \`<location>\`'s colour to a hex code or a word
-	**<location> description <description>**
-	Sets \`<location>\`'s description to \`<description>\`
-	**<location> reference add <name> <url>**
-	Adds a reference to \`<location>\`
-	**<location> reference remove <name>**
-	Removes a reference from \`<location>\``,
+	description: `Displays location/s, or edits a location`,
 	hidden: false,
 	args: false,
 	argsMin: 0,
