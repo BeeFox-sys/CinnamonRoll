@@ -25,7 +25,7 @@ module.exports = {
 	hidden: false,
 	args: false,
 	argsMin: 0,
-  usage: [`**\nLists all locations`
+  usage: [`**\nLists all locations`,
           `[location]**\nDisplays a single location`,
           `add <name>**\nCreates a new location`,
           `<location> remove**\nDeletes a location`,
