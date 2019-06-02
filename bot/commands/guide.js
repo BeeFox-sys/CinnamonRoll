@@ -14,13 +14,15 @@ module.exports = {
 		var message = await msg.channel.send(utils.warnEmbed(
 `There are several guides to choose from, please react with the corresponding reaction
 👤: Character creation
+👥: Advanced character creation
 🗺: Location Creation
 🔧: Server setup guide`))
 		await message.react("👤")
+		await message.react("👥")
 		await message.react("🗺")
 		await message.react("🔧")
 		var reactionFilter = (reaction, user)=>{
-			return ['👤','🗺','🔧'].includes(reaction.emoji.name) && user.id === msg.author.id;
+			return ['👤','🗺','🔧',"👥"].includes(reaction.emoji.name) && user.id === msg.author.id;
 		}
 		await message.awaitReactions(reactionFilter, {max:1,time:60000*2, errors:['time']})
 		.then(collected => {
@@ -36,6 +38,10 @@ module.exports = {
 
 				case '🔧':
 					guildSetupGuide(msg,guildSettings,message)
+				break;
+				
+				case '👥':
+					advancedCharacterCreation(msg,guildSettings,message)
 				break;
 			
 				default:
@@ -174,4 +180,15 @@ async function guildSetupGuide(msg, guildSettings, message) {
 	]
 	
 	guidePage(msg, guildSetup, 0, message)
+}
+
+async function advancedCharacterCreation(msg, guildSettings, message) {
+	advancedCharacter = [
+		{
+			title:"Coming Soon!",
+			content: `This guide is being worked on`
+		}
+	]
+	
+	guidePage(msg, advancedCharacter, 0, message)
 }
