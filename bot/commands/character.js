@@ -463,6 +463,10 @@ async function setProxy(character, msg, args) {
   var proxy = args.slice(2).join(" ");
   var response;
   if(args.length > 2){
+    if(proxy.includes("text") == false) {
+      await msg.channel.send(utils.errorEmbed(`Example match must contain the string \`text\`.\nExample proxy setting: \`-text-\``))
+      return
+    }
     proxy = proxy.split("text")
 
     var prefix = proxy[0].trim() || ""
