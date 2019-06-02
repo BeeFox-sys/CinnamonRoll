@@ -54,7 +54,7 @@ module.exports = {
     }],
     stats: [{
       name: String,
-      amount: Number
+      value: Number
     }]
   }),
 
