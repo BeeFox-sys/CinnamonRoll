@@ -96,6 +96,11 @@ module.exports = {
           updateBag(character, msg, args, client)
         break;
 
+        case "stat":
+        case "stats":
+          updateStat(character, msg, args, client)
+        break;
+
         case "displayname":
         case "nickname":
           await setDisplayName(character, msg, args)
@@ -263,6 +268,11 @@ async function showCharacterStats(character, msg, client, message) {
     .setColor(character.colour)
   if(character.avatar || character.references.length > 0) embed.setThumbnail(character.avatar || character.references[0].url)
   
+  for (let index = 0; index < character.stats.length; index++) {
+    const stat = character.stats[index];
+    embed.addField(stat.name,stat.value,true)
+  }
+
   if(!message) message = await msg.channel.send(embed)
     else await message.edit(embed)  
 
@@ -612,5 +622,52 @@ async function updateBag(character, msg, args, client){
       return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
     }
     return msg.channel.send(utils.passEmbed(`Put ${quantity} ${item} into ${character.displayName || character.name}'s bag\nThere is now ${doc.bag[itemIndex].quantity} in their bag`))
+  })
+}
+
+
+//inv <item> <quantity>
+async function updateStat(character, msg, args, client){
+  var item = args[2]
+  if(item == undefined) return showCharacterStats(character, msg, client)
+  item = item
+  itemIndex = character.stats.findIndex((element) => {return element.name == item})
+  var value = args[3]
+  if(value == "clear"){
+    if(itemIndex != -1){
+      character.stats.splice(itemIndex, 1)
+      return character.save((err, doc)=>{
+        if(err){
+          console.warn(err)
+          return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
+        }
+        return msg.channel.send(utils.passEmbed(`Removed ${item} stat from ${character.displayName || character.name}'s stat sheet`))
+      })
+    } 
+    return msg.channel.send(utils.passEmbed(`That stat is not on ${character.displayName || character.name}'s stat sheet`))
+  }
+  value = +value
+  if(value + 0 != value) return msg.channel.send(utils.errorEmbed("Value must be a number or clear!"))
+  
+  var newStat = {
+    name: item,
+    value: value
+  }
+
+  if(itemIndex != -1) {
+    character.stats[itemIndex] = newStat
+  }
+  else {
+    if(character.stats.length > 20) return msg.channel.send(utils.errorEmbed("Can't have more then 20 stats! Clear one to add more!"))
+    character.stats.push(newStat) 
+    itemIndex = character.stats.length-1
+  }
+
+  return character.save((err, doc)=>{
+    if(err){
+      console.warn(err)
+      return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
+    }
+    return msg.channel.send(utils.passEmbed(`Set ${character.displayName || character.name}'s ${doc.stats[itemIndex].name} stat to ${doc.stats[itemIndex].value}`))
   })
 }
