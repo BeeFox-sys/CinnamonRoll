@@ -14,7 +14,6 @@ module.exports = {
 		var message = await msg.channel.send(utils.warnEmbed(
 `There are several guides to choose from, please react with the corresponding reaction
 👤: Character creation
-<<<<<<< HEAD
 👥: Advanced character creation
 🗺: Location Creation
 🔧: Server setup guide`))
@@ -24,15 +23,6 @@ module.exports = {
 		await message.react("🔧")
 		var reactionFilter = (reaction, user)=>{
 			return ['👤','🗺','🔧',"👥"].includes(reaction.emoji.name) && user.id === msg.author.id;
-=======
-🗺: Location Creation
-🔧: Server setup guide`))
-		await message.react("👤")
-		await message.react("🗺")
-		await message.react("🔧")
-		var reactionFilter = (reaction, user)=>{
-			return ['👤','🗺','🔧'].includes(reaction.emoji.name) && user.id === msg.author.id;
->>>>>>> Added refrence adding to character guide and prepared the making of two other guides
 		}
 		await message.awaitReactions(reactionFilter, {max:1,time:60000*2, errors:['time']})
 		.then(collected => {
@@ -49,13 +39,10 @@ module.exports = {
 				case '🔧':
 					guildSetupGuide(msg,guildSettings,message)
 				break;
-<<<<<<< HEAD
 				
 				case '👥':
 					advancedCharacterCreation(msg,guildSettings,message)
 				break;
-=======
->>>>>>> Added refrence adding to character guide and prepared the making of two other guides
 			
 				default:
 					break;
@@ -131,7 +118,6 @@ When editing a character, all your commands will start with \`${guildSettings.pr
 There are many things you can set for your character! You can set your characters, nickname, birthday, pronouns, avatar, colour, and description!
 Feel free to try them out! An example command is \`${guildSettings.prefix}character <id> description This is an awsome character!\``
 		},{
-<<<<<<< HEAD
 			title:"Thats all folks!",
 			content:
 `And thats everything!
@@ -178,17 +164,11 @@ Refrences, proxies, bag, and stats are all covered in this guide!`
 			title:"Character Refrences",
 			content:
 `You can add refrence links to your character! This is done by using the refrence add command
-=======
-			title:"Character Refrences",
-			content:
-`You can also add refrence links to your character! This is done by using the refrence add command
->>>>>>> Added refrence adding to character guide and prepared the making of two other guides
 \`${guildSettings.prefix}character <id> reference add <name> <link>\`
 This will add a refrence with the name \`<name>\` and it links to \`<link>\`
 It will look like this on your character's profile: [This is a refrence](https://duckduckgo.com/?q=cinnamon+roll&iar=images)
 Tip! If your character doesn't have an avatar and their first refrence links to an image, they'll use that as their avatar until you set one!`
 		},{
-<<<<<<< HEAD
 			title:"The bag!",
 			content:
 `A character's bag is their inventory!
@@ -204,8 +184,6 @@ The only diffrence is that you use the bag subcommand, and that you can set it t
 \`${guildSettings.prefix}character <id> stat <stat> <value>\`
 One last thing is that when you set an item in bag it adds or removes the number from the previous number, while setting a stat sets it to what you type in`
 		},{
-=======
->>>>>>> Added refrence adding to character guide and prepared the making of two other guides
 			title:"Character Proxies",
 			content:
 `Now we are into the *scary stuff*
@@ -228,33 +206,6 @@ You can choose what to type before and after your message to!
 And you can customise it all you like! by just changing what is in front of, and after, \`text\` in the proxy command`
 		}
 	]
-<<<<<<< HEAD
 	
 	guidePage(msg, advancedCharacter, 0, message)
-=======
-
-	guidePage(msg, characterCreation, 0, message)
-}
-
-async function locationCreationGuide(msg, guildSettings, message) {
-	locationCreation = [
-		{
-			title:"Coming Soon!",
-			content: `This guide is being worked on`
-		}
-	]
-	
-	guidePage(msg, locationCreation, 0, message)
-}
-
-async function guildSetupGuide(msg, guildSettings, message) {
-	guildSetup = [
-		{
-			title:"Coming Soon!",
-			content: `This guide is being worked on`
-		}
-	]
-	
-	guidePage(msg, guildSetup, 0, message)
->>>>>>> Added refrence adding to character guide and prepared the making of two other guides
 }
