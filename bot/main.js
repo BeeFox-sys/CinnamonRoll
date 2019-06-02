@@ -81,7 +81,9 @@ client.on('message',async msg => {
 
   const command = await client.commands.get(commandName)
     || await client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
-  if(!command) return
+  if(!command) {
+    await msg.channel.send(utils.errorEmbed(`Unknown command \`${command}\`. For a list of commands, type \`${settings.prefix} help\`, or just mention me!`))
+  }
   if (command.args && args.length < command.argsMin) {
     let reply = `You didn't provide enough arguments!`;
 			if (command.usage) {
