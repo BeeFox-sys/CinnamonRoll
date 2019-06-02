@@ -118,35 +118,6 @@ When editing a character, all your commands will start with \`${guildSettings.pr
 There are many things you can set for your character! You can set your characters, nickname, birthday, pronouns, avatar, colour, and description!
 Feel free to try them out! An example command is \`${guildSettings.prefix}character <id> description This is an awsome character!\``
 		},{
-			title:"Character Refrences",
-			content:
-`You can also add refrence links to your character! This is done by using the refrence add command
-\`${guildSettings.prefix}character <id> reference add <name> <link>\`
-This will add a refrence with the name \`<name>\` and it links to \`<link>\`
-It will look like this on your character's profile: [This is a refrence](https://duckduckgo.com/?q=cinnamon+roll&iar=images)
-Tip! If your character doesn't have an avatar and their first refrence links to an image, they'll use that as their avatar until you set one!`
-		},{
-			title:"Character Proxies",
-			content:
-`Now we are into the *scary stuff*
-I'm joking! Don't worry.
-Now that your character is looking a bit more fleshed out, wouldn't it be awsome if they could speak?
-Try running \`${guildSettings.prefix}character <id> proxy +text+\``
-		},{
-			title:"Character Proxies",
-			content:
-`Great! now type a message starting and ending with \`+\`
-+Like this!+`
-		},{
-			title:"It's alive!!!",
-			content:
-`Whoah! Look at that!
-You can choose what to type before and after your message to!
-\`Character:text\` will make it so if you type Character: at the start of a message, it will be proxied!
-\`text-Character\` will do the same, but with -Character at the end of your message
-\`text\` or leaving it blank will disable proxying
-And you can customise it all you like! by just changing what is in front of, and after, \`text\` in the proxy command`
-		},{
 			title:"Thats all folks!",
 			content:
 `And thats everything!
@@ -185,8 +156,54 @@ async function guildSetupGuide(msg, guildSettings, message) {
 async function advancedCharacterCreation(msg, guildSettings, message) {
 	advancedCharacter = [
 		{
-			title:"Coming Soon!",
-			content: `This guide is being worked on`
+			title:"Advanced Character Creation",
+			content:
+`Welcome to the advanced character creation guide! This will go through the more complex parts of character creation.
+Refrences, proxies, bag, and stats are all covered in this guide!`
+		},{
+			title:"Character Refrences",
+			content:
+`You can add refrence links to your character! This is done by using the refrence add command
+\`${guildSettings.prefix}character <id> reference add <name> <link>\`
+This will add a refrence with the name \`<name>\` and it links to \`<link>\`
+It will look like this on your character's profile: [This is a refrence](https://duckduckgo.com/?q=cinnamon+roll&iar=images)
+Tip! If your character doesn't have an avatar and their first refrence links to an image, they'll use that as their avatar until you set one!`
+		},{
+			title:"The bag!",
+			content:
+`A character's bag is their inventory!
+You can add items to the bag using \`${guildSettings.prefix}character <id> bag <item> <quantity>\`
+This command will add (or remove) the quantity of \`<item>\`!
+To clear an item you can do \`${guildSettings.prefix}character <id> bag <item> clear\` or by taking away all the items by adding a negitive number!
+Give it a try!`
+		},{
+			title:"Stats!",
+			content:
+`Stats use the same syntax as the bag!
+The only diffrence is that you use the bag subcommand, and that you can set it to negitive numbers!
+\`${guildSettings.prefix}character <id> stat <stat> <value>\`
+One last thing is that when you set an item in bag it adds or removes the number from the previous number, while setting a stat sets it to what you type in`
+		},{
+			title:"Character Proxies",
+			content:
+`Now we are into the *scary stuff*
+I'm joking! Don't worry.
+Now that your character is looking a bit more fleshed out, wouldn't it be awsome if they could speak?
+Try running \`${guildSettings.prefix}character <id> proxy +text+\``
+		},{
+			title:"Character Proxies",
+			content:
+`Great! now type a message starting and ending with \`+\`
++Like this!+`
+		},{
+			title:"It's alive!!!",
+			content:
+`Whoah! Look at that!
+You can choose what to type before and after your message to!
+\`Character:text\` will make it so if you type Character: at the start of a message, it will be proxied!
+\`text-Character\` will do the same, but with -Character at the end of your message
+\`text\` or leaving it blank will disable proxying
+And you can customise it all you like! by just changing what is in front of, and after, \`text\` in the proxy command`
 		}
 	]
 	
