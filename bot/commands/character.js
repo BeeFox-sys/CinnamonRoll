@@ -182,9 +182,8 @@ async function showCharacter(character, msg, client, message) {
 
 		if(!message) message = await msg.channel.send(embed)
     else await message.edit(embed)
-    console.log(Object.keys(character.stats).length)
-    if(Object.keys(character.bag).length > 0) await message.react("🎒")
-    if(Object.keys(character.stats).length > 0) await message.react("🎲")
+    if(character.bag.length > 0) await message.react("🎒")
+    if(character.stats.length > 0) await message.react("🎲")
     var reactionFilter = (reaction, user) => {return ["🎒","🎲"].includes(reaction.emoji.name) && user.id === msg.author.id;}
     message.awaitReactions(reactionFilter, {max:1,time:60000*2, errors:["time"]})
       .then(async collection => {
@@ -219,11 +218,9 @@ async function showCharacterBag(character, msg, client, message) {
   if(character.avatar || character.references.length > 0) embed.setThumbnail(character.avatar || character.references[0].url)
   
   invString = ``
-  for (const item in character.bag) {
-    if (character.bag.hasOwnProperty(item)) {
-      const quantity = character.bag[item];
-        invString += `${quantity} | ${item}`
-    }
+  for (let index = 0; index < character.bag.length; index++) {
+    const item = character.bag[index];
+    invString += `${item.quantity} | ${item.name}\n`    
   }
 
   embed.setDescription(invString || `Their bag is empty!`)
@@ -232,7 +229,7 @@ async function showCharacterBag(character, msg, client, message) {
     else await message.edit(embed)  
 
     await message.react("👤")
-    if(Object.keys(character.stats).length > 0)await message.react("🎲")
+    if(character.stats.length > 0)await message.react("🎲")
     var reactionFilter = (reaction, user) => {return ["👤","🎲"].includes(reaction.emoji.name) && user.id === msg.author.id;}
     message.awaitReactions(reactionFilter, {max:1,time:60000*2, errors:["time"]})
       .then(async collection => {
@@ -270,7 +267,7 @@ async function showCharacterStats(character, msg, client, message) {
     else await message.edit(embed)  
 
     await message.react("👤")
-    if(Object.keys(character.bag).length > 0) await message.react("🎒")
+    if(character.bag.length > 0) await message.react("🎒")
     var reactionFilter = (reaction, user) => {return ["👤","🎒"].includes(reaction.emoji.name) && user.id === msg.author.id;}
     message.awaitReactions(reactionFilter, {max:1,time:60000*2, errors:["time"]})
       .then(async collection => {
@@ -565,11 +562,55 @@ async function setBirthday(character, msg, args){
 async function updateBag(character, msg, args, client){
   var item = args[2]
   if(item == undefined) return showCharacterBag(character, msg, client)
-  item = item.toLowerCase()
+  item = item
+  itemIndex = character.bag.findIndex((element) => {return element.name == item})
   var quantity = args[3]
-  if(quantity == "clear") return msg.channel.send(utils.passEmbed(`Removed ${item} from ${character.displayName || character.name}'s bag`))
-  if(quantity == undefined)   return msg.channel.send(utils.passEmbed(`${character.displayName || character.name} has ${character.bag[item] || "no"} ${item}`))
+  if(quantity == "clear"){
+    if(itemIndex != -1){
+      character.bag.splice(itemIndex, 1)
+      return character.save((err, doc)=>{
+        if(err){
+          console.warn(err)
+          return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
+        }
+        return msg.channel.send(utils.passEmbed(`Removed ${item} from ${character.displayName || character.name}'s bag`))
+      })
+    } 
+    return msg.channel.send(utils.passEmbed(`That item is not in ${character.displayName || character.name}'s bag`))
+  }
   quantity = +quantity
-  if(quantity + 0 != quantity) return msg.channel.send(utils.errorEmbed("Quantity must be a number!"))
-  return msg.channel.send(utils.passEmbed(`Put ${quantity} ${item} item ${character.displayName || character.name}'s bag\nNow they have ${character.bag[item].quantity} of ${item}`))
+  if(quantity + 0 != quantity) return msg.channel.send(utils.errorEmbed("Quantity must be a number or clear!"))
+  
+  var newItem = {
+    name: item,
+    quantity: quantity
+  }
+
+  if(itemIndex != -1) {
+    newItem.quantity += character.bag[itemIndex].quantity
+    character.bag[itemIndex] = newItem
+  }
+  else {
+    character.bag.push(newItem)
+    itemIndex = character.bag.length-1
+  }
+
+  if(character.bag[itemIndex].quantity < 1){
+    character.bag.splice(itemIndex, 1)
+      return character.save((err, doc)=>{
+        if(err){
+          console.warn(err)
+          return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
+        }
+        return msg.channel.send(utils.passEmbed(`Put ${quantity} ${item} into ${character.displayName || character.name}'s bag\nThere is none left!`))
+      })
+  }
+
+  return character.save((err, doc)=>{
+    if(err){
+      console.warn(err)
+      return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
+    }
+    return msg.channel.send(utils.passEmbed(`Put ${quantity} ${item} into ${character.displayName || character.name}'s bag\nThere is now ${doc.bag[itemIndex].quantity} in their bag`))
+  })
 }
