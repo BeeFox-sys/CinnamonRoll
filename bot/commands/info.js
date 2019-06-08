@@ -1,5 +1,5 @@
 const utils = require('../util.js');
-const config = require("../config.json")
+const config = require("../../config.json")
 
 module.exports = {
   name: 'info',

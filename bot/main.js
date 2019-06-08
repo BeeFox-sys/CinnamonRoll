@@ -1,5 +1,5 @@
 const Discord = require('discord.js');
-const config = require('./config.json');
+const config = require('../config.json');
 const utils = require('./util.js')
 const fs = require('fs');
 const proxyMethod = require('./proxy.js')

@@ -1,6 +1,6 @@
 const Discord = require('discord.js');
 const utils = require('../util.js');
-const config = require('../config.json')
+const config = require('../../config.json')
 const mongoose = require('mongoose');
 const schemas = require('../schemas.js')
 const messages = mongoose.model('messages', schemas.message)
