@@ -1,5 +1,6 @@
+const { Permissions } = require('discord.js');
 const utils = require('../util.js');
-const config = require("../../config.json")
+const config = require("../../config.json");
 
 module.exports = {
   name: 'info',
@@ -10,10 +11,10 @@ module.exports = {
   usage:[],
   async execute(client, guildSettings, msg, args) {
     // Fetch the bot info and get the client ID
-    const oauth_app = await client.fetchApplication();
-    const client_id = oauth_app.id;
+    const oauthApp = await client.fetchApplication();
+    const clientID = oauthApp.id;
     /*
-    Give the bot permissions integer "536996928" which allows the following permissions:
+    Give the bot the following permission flags:
 
     Manage webhooks - so the bot can make [NPC] posts
     View channels - so the bot can read text channels (and see voice channels) throughout the server
@@ -24,10 +25,21 @@ module.exports = {
     Read messages history - might need this later on for message lookup/context-aware stuff
     Add reactions - let the bot react to messages e.g. for controlling embed panels
     */
-    const permissions = "536996928";
+    const flags = [
+      "MANAGE_WEBHOOKS",
+      "VIEW_CHANNEL",
+      "SEND_MESSAGES",
+      "MANAGE_MESSAGES",
+      "EMBED_LINKS",
+      "ATTACH_FILES",
+      "READ_MESSAGE_HISTORY",
+      "ADD_REACTIONS"
+    ];
+    // Resolve the flags to a permissions integer
+    const permissions = Permissions.resolve(flags);
 
     // Construct the URL with proper client ID and permissions integer
-    const inviteUrl = `https://discordapp.com/oauth2/authorize?client_id=${client_id}&scope=bot&permissions=${permissions}`;
+    const inviteUrl = `https://discordapp.com/oauth2/authorize?client_id=${clientID}&scope=bot&permissions=${permissions}`;
     //Misc links
     const githubUrl = "https://github.com/PlatypodeCode/CinnamonRoll";
     // Generate Embed
