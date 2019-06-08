@@ -1,6 +1,6 @@
 const Discord = require("discord.js")
 const mongoose = require('mongoose');
-const config = require("./config.json")
+const config = require("../config.json")
 const schemas = require('./schemas.js');
 const guildSettings = mongoose.model('guildSettings', schemas.guildSettings)
 
