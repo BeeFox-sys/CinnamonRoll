@@ -36,14 +36,18 @@ for (const file of commandFiles) {
 }
 
 
-client.once('ready', async () => {
+client.on('ready', async () => {
   console.warn(`Logged in as ${client.user.tag} (ID: ${client.user.id})!`);
   console.warn(`${client.guilds.size} servers`);
   // console.warn(`${client.shard.count} shards`); // for future use once sharding becomes necessary
   await setPresence()
 });
 
-client.on('message',async msg => {
+client.on('reconnecting', () => {
+  console.warn("Lost conneciton to the Discord gateway!\nAttempting to resume the websocket connection...")
+});
+
+client.on('message', async msg => {
   if(msg.author.bot) return
   if(msg.channel.type !== 'text')	return await msg.channel.send(utils.errorEmbed('I only work in servers!'));
 
