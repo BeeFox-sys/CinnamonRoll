@@ -105,15 +105,13 @@ client.on('message', async msg => {
     // Execute command
     await command.execute(client, settings, msg, args);
     // Catch any errors
-  } catch (error) {
+  } catch (err) {
     // Log error to console
-    console.error(error);
+    console.error(err);
     // Notify the user there was an error
   	msg.channel.send(utils.errorEmbed('There was an error trying to execute that command!'));
     // Post error to logging channel if it exists
-    if(config.logChannel) {
-      await logTraceback(client, config, msg, error)
-    }
+    utils.logTraceback(client, msg, err)
   }
 });
 
@@ -152,21 +150,6 @@ async function setPresence() {
   else {
     client.user.setActivity(`Mention for help! | in ${client.guilds.size} servers`, { type: 'PLAYING'});
   }
-}
-
-
-// Traceback logging
-async function logTraceback(client, config, msg, error) {
-  const logChannel = await client.channels.get(config.logChannel);
-  var user = await client.fetchUser(msg.author.id)
-  var embed = utils.errorEmbed()
-  if(msg.content.length > 256) {
-    embed.setTitle(msg.content.substring(0, 256 - 3) + "...")
-  }
-  else embed.setTitle(msg.content)
-  embed.description = "```js\n" + error + "```"
-  embed.setFooter(`Sender: ${user.tag} (${user.id}) | Guild: ${msg.guild.id} | Channel: ${msg.channel.id}`)
-  logChannel.send(embed);
 }
 
 
