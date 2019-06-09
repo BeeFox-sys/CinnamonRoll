@@ -4,5 +4,6 @@
   "db": "mongodb://db/CinnamonRoll",
   "idCharacters": "abcdefghijklmnopqrstuvwxyz",
   "idLength": 5,
-  "owner": {"id":"123456789101112131", "name": "This can be left blank"}
+  "owner": {"id":"123456789101112131", "name": "This can be left blank"},
+  "logChannel": "123456789098765432"
 }
