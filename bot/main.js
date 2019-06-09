@@ -102,19 +102,25 @@ client.on('message', async msg => {
     }
 
   try {
-  	await command.execute(client, settings, msg, args);
+    // Execute command
+    await command.execute(client, settings, msg, args);
+    // Catch any errors
   } catch (error) {
-  	console.error(error);
+    // Log error to console
+    console.error(error);
+    // Notify the user there was an error
   	msg.channel.send(utils.errorEmbed('There was an error trying to execute that command!'));
+    // Post error to logging channel if it exists
+    if(config.logChannel) {
+      await logTraceback(client, config, msg, error)
+    }
   }
 });
 
-//reaction stuff
+// Reaction event handling
 
 reactions = require('./reactions.js')
 reactions.execute(client)
-
-
 
 client.on("guildCreate", async ()=> {
   await setPresence()
@@ -124,9 +130,11 @@ client.on("guildDelete", async ()=> {
   await setPresence()
 })
 
+
+// Finally, login with the configured token
 client.login(config.token);
 
-//Gracefull exit
+// Graceful exit
 process.on( 'SIGINT', function() {
   gracefulExit()
 })
@@ -144,6 +152,21 @@ async function setPresence() {
   else {
     client.user.setActivity(`Mention for help! | in ${client.guilds.size} servers`, { type: 'PLAYING'});
   }
+}
+
+
+// Traceback logging
+async function logTraceback(client, config, msg, error) {
+  const logChannel = await client.channels.get(config.logChannel);
+  var user = await client.fetchUser(msg.author.id)
+  var embed = utils.errorEmbed()
+  if(msg.content.length > 256) {
+    embed.setTitle(msg.content.substring(0, 256 - 3) + "...")
+  }
+  else embed.setTitle(msg.content)
+  embed.description = "```js\n" + error + "```"
+  embed.setFooter(`Sender: ${user.tag} (${user.id}) | Guild: ${msg.guild.id} | Channel: ${msg.channel.id}`)
+  logChannel.send(embed);
 }
 
 
