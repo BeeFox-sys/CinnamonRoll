@@ -174,6 +174,22 @@ utils = {
     return new Promise(async resolve => {
       setTimeout(resolve, ms);
     })
+  },
+  
+  // Traceback logging
+  async logTraceback(client, msg, err) {
+    if(config.logChannel) {
+      const logChannel = await client.channels.get(config.logChannel);
+      var embed = utils.errorEmbed()
+      var user = await client.fetchUser(msg.author.id)
+      if(msg.content.length > 256) {
+        embed.setTitle(msg.content.substring(0, 256 - 3) + "...")
+      } else embed.setTitle(msg.content)
+      embed.setFooter(`Sender: ${user.tag} (${user.id}) | Guild: ${msg.guild.id} | Channel: ${msg.channel.id}`)
+      embed.description = "```js\n" + err + "```"
+      logChannel.send(embed);
+    }
+    return
   }
 }
 
