@@ -29,7 +29,9 @@ This bot uses a JSON file for configuration. The elements are explained below. `
 * `db` - Database URI pointing to a mongoDB instance
 * `idCharacters` - A string of characters that unique IDs will be generated from
 * `idLength` - Number of characters to generate IDs with
-* `owner` - Discord user ID of the bot owner (or anyone you want to grant superuser permission for)
+* `owner` - Object containing Discord user ID and name of the bot owner (or anyone you want to grant superuser permission for)
+  - `id` - The 18-digit user ID
+  - `name` - Name to display (can be left blank)
 * `logChannel` - Discord channel ID where you want tracebacks to be posted (make sure this is private!)
 
 # Dependencies
