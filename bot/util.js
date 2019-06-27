@@ -126,6 +126,7 @@ utils = {
     },
 
   quoteFinder(array){
+    if(array[0].startsWith('"') == false) return array
     var start = null
     var end = null
     for(var i = 0; i < array.length; i++){
@@ -141,7 +142,6 @@ utils = {
       quote = array.slice(start, end).join(" ").slice(1,-1)
       var del = end - start
       array.splice(start, del, quote)
-      return utils.quoteFinder(array)
     }
     return array
   },
