@@ -40,7 +40,7 @@ module.exports.execute = async (client, guildSettings, msg) => {
       var attachments = utils.attachmentsToFileOptions(msg.attachments)
       if(!attachments && content == "")  return
       var newMessage = await hook.send(content, {
-  			username: name,
+  			username: utils.fackClyde(name),
   			avatarURL: avatar,
   			disableEveryone: true,
   			files: attachments

@@ -190,6 +190,14 @@ utils = {
       logChannel.send(embed);
     }
     return
+  },
+  fackClyde(str){
+    if(!str.toLowerCase().includes("clyde")) return str
+    var pos = str.search(/(clyde)/gi)
+    var strarry = str.split('')
+    strarry.splice(pos+1,0," ")
+    str = strarry.join("")
+    return utils.fackClyde(str)
   }
 }
 

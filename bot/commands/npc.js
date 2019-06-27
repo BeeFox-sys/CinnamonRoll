@@ -21,7 +21,7 @@ module.exports = {
     if (attachments) argLength = 1
 
     args = await utils.quoteFinder(args)
-    un = args.slice(0, 1)
+    un = utils.fackClyde(args.slice(0, 1).toString())
     content = args.slice(1).join(" ")
 
     if (un.length + content.length < argLength) return msg.channel.send(utils.errorEmbed("Message cannot be empty"))
@@ -29,7 +29,7 @@ module.exports = {
     hook = await utils.getWebhook(client, msg.channel)
 
     newMessage = await hook.send(content, {
-      username: un.join(" "),
+      username: un,
       avatarURL: "https://cdn.discordapp.com/avatars/582243614030299136/fe639cfe01e197860599ff347eed9998.png?size=256",
       disableEveryone: true,
       files: attachments
