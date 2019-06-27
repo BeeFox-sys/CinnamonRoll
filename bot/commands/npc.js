@@ -6,36 +6,40 @@ const schemas = require('../schemas.js')
 const messages = mongoose.model('messages', schemas.message)
 
 module.exports = {
-	name: 'npc',
-	aliases: ['n'],
-	description: 'Summon an extra',
+  name: 'npc',
+  aliases: ['n'],
+  description: 'Summon an extra',
   perms: [''],
-	hidden: false,
-	args: false,
-	argsMin: 1,
-	usage: ['<name> <text>**\nProxies an npc'],
-	async execute(client, guildSettings, msg, args) {
-		var attachments = utils.attachmentsToFileOptions(msg.attachments)
+  hidden: false,
+  args: false,
+  argsMin: 1,
+  usage: ['<name> <text>**\nProxies an npc'],
+  async execute(client, guildSettings, msg, args) {
+    var attachments = utils.attachmentsToFileOptions(msg.attachments)
 
-		var argLength = 2
-		if(attachments) argLength = 1
+    var argLength = 2
+    if (attachments) argLength = 1
 
-		if(args.length < argLength) return msg.channel.send(utils.errorEmbed("Message cannot be empty"))
+    args = await utils.quoteFinder(args)
+    un = args.slice(0, 1)
+    content = args.slice(1).join(" ")
 
-		hook = await utils.getWebhook(client, msg.channel)
-		un = args.shift()
+    if (un.length + content.length < argLength) return msg.channel.send(utils.errorEmbed("Message cannot be empty"))
 
-		newMessage = await hook.send(args.join(" "), {
-			username: un,
-			avatarURL: "https://cdn.discordapp.com/avatars/582243614030299136/fe639cfe01e197860599ff347eed9998.png?size=256",
-			disableEveryone: true,
-			files: attachments
-		})
-		messageRecord = new messages({
-			_id: newMessage.id,
-			owner: msg.member.id,
-			character: undefined
-		}).save()
-		await msg.delete()
-	},
+    hook = await utils.getWebhook(client, msg.channel)
+
+    newMessage = await hook.send(content, {
+      username: un.join(" "),
+      avatarURL: "https://cdn.discordapp.com/avatars/582243614030299136/fe639cfe01e197860599ff347eed9998.png?size=256",
+      disableEveryone: true,
+      files: attachments
+    })
+
+    messageRecord = new messages({
+      _id: newMessage.id,
+      owner: msg.member.id,
+      character: undefined
+    }).save()
+    await msg.delete()
+  },
 };

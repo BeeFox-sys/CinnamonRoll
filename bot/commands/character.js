@@ -22,7 +22,7 @@ module.exports = {
           `<character> reference remove <name>**\nRemoves a reference link from the character `, 
           `<character> rename <New name>**\nRenames the character`,
           `<character> avatar <url | attatchment>**\nSets the characters avatar`,
-          `<character> brithday <birthday>**\nSets the characters birthday`,
+          `<character> birthday <birthday>**\nSets the characters birthday`,
           `<character> nickname <nickname>**\nSets the characters nickname`,
           `<character> proxy <prefix>text<suffix>**\nSets the characters proxy`,
           `<character> pronouns <pronouns>**\nSets the characters pronouns`],
