@@ -147,7 +147,10 @@ async function listCharacters(guildSettings, charactersList, msg) {
 
   for (var index = 0; index < charactersList.length; index++) {
     var character = charactersList[index]
-    response.description += `\n**${character.name}** \`(${character._id})\`<@${character.owner}>`
+    if (character.proxy.prefix || character.proxy.suffix !== "") {
+      response.description += `\n[\`${character._id}\`] **${character.name}** (\`${character.proxy.prefix}text${character.proxy.suffix}\`) <@${character.owner}>`
+    } else response.description += `\n[\`${character._id}\`] **${character.name}** <@${character.owner}>`
+    
     if(response.description.length > 1800){
       part += 1
       await msg.channel.send(response)
