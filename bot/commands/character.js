@@ -7,7 +7,7 @@ const guildSettingsModel = mongoose.model('guildsettings', schemas.guildSettings
 
 module.exports = {
   name: 'character',
-  aliases: ['c', 'char'],
+  aliases: ['c', 'char'], 
   description: `Lists characters, Shows a character, or edits one of your characters`,
   hidden: false,
   args: false,
@@ -47,6 +47,7 @@ module.exports = {
     }
 
     else if (args[0] == "add" || args[0] == "new" || args[0] == "create") {
+      args.shift()
       await addCharacter(guildSettings, msg, args)
       return
     }
@@ -54,13 +55,13 @@ module.exports = {
 
 		//Find Character
 		args = utils.quoteFinder(args)
-		var name = args[0]
+		var name = args.shift()
 		var character = utils.findObjInArray(name, charactersList)
 		if(character == null) return msg.channel.send(utils.errorEmbed(`Character \"${name}\" does not exist`))
 
 		//Character editing commands
-		if(args.length > 1 && character.owner == msg.member.id){
-      switch (args[1].toLowerCase()) {
+		if(args.length > 0 && character.owner == msg.member.id){
+      switch (args.shift().toLowerCase()) {
 
         //Colour: <character> colour <hex | word>
         case "colour":
@@ -306,9 +307,9 @@ async function showCharacterStats(character, msg, client, message) {
 
 // Add a character
 async function addCharacter(guildSettings, msg, args, message) {
-  if(args.length > 1) {
+  if(args.length > 0) {
     var newCharacter = await new charactersModel()
-    newCharacter.name = args.splice(1).join(" ")
+    newCharacter.name = args.join(" ")
     newCharacter._id = await utils.generateID(charactersModel)
     newCharacter.guild = guildSettings._id
     newCharacter.owner = msg.member.id
@@ -332,7 +333,7 @@ async function addCharacter(guildSettings, msg, args, message) {
 
 // Set character colour
 async function setColour(character, msg, args) {
-  var colour = args.splice(2).join("_").toUpperCase()
+  var colour = args.join("_").toUpperCase()
   if(utils.valadateColour(colour)){
   	character.colour = colour
   	if(colour == "DEFAULT") character.colour = ""
@@ -341,7 +342,7 @@ async function setColour(character, msg, args) {
   			console.warn(err)
   			return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
   		}
-  		return msg.channel.send(utils.passEmbed(`Set colour to **${doc.colour.toLowerCase() || "default"}**`))
+  		return msg.channel.send(utils.passEmbed(`Set colour to **${utils.toTitleCase(doc.colour.replace(/_/g," ")) || "default"}**`).setColor(doc.colour))
   	})
   }
   var embed = utils.errorEmbed()
@@ -359,7 +360,7 @@ async function setColour(character, msg, args) {
 
 // Set character description
 async function setDescription(character, msg, args) {
-  var desc = args.splice(2).join(" ")
+  var desc = args.join(" ").replace(/^"(.+(?="$))"$/, '$1')
   character.description = desc
   return await character.save((err,  doc)=>{
     if(err) {
@@ -378,13 +379,13 @@ async function setDescription(character, msg, args) {
 
 // Set character references
 async function setReference(guildSettings, character, msg, args) {
-  if(args.length > 2) {
-    switch (args[2].toLowerCase()) {
+  if(args.length > 0) {
+    switch (args.shift().toLowerCase()) {
       case 'add':
       case 'new':
-        if(args.length < 5) return msg.channel.send(utils.errorEmbed("A reference must have a name and a link"))
-        var name = utils.quoteFinder(args.slice(3))[0]
-        var url = utils.quoteFinder(args.slice(3))[1]
+        if(args.length < 2) return msg.channel.send(utils.errorEmbed("A reference must have a name and a link"))
+        var name = utils.quoteFinder(args).shift()
+        var url = args.shift()
         if(name.length > 30) return msg.channel.send(utils.errorEmbed("Name cannot be longer then 30 characters"))
         var find = character.references.filter(ref => ref.name == name)
         if(find.length != 0) return msg.channel.send(utils.errorEmbed("That reference already exists!"))
@@ -404,8 +405,8 @@ async function setReference(guildSettings, character, msg, args) {
 
       case "remove":
       case "delete":
-        if(args.length < 4) return msg.channel.send(utils.errorEmbed("Must supply a reference to delete"))
-        var name = utils.quoteFinder(args.slice(3))[0]
+        if(args.length < 1) return msg.channel.send(utils.errorEmbed("Must supply a reference to delete"))
+        var name = utils.quoteFinder(args)
         var find = character.references.filter(ref => ref.name == name)
         if(find.length == 0) return msg.channel.send(utils.errorEmbed(`Reference \"${name}\" doesn't exist!`))
         var index = character.references.indexOf(find[0])
@@ -423,14 +424,14 @@ async function setReference(guildSettings, character, msg, args) {
           return;
     }
   }
-  return msg.channel.send(utils.errorEmbed(`You must specify whether you want to add or remove a reference!\nIf you want to view \`${character.name}\`'s current references, type \`${guildSettings.prefix}character ${character.name}\``))
+  return msg.channel.send(utils.errorEmbed(`You must specify whether you want to add or remove a reference!\nIf you want to view \`${character.name}\`'s current references, type \`${guildSettings.prefix}character "${character.name}"\``))
 }
 
 
 // Set character avatar
 async function setAvatar(character, msg, args) {
   var attachments = utils.attachmentsToFileOptions(msg.attachments)
-  if(!attachments){character.avatar = args[2] || undefined}
+  if(!attachments){character.avatar = args[0] || undefined}
   else {character.avatar = attachments[0].attachment}
   return await character.save((err,  doc)=>{
     if(err) {
@@ -449,8 +450,8 @@ async function setAvatar(character, msg, args) {
 
 // Set character name (rename)
 async function setName(character, msg, args) {
-  if(args.length < 3) return msg.channel.send(utils.errorEmbed("A character must have a name!"))
-  var newName = args.slice(2).join(" ")
+  if(args.length < 1) return msg.channel.send(utils.errorEmbed("A character must have a name!"))
+  var newName = args.join(" ").replace(/^"(.+(?="$))"$/, '$1')
   character.name = newName
   return await character.save(err => {
       if(err){
@@ -464,9 +465,9 @@ async function setName(character, msg, args) {
 
 // Set character proxy tags
 async function setProxy(character, msg, args) {
-  var proxy = args.slice(2).join(" ");
+  var proxy = args.join(" ");
   var response;
-  if(args.length > 2){
+  if(args.length > 0){
     if(proxy.includes("text") == false) {
       await msg.channel.send(utils.errorEmbed(`Example match must contain the string \`text\`.\nExample proxy setting: \`-text-\``))
       return
@@ -537,7 +538,7 @@ async function removeCharacter(character, msg) {
 }
 
 async function setDisplayName(character, msg, args){
-  var newName = args.slice(2).join(" ")
+  var newName = args.join(" ").replace(/^"(.+(?="$))"$/, '$1')
   character.displayName = newName
   return await character.save((err, doc) => {
       if(err){
@@ -551,7 +552,7 @@ async function setDisplayName(character, msg, args){
 }
 
 async function setPronouns(character, msg, args){
-  var pronouns = args.slice(2).join(" ")
+  var pronouns = args.join(" ").replace(/^"(.+(?="$))"$/, '$1')
   character.pronouns = pronouns
   return await character.save((err, doc) => {
       if(err){
@@ -564,7 +565,7 @@ async function setPronouns(character, msg, args){
 }
 
 async function setBirthday(character, msg, args){
-  var birthday = args.slice(2).join(" ")
+  var birthday = args.join(" ").replace(/^"(.+(?="$))"$/, '$1')
   character.birthday = birthday
   return await character.save((err, doc) => {
       if(err){
@@ -578,11 +579,11 @@ async function setBirthday(character, msg, args){
 
 //inv <item> <quantity>
 async function updateBag(character, msg, args, client){
-  var item = args[2]
+  var item = args.shift()
   if(item == undefined) return showCharacterBag(character, msg, client)
   item = item
   itemIndex = character.bag.findIndex((element) => {return element.name == item})
-  var quantity = args[3]
+  var quantity = args[0]
   if(quantity == "clear"){
     if(itemIndex != -1){
       character.bag.splice(itemIndex, 1)
@@ -636,11 +637,11 @@ async function updateBag(character, msg, args, client){
 
 //inv <item> <quantity>
 async function updateStat(character, msg, args, client){
-  var item = args[2]
+  var item = args.shift()
   if(item == undefined) return showCharacterStats(character, msg, client)
   item = item
   itemIndex = character.stats.findIndex((element) => {return element.name == item})
-  var value = args[3]
+  var value = args[0]
   if(value == "clear"){
     if(itemIndex != -1){
       character.stats.splice(itemIndex, 1)
