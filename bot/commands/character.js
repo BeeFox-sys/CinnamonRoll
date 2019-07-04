@@ -333,7 +333,7 @@ async function addCharacter(guildSettings, msg, args, message) {
 
 // Set character colour
 async function setColour(character, msg, args) {
-  var colour = args.join("_").toUpperCase()
+  var colour = args.join("_").toUpperCase().replace(/^"(.+(?="$))"$/, '$1')
   if(utils.valadateColour(colour)){
   	character.colour = colour
   	if(colour == "DEFAULT") character.colour = ""

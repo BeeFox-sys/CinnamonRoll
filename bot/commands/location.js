@@ -43,23 +43,25 @@ module.exports = {
 		}
 
     else if ((args[0] == "add" || args[0] == "new" || args[0] == "create") && await utils.checkGameAdmin(guildSettings, msg.member)) {
+      args.shift()
       await addLocation(guildSettings, msg, args)
 			return
     }
     else if ((args[0] == "add" || args[0] == "new" || args[0] == "create") && !await utils.checkGameAdmin(guildSettings, msg.member)) {
+      args.shift()
       return msg.channel.send(utils.errorEmbed("You are not a game manager"))
     }
 
 		//Find Location
 		args = utils.quoteFinder(args)
-		var name = args[0]
+		var name = args.shift()
 		var location = await utils.findObjInArray(name, locationsList)
 		if(location == null) return msg.channel.send(utils.errorEmbed(`Location \"${name}\" does not exist`))
 
     //Location editing commands
-		if(args.length > 1 && await utils.checkGameAdmin(guildSettings, msg.member)){
+		if(args.length > 0 && await utils.checkGameAdmin(guildSettings, msg.member)){
       if(guildSettings.locationLock && location.owner != msg.member.id) return showLocation(location, msg, client)
-        switch (args[1].toLowerCase()) {
+        switch (args.shift().toLowerCase()) {
         //Colour: <location> colour <hex | word>
           case "colour":
           case "color":
@@ -141,9 +143,9 @@ async function showLocation(location, msg, client) {
 
 // Add location
 async function addLocation(guildSettings, msg, args) {
-	if(args.length > 1){
+	if(args.length > 0){
 		var newLocation = await new locationsModel()
-		newLocation.name = args.splice(1).join(" ")
+		newLocation.name = args.join(" ").replace(/^"(.+(?="$))"$/, '$1')
     newLocation._id = await utils.generateID(locationsModel)
     newLocation.owner = msg.member.id
 		newLocation.guild = guildSettings._id
@@ -163,7 +165,7 @@ async function addLocation(guildSettings, msg, args) {
 
 // Set location colour
 async function setColour(location, msg, args) {
-  var colour = args.splice(2).join("_").toUpperCase()
+  var colour = args.join("_").toUpperCase().replace(/^"(.+(?="$))"$/, '$1')
   if(utils.valadateColour(colour)){
   	location.colour = colour
   	if(colour == "DEFAULT") location.colour = ""
@@ -172,7 +174,7 @@ async function setColour(location, msg, args) {
   			console.warn(err)
   			return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
   		}
-  		return msg.channel.send(utils.passEmbed(`Set colour to **${doc.colour.toLowerCase() || "default"}**`))
+  		return msg.channel.send(utils.passEmbed(`Set colour to **${doc.colour.toLowerCase() || "default"}**`).setColor(doc.colour))
   	})
   }
   var embed = utils.errorEmbed()
@@ -190,7 +192,11 @@ async function setColour(location, msg, args) {
 
 // Set location description
 async function setDescription(location, msg, args) {
-  var desc = args.splice(2).join(" ")
+  var desc = args.join(" ")
+  if (desc.charAt(0) === '"' && desc.charAt(desc.length -1) === '"')
+  {
+      desc = desc.substr(1,desc.length -2);
+  }
   location.description = desc
   return await location.save((err,  doc)=>{
     if(err) {
@@ -209,13 +215,13 @@ async function setDescription(location, msg, args) {
 
 // Set location references
 async function setReference(guildSettings, location, msg, args) {
-  if(args.length > 2) {
-    switch (args[2].toLowerCase()) {
+  if(args.length > 1) {
+    switch (args.shift().toLowerCase()) {
       case 'add':
       case 'new':
-        if(args.length < 5) return msg.channel.send(utils.errorEmbed("A reference must have a name and a link"))
-        var name = utils.quoteFinder(args.slice(3))[0]
-        var url = utils.quoteFinder(args.slice(3))[1]
+        if(args.length < 2) return msg.channel.send(utils.errorEmbed("A reference must have a name and a link"))
+        var name = utils.quoteFinder(args).shift()
+        var url = args[0]
         if(name.length > 30) return msg.channel.send(utils.errorEmbed("Name cannot be longer then 30 locations"))
         var find = location.references.filter(ref => ref.name == name)
         if(find.length != 0) return msg.channel.send(utils.errorEmbed("That reference already exists!"))
@@ -235,8 +241,8 @@ async function setReference(guildSettings, location, msg, args) {
 
       case "remove":
       case "delete":
-        if(args.length < 4) return msg.channel.send(utils.errorEmbed("Must supply a reference to delete"))
-        var name = utils.quoteFinder(args.slice(3))[0]
+        if(args.length < 1) return msg.channel.send(utils.errorEmbed("Must supply a reference to delete"))
+        var name = utils.quoteFinder(args)[0]
         var find = location.references.filter(ref => ref.name == name)
         if(find.length == 0) return msg.channel.send(utils.errorEmbed(`Reference \"${name}\" doesn't exist!`))
         var index = location.references.indexOf(find[0])
@@ -260,8 +266,8 @@ async function setReference(guildSettings, location, msg, args) {
 
 // Set location name (rename)
 async function setName(location, msg, args) {
-  if(args.length < 3) return msg.channel.send(utils.errorEmbed("A location must have a name!"))
-  var newName = args.slice(2).join(" ")
+  if(args.length < 1) return msg.channel.send(utils.errorEmbed("A location must have a name!"))
+  var newName = args.join(" ").replace(/^"(.+(?="$))"$/, '$1')
   location.name = newName
   return await location.save(err => {
       if(err){
