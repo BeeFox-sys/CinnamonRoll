@@ -24,7 +24,7 @@ module.exports = {
 				return
 			}
 
-			switch (args[0]) {
+			switch (args.shift()) {
 				case "prefix":
 					await setPrefix(guildSettings, msg, args)
 					return;
@@ -44,8 +44,8 @@ module.exports = {
 
 				case "name":
 				case "rename":
-					if(args.length > 1){
-						guildSettings.gameName = args.slice(1).join(" ")
+					if(args.length > 0){
+						guildSettings.gameName = args.join(" ").replace(/^"(.+(?="$))"$/, '$1')
 						var response = `Name set to **${guildSettings.gameName}**`
 					} else {
 						guildSettings.gameName = ""
@@ -74,7 +74,7 @@ module.exports = {
 				break
 
 				case "reset":
-					if(args[1] == guildSettings._id){
+					if(args[0] == guildSettings._id){
 						return utils.eraseGuild(msg, guildSettings._id)
 					} else {
 						return msg.channel.send(utils.errorEmbed(`Are you absolutely sure you want to do this?\nThis will delete all server settings, locations, and characters in this server!\nTo reset the server, run this command again with the servers id as an argument\n\`${guildSettings.prefix}settings reset ${guildSettings._id}\``))
@@ -119,10 +119,10 @@ async function displaySettings(guildSettings, msg) {
 
 // Set server prefix
 async function setPrefix(guildSettings, msg, args) {
-	if(args.length < 2){
+	if(args.length < 1){
 		return msg.channel.send(utils.errorEmbed('You must supply a prefix to change to'))
 	}
-	guildSettings.prefix = args.slice(1).join(" ")
+	guildSettings.prefix = args.join(" ")
 	return guildSettings.save((err, doc) => {
 		if(err){
 			console.log(err)
@@ -137,7 +137,7 @@ async function setPrefix(guildSettings, msg, args) {
 // Set server roles
 async function setRole(guildSettings, msg, args) {
 	var guildRoles = msg.guild.roles
-	var roleName = args.slice(2).join(" ")
+	var roleName = args.slice(2).join(" ").replace(/^"(.+(?="$))"$/, '$1')
 	var role = guildRoles.find(roleFind => roleFind.name === roleName);
 	switch (args[1]) {
 		case "add":
@@ -177,8 +177,8 @@ async function setRole(guildSettings, msg, args) {
 
 // Set server game name
 async function setName(guildSettings, msg, args) {
-	if(args.length > 1){
-		guildSettings.gameName = args.slice(1).join(" ")
+	if(args.length > 0){
+		guildSettings.gameName = args.join(" ").replace(/^"(.+(?="$))"$/, '$1')
 		var response = `Name set to **${guildSettings.gameName}**`
 	} else {
 		guildSettings.gameName = ""
@@ -236,7 +236,7 @@ async function removeLocation(msg, settings, args) {
 
 	//Find location
 	args = utils.quoteFinder(args)
-	var name = args[2]
+	var name = args.shift()
 	var location = await utils.findObjInArray(name, settings.locations)
 	if(location == null) return msg.channel.send(utils.errorEmbed(`Location \"${name}\" does not exist`))
 
@@ -280,7 +280,7 @@ async function removeCharacter(msg, settings, args) {
 
 	//Find character
 	args = utils.quoteFinder(args)
-	var name = args[2]
+	var name = args.shift()
 	var character = await utils.findObjInArray(name, settings.characters)
 	if(character == null) return msg.channel.send(utils.errorEmbed(`character \"${name}\" does not exist`))
 
