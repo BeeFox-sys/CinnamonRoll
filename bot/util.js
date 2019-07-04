@@ -116,6 +116,11 @@ utils = {
     return /^[0-9A-F]{6}$/i.test(colour.replace("#", ""))
   },
 
+  validateUrl(url) {
+    pattern = new RegExp(/^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/igm);
+    return pattern.test(url);
+  },
+
   toTitleCase(str) {
         return str.replace(
             /\w\S*/g,

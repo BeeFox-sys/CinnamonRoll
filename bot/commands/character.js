@@ -388,6 +388,7 @@ async function setReference(guildSettings, character, msg, args) {
         if(name.length > 30) return msg.channel.send(utils.errorEmbed("Name cannot be longer then 30 characters"))
         var find = character.references.filter(ref => ref.name == name)
         if(find.length != 0) return msg.channel.send(utils.errorEmbed("That reference already exists!"))
+        if (utils.validateUrl(url) !== true) return msg.channel.send(utils.errorEmbed(`\`${url}\` is not a valid URL. Make sure the website exists and that the link starts with \`http://\` or \`https://\`.`))
         character.references.push({
           name: name,
           url: url
