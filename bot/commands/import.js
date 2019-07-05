@@ -19,7 +19,11 @@ module.exports = {
 	example: '',
 	async execute(client, guildSettings, msg, args) {
 		var attachments = msg.attachments.array()
-		if(attachments.length != 1) return msg.channel.send(utils.errorEmbed("You must attach only one file from either Tupperbox, CinnamonRoll, or Pluralkit"))
+		if(attachments.length != 1 || !attachments[0].filename.toUpperCase().endsWith(".JSON")) return msg.channel.send(utils.errorEmbed("You must attach only one file from either Tupperbox, CinnamonRoll, or Pluralkit"))
+		if(attachments[0].filesize > 64000000){
+			return msg.channel.send(utils.errorEmbed("To prevent overloading the server and reduce running costs, Cinnamon roll only accepts files 8mb and under for importing"))
+		}
+
 		
 		await request.get(attachments[0].url, (error, response, body) => {
 			try{
