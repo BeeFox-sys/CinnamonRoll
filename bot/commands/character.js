@@ -65,7 +65,7 @@ module.exports = {
       var message = `Character \"${name}\" does not exist`
       if(suggestedCharacters){
         suggestedCharacters = suggestedCharacters.map(suggestion => suggestion[1])
-        message += `\nDid you mean:\n${suggestedCharacters.join(`\n`)}`
+        message += `\n***Did you mean:***\n${suggestedCharacters.join(`\n`)}`
       }
       return msg.channel.send(utils.errorEmbed(message))
     }

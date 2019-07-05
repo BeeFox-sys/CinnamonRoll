@@ -4,6 +4,7 @@ const utils = require('../util.js');
 const schemas = require('../schemas.js');
 const locationsModel = mongoose.model('locations', schemas.location)
 const guildSettingsModel = mongoose.model('guildsettings', schemas.guildSettings)
+const fuzzyjs = require("fuzzyset.js")
 
 
 module.exports = {
@@ -54,9 +55,18 @@ module.exports = {
 
 		//Find Location
 		args = utils.quoteFinder(args)
-		var name = args.shift()
+		var name = args.shift().toLowerCase()
 		var location = await utils.findObjInArray(name, locationsList)
-		if(location == null) return msg.channel.send(utils.errorEmbed(`Location \"${name}\" does not exist`))
+		if(location == null){
+      var locationNames = locationsList.map(location => location.name)
+      var locationFuzz = FuzzySet(locationNames).get(name)
+      var message = `Location \"${name}\" does not exist`
+      if(locationFuzz != null){
+        var suggestedLocations = locationFuzz.map(location => location[1])
+        message += `\n***Did you mean:***\n${suggestedLocations.join("\n")}` 
+      }
+      return msg.channel.send(utils.errorEmbed(message))
+    }
 
     //Location editing commands
 		if(args.length > 0 && await utils.checkGameAdmin(guildSettings, msg.member)){
