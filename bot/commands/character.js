@@ -2,8 +2,9 @@ const Discord = require('discord.js');
 const mongoose = require('mongoose');
 const utils = require('../util.js');
 const schemas = require('../schemas.js');
-const charactersModel = mongoose.model('characters', schemas.character)
-const guildSettingsModel = mongoose.model('guildsettings', schemas.guildSettings)
+const charactersModel = mongoose.model('characters', schemas.character);
+const guildSettingsModel = mongoose.model('guildsettings', schemas.guildSettings);
+const fuzzyjs = require("fuzzyset.js")
 
 module.exports = {
   name: 'character',
@@ -55,9 +56,19 @@ module.exports = {
 
 		//Find Character
 		args = utils.quoteFinder(args)
-		var name = args.shift()
+		var name = args.shift().toLowerCase()
 		var character = utils.findObjInArray(name, charactersList)
-		if(character == null) return msg.channel.send(utils.errorEmbed(`Character \"${name}\" does not exist`))
+		if(character == null) {
+      var characterNames = charactersList.map(character => character.name)
+      var characterFuzz = FuzzySet(characterNames)
+      var suggestedCharacters = characterFuzz.get(name)
+      var message = `Character \"${name}\" does not exist`
+      if(suggestedCharacters){
+        suggestedCharacters = suggestedCharacters.map(suggestion => suggestion[1])
+        message += `\nDid you mean:\n${suggestedCharacters.join(`\n`)}`
+      }
+      return msg.channel.send(utils.errorEmbed(message))
+    }
 
 		//Character editing commands
 		if(args.length > 0 && character.owner == msg.member.id){

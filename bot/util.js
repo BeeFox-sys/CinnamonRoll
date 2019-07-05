@@ -101,7 +101,7 @@ utils = {
     }
     if(result == null){
       for (var i = 0; i < objectsArray.length; i++) {
-        if(objectsArray[i].name == search){
+        if(objectsArray[i].name.toLowerCase() == search){
           result = objectsArray[i]
         }
       }
