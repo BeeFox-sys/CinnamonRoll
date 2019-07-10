@@ -111,7 +111,7 @@ client.on('message', async msg => {
     // Notify the user there was an error
     msg.channel.send(utils.errorEmbed('There was an error trying to execute that command!'));
     // Post error to logging channel if it exists
-    utils.logTraceback(client, msg, err)
+    utils.logTraceback(client, err, msg)
   }
 });
 
@@ -153,10 +153,10 @@ async function setPresence() {
 }
 
 
-// Close client connection and exit gracefully
+// Log out of Discord and exit gracefully
 function gracefulExit() {
-  console.warn("\nGracefully shutting down");
-  client.destroy()
-  console.warn('Goodbye')
+  console.warn("\nGracefully shutting down...");
+  client.destroy();
+  console.warn("Goodbye");
   process.exit();
 }

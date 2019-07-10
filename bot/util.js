@@ -183,19 +183,23 @@ utils = {
   },
 
   // Traceback logging
-  async logTraceback(client, msg, err) {
-    if(config.logChannel) {
-      const logChannel = await client.channels.get(config.logChannel);
-      var embed = utils.errorEmbed()
-      var user = await client.fetchUser(msg.author.id)
-      if(msg.content.length > 256) {
-        embed.setTitle(msg.content.substring(0, 256 - 3) + "...")
-      } else embed.setTitle(msg.content)
-      embed.setFooter(`Sender: ${user.tag} (${user.id}) | Guild: ${msg.guild.id} | Channel: ${msg.channel.id}`)
-      embed.description = "```js\n" + err + "```"
-      logChannel.send(embed);
+  async logTraceback(err, client, msg) {
+    try {
+      if (config.logChannel) {
+        const logChannel = await client.channels.get(config.logChannel);
+        var embed = utils.errorEmbed()
+        var user = await client.fetchUser(msg.author.id)
+        if (msg.content.length > 256) {
+          embed.setTitle(msg.content.substring(0, 256 - 3) + "...")
+        } else embed.setTitle(msg.content)
+        embed.setFooter(`Sender: ${user.tag} (${user.id}) | Guild: ${msg.guild.id} | Channel: ${msg.channel.id}`)
+        embed.description = "```js\n" + err + "```"
+        logChannel.send(embed);
+      }
+      return
+    } catch (e) {
+      console.warn("Something went wrong, we couldn't log this error to the log channel because of the following error:\n" + e)
     }
-    return
   },
   fackClyde(str){
     if(!str.toLowerCase().includes("clyde")) return str
