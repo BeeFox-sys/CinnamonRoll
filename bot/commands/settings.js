@@ -44,21 +44,7 @@ module.exports = {
 
 				case "name":
 				case "rename":
-					if (args.length > 0) {
-						guildSettings.gameName = args.join(" ").replace(/^"(.+(?="$))"$/, '$1')
-						var response = `Name set to **${guildSettings.gameName}**`
-					} else {
-						guildSettings.gameName = ""
-						var response = "Name Cleared"
-					}
-					return guildSettings.save((err, doc) => {
-						if (err) {
-							console.log(err)
-							return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command!"))
-						} else {
-							return msg.channel.send(utils.passEmbed(response))
-						}
-					})
+					await setName(guildSettings, msg, args)
 					break;
 
 				case "delete":
