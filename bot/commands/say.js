@@ -12,7 +12,7 @@ module.exports = {
 	usage: [],
 	example: [],
 	async execute(client, guildSettings, msg, args) {
-    if(msg.member.id == config.owner.id){
+		if (msg.member.id == config.owner.id) {
 			var message = args.join(" ")
 			await msg.channel.send(message)
 			return await msg.delete()
