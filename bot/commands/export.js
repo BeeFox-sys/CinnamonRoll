@@ -133,10 +133,8 @@ async function exportAll(guildSettings, msg) {
 	for (let i = 0; i < guildSettings.locations.length; i++) {
 		const document = guildSettings.locations[i];
 		exportArray.locations.push(await cleanObject(document))
-		if(i == guildSettings.locations.length-1){
-			createFile(exportArray, msg, exportMsg)
-		}
 	}
+	createFile(exportArray, msg, exportMsg)
 }
 
 async function exportBackup(guildSettings, msg){
