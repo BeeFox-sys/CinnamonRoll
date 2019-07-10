@@ -43,6 +43,7 @@ module.exports = {
 			case "backup":
 				exportBackup(guildSettings, msg)
 			default:
+				msg.channel.send(utils.errorEmbed(`You must have one of the following options:\n${guildSettings.prefix}export location [name or id]\n${guildSettings.prefix}export character [name or id]\n${guildSettings.prefix}export all\n${guildSettings.prefix}export all locations\n${guildSettings.prefix}export all characters`))
 				break;
 		}
 	},
