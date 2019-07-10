@@ -8,7 +8,7 @@ module.exports = {
   decription: 'Shows information about the bot',
   hidden: false,
   args: false,
-  usage:["**"],
+  usage: ["**"],
   async execute(client, guildSettings, msg, args) {
     // Fetch the bot info and get the client ID
     const oauthApp = await client.fetchApplication();
@@ -40,18 +40,23 @@ module.exports = {
 
     // Construct the URL with proper client ID and permissions integer
     const inviteUrl = `https://discordapp.com/oauth2/authorize?client_id=${clientID}&scope=bot&permissions=${permissions}`;
-    //Misc links
+
+    // Misc links
     const githubUrl = "https://github.com/PlatypodeCode/CinnamonRoll";
-    // Generate Embed
+
     const infoMessage = `CinnamonRoll is a bot designed for roleplay on Discord. It allows you to create characters and set up message proxying, set scenes and define locations, post as NPCs, roll dice and more.\n\nType \`${guildSettings.prefix}help\` for a list of commands and \`${guildSettings.prefix}help [command]\` to find out how they work!\n\nWe also have a support server for help, announcements, discussion, suggestions, etc`;
+
     const serverUrl = "https://discord.gg/PrKWQP2";
+
+     // Generate Embed
     const embed = utils.passEmbed()
       .addField("CinnamonRoll", infoMessage)
-      .addField("Add the bot!",`[Click here to add CinnamonRoll to your server](${inviteUrl})`)
-      .addField("See the code!",`[Click here to view the GitHub for CinnamonRoll](${githubUrl})`)
+      .addField("Add the bot!", `[Click here to add CinnamonRoll to your server](${inviteUrl})`)
+      .addField("See the code!", `[Click here to view the GitHub for CinnamonRoll](${githubUrl})`)
       .addField("Get help!", `[Click here to join our support server](${serverUrl})`);
-      if(config.owner.name != "") embed.setFooter(`Instance Owner: ${config.owner.name}`)
+    if (config.owner.name != "") embed.setFooter(`Instance Owner: ${config.owner.name}`)
+
     // Finally, send the embed with all the content
     return msg.channel.send(embed);
-  },
+  }
 };

@@ -30,7 +30,7 @@ module.exports = {
 
     newMessage = await hook.send(content, {
       username: un,
-      avatarURL: "https://cdn.discordapp.com/avatars/582243614030299136/fe639cfe01e197860599ff347eed9998.png?size=256",
+      avatarURL: "https://cdn.discordapp.com/avatars/582243614030299136/fe639cfe01e197860599ff347eed9998.png?size=256", // Send an empty transparent PNG file so the default avatar is replaced with nothingness
       disableEveryone: true,
       files: attachments
     })

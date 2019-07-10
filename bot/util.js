@@ -14,7 +14,7 @@ utils = {
   		var hook
   		webhooks = webhooks.filter(hook => hook.channelID === channel.id)
   		if(webhooks.find(hook => hook.owner.id === client.user.id) == null){
-  			hook = await channel.createWebhook("CinnamonRP")
+  			hook = await channel.createWebhook("CinnamonRoll")
   		} else {
   			hook = await webhooks.find(hook => hook.owner.id === client.user.id)
   		}
@@ -109,7 +109,7 @@ utils = {
     return result
   },
 
-  valadateColour(colour){
+  validateColour(colour){
     if (colour === 'RANDOM') return true
     colourTest = Discord.Constants.Colors[colour]
     if(colourTest != undefined) return true
@@ -150,10 +150,10 @@ utils = {
     }
     return array
   },
-  attachmentsToFileOptions(attatchments){
-    if(attatchments.size == 0) return undefined
+  attachmentsToFileOptions(attachments){
+    if(attachments.size == 0) return undefined
     var fileOptions = []
-    attatchments.tap((attachment)=>{
+    attachments.tap((attachment)=>{
       fileOptions.push({
         attachment: attachment.url,
         name: attachment.filename
@@ -163,7 +163,7 @@ utils = {
   },
   async eraseGuild(msg, guildID){
     return new Promise(async resolve => {
-      msg.channel.send(utils.errorEmbed("Reseting your guild, this may take some time"))
+      msg.channel.send(utils.errorEmbed("Resetting your guild, This may take some time..."))
       var guild = await guildSettings.findById(guildID).populate('locations').populate('characters').exec()
       for(var ci = 0; ci < guild.characters.length; ci++){
         guild.characters[ci].delete()
@@ -180,7 +180,7 @@ utils = {
       setTimeout(resolve, ms);
     })
   },
-  
+
   // Traceback logging
   async logTraceback(client, msg, err) {
     if(config.logChannel) {
