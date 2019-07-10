@@ -7,13 +7,13 @@ module.exports = {
 
   guildSettings: new mongoose.Schema({
     _id: String,
-    prefix: {type:String, default: config.defaultPrefix},
+    prefix: { type: String, default: config.defaultPrefix },
     locations: [{ type: String, ref: 'locations' }],
-    characters: [{ type: String, ref:'characters' }],
+    characters: [{ type: String, ref: 'characters' }],
     admin: [String],
     gameName: String,
-    enableImport: {type: Boolean, default: true},
-    locationLock: {type: Boolean, default: false}
+    enableImport: { type: Boolean, default: true },
+    locationLock: { type: Boolean, default: false }
   }),
 
   location: new mongoose.Schema({
@@ -34,16 +34,16 @@ module.exports = {
     owner: String,
     guild: String,
     name: String,
-    displayName: {type:String, default:""},
-    pronouns: {type:String, default:""},
-    avatar: {type:String, default:""},
-    proxy:{
-      prefix: {type:String, default:""},
-      suffix: {type:String, default:""}
+    displayName: { type: String, default: "" },
+    pronouns: { type: String, default: "" },
+    avatar: { type: String, default: "" },
+    proxy: {
+      prefix: { type: String, default: "" },
+      suffix: { type: String, default: "" }
     },
-    birthday: {type:String, default:""},
-    colour: {type:String, default:""},
-    description: {type:String, default:""},
+    birthday: { type: String, default: "" },
+    colour: { type: String, default: "" },
+    description: { type: String, default: "" },
     bag: [{
       name: String,
       quantity: Number
@@ -61,13 +61,13 @@ module.exports = {
   reaction: new mongoose.Schema({
     _id: String,
     user: String,
-    settings: Object   //Settings object must have `type` tag
+    settings: Object   // Settings object must have `type` tag
   }),
 
   message: new mongoose.Schema({
     _id: String,
     owner: String,
-    character: { type: String, ref:'characters' },
-    timestamp: {type: Date, default: Date.now}
+    character: { type: String, ref: 'characters' },
+    timestamp: { type: Date, default: Date.now }
   })
 }
