@@ -18,43 +18,43 @@ module.exports = {
 		`remove <character | location> <id | name>**\nRemoves specified character/location from the server\nUseful for deleting characters if a user leaves`],
 	example: '',
 	async execute(client, guildSettings, msg, args) {
-		if (msg.member.hasPermission("MANAGE_GUILD")) {
-			if (args.length == 0) {
-				await displaySettings(guildSettings, msg)
-				return
-			}
+		if (args.length == 0) {
+			await displaySettings(guildSettings, msg)
+			return
+		}
 
+		if (msg.member.hasPermission("MANAGE_GUILD")) {
 			switch (args.shift()) {
 				case "prefix":
-					await setPrefix(guildSettings, msg, args)
+					await setPrefix(guildSettings, client, msg, args)
 					return;
 
 				case "role":
 				case "roles":
-					await setRole(guildSettings, msg, args)
+					await setRole(guildSettings, client, msg, args)
 					return;
 
 				case "import":
-					await toggleImport(guildSettings, msg, args)
+					await toggleImport(guildSettings, client, msg, args)
 					return;
 
 				case "locationlock":
-					await toggleLocationLock(guildSettings, msg, args)
+					await toggleLocationLock(guildSettings, client, msg, args)
 					break;
 
 				case "name":
 				case "rename":
-					await setName(guildSettings, msg, args)
+					await setName(guildSettings, client, msg, args)
 					break;
 
 				case "delete":
 				case "remove":
 					switch (args[1]) {
 						case "location":
-							removeLocation(msg, guildSettings, args)
+							removeLocation(client, msg, guildSettings, args)
 							break;
 						case "character":
-							removeCharacter(msg, guildSettings, args)
+							removeCharacter(client, msg, guildSettings, args)
 							break
 					}
 					break
@@ -68,7 +68,7 @@ module.exports = {
 					break;
 
 				default:
-					return msg.channel.send(utils.errorEmbed('That is not a subcommand'))
+					return msg.channel.send(utils.errorEmbed('That is not a valid subcommand'))
 					break
 			}
 		}
@@ -104,7 +104,7 @@ async function displaySettings(guildSettings, msg) {
 
 
 // Set server prefix
-async function setPrefix(guildSettings, msg, args) {
+async function setPrefix(guildSettings, client, msg, args) {
 	if (args.length < 1) {
 		return msg.channel.send(utils.errorEmbed('You must supply a prefix to change to'))
 	}
@@ -112,6 +112,7 @@ async function setPrefix(guildSettings, msg, args) {
 	return guildSettings.save((err, doc) => {
 		if (err) {
 			console.log(err)
+			utils.logTraceback(err, client, msg)
 			return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command!"))
 		} else {
 			return msg.channel.send(utils.passEmbed(`Prefix changed to \`${doc.prefix}\``))
@@ -121,7 +122,7 @@ async function setPrefix(guildSettings, msg, args) {
 
 
 // Set server roles
-async function setRole(guildSettings, msg, args) {
+async function setRole(guildSettings, client, msg, args) {
 	var guildRoles = msg.guild.roles
 	var roleName = args.slice(2).join(" ").replace(/^"(.+(?="$))"$/, '$1')
 	var role = guildRoles.find(roleFind => roleFind.name === roleName);
@@ -133,6 +134,7 @@ async function setRole(guildSettings, msg, args) {
 			return guildSettings.save((err, doc) => {
 				if (err) {
 					console.log(err)
+					utils.logTraceback(err, client, msg)
 					return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command!"))
 				} else {
 					return msg.channel.send(utils.passEmbed(role.name + " has been added to Game Manager roles"))
@@ -148,6 +150,7 @@ async function setRole(guildSettings, msg, args) {
 			return guildSettings.save((err, doc) => {
 				if (err) {
 					console.log(err)
+					utils.logTraceback(err, client, msg)
 					return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command!"))
 				} else {
 					return msg.channel.send(utils.passEmbed(role.name + " has been removed from Game Manager roles"))
@@ -162,7 +165,7 @@ async function setRole(guildSettings, msg, args) {
 
 
 // Set server game name
-async function setName(guildSettings, msg, args) {
+async function setName(guildSettings, client, msg, args) {
 	if (args.length > 0) {
 		guildSettings.gameName = args.join(" ").replace(/^"(.+(?="$))"$/, '$1')
 		var response = `Name set to **${guildSettings.gameName}**`
@@ -174,6 +177,7 @@ async function setName(guildSettings, msg, args) {
 	return guildSettings.save((err, doc) => {
 		if (err) {
 			console.log(err)
+			utils.logTraceback(err, client, msg)
 			return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command!"))
 		} else {
 			return msg.channel.send(utils.passEmbed(response))
@@ -182,12 +186,13 @@ async function setName(guildSettings, msg, args) {
 }
 
 //Toggle Import
-function toggleImport(guildSettings, msg, args) {
+function toggleImport(guildSettings, client, msg, args) {
 	var currentImport = guildSettings.enableImport
 	guildSettings.enableImport = !currentImport
 	guildSettings.save((err, doc) => {
 		if (err) {
 			console.log(err)
+			utils.logTraceback(err, client, msg)
 			return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command!"))
 		}
 		if (doc.enableImport) return msg.channel.send(utils.passEmbed("Enabled importing"))
@@ -196,12 +201,13 @@ function toggleImport(guildSettings, msg, args) {
 }
 
 //Toggle Location Lock
-function toggleLocationLock(guildSettings, msg, args) {
+function toggleLocationLock(guildSettings, client, msg, args) {
 	var currentLock = guildSettings.locationLock
 	guildSettings.locationLock = !currentLock
 	return guildSettings.save((err, doc) => {
 		if (err) {
 			console.log(err)
+			utils.logTraceback(err, client, msg)
 			return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command!"))
 		}
 		if (doc.locationLock) return msg.channel.send(utils.passEmbed("Enabled Location Lock\nGame Managers can only edit locations created by them"))
@@ -218,7 +224,7 @@ const locationsModel = mongoose.model('locations', schemas.location)
 const charactersModel = mongoose.model('locations', schemas.location)
 const guildSettingsModel = mongoose.model('guildsettings', schemas.guildSettings)
 
-async function removeLocation(msg, settings, args) {
+async function removeLocation(client, msg, settings, args) {
 
 	//Find location
 	args = utils.quoteFinder(args)
@@ -243,6 +249,7 @@ async function removeLocation(msg, settings, args) {
 			guildSettingsModel.updateOne({ _id: settings.id }, { $pull: { locations: location.id } }, (err, doc) => {
 				if (err) {
 					console.warn(err)
+					utils.logTraceback(err, client, msg)
 					return msg.channel.send(utils.errorEmbed("Something went wrong with that reaction")
 					)
 				}
@@ -252,6 +259,7 @@ async function removeLocation(msg, settings, args) {
 			return locationsModel.deleteOne({ _id: location._id }, (err) => {
 				if (err) {
 					console.warn(err)
+					utils.logTraceback(err, client, msg)
 					return msg.channel.send(utils.errorEmbed("Something went wrong with that reaction"))
 				}
 				return msg.channel.send(utils.passEmbed(`Deleted location`))
@@ -263,7 +271,7 @@ async function removeLocation(msg, settings, args) {
 		})
 }
 
-async function removeCharacter(msg, settings, args) {
+async function removeCharacter(client, msg, settings, args) {
 
 	//Find character
 	args = utils.quoteFinder(args)
@@ -293,6 +301,7 @@ async function removeCharacter(msg, settings, args) {
 			guildSettingsModel.updateOne({ _id: settings.id }, { $pull: { characters: character.id } }, (err, doc) => {
 				if (err) {
 					console.warn(err)
+					utils.logTraceback(err, client, msg)
 					return msg.channel.send(utils.errorEmbed("Something went wrong with that reaction")
 					)
 				}
@@ -302,6 +311,7 @@ async function removeCharacter(msg, settings, args) {
 			return charactersModel.deleteOne({ _id: character._id }, (err) => {
 				if (err) {
 					console.warn(err)
+					utils.logTraceback(err, client, msg)
 					return msg.channel.send(utils.errorEmbed("Something went wrong with that reaction"))
 				}
 				return msg.channel.send(utils.passEmbed(`Deleted character`))

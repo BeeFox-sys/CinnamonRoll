@@ -39,7 +39,7 @@ module.exports = {
 	},
 };
 
-async function pluralkitImport(importJson, msg, guildSettings) {
+async function pluralkitImport(importJson, client, msg, guildSettings) {
 	var importMessage = await msg.channel.send(utils.warnEmbed(`Beginning import...`).setTitle(`Importing characters from PluralKit for ${msg.member.nickname}`).setFooter("This may take some time..."))
 
 	if (!guildSettings.enableImport) return await importMessage.edit(utils.errorEmbed("Cannot import characters, as importing has been disabled for this server. Please ask someone with the Manage server permission to enable it.").setTitle(`Importing characters from CinnamonRoll for ${msg.member.nickname}`))
@@ -71,6 +71,7 @@ async function pluralkitImport(importJson, msg, guildSettings) {
 		await newDoc.save(async (err, doc) => {
 			if (err) {
 				console.warn(err)
+				utils.logTraceback(err, client, msg)
 				return msg.channel.send(utils.errorEmbed("Something went wrong while saving the data"))
 			}
 			if (ci == importJson.members.length - 1) {
@@ -80,7 +81,7 @@ async function pluralkitImport(importJson, msg, guildSettings) {
 	}
 }
 
-async function tupperboxImport(importJson, msg, guildSettings) {
+async function tupperboxImport(importJson, client, msg, guildSettings) {
 	var importMessage = await msg.channel.send(utils.warnEmbed(`Begining import...`).setTitle(`Importing characters from TupperBox for ${msg.member.nickname}`).setFooter("This may take some time..."))
 
 	if (!guildSettings.enableImport) return await importMessage.edit(utils.errorEmbed("Cannot import characters, as importing has been disabled for this server. Please ask someone with the Manage server permission to enable it.").setTitle(`Importing characters from TupperBox for ${msg.member.nickname}`))
@@ -108,6 +109,7 @@ async function tupperboxImport(importJson, msg, guildSettings) {
 		await newDoc.save(async (err, doc) => {
 			if (err) {
 				console.warn(err)
+				utils.logTraceback(err, client, msg)
 				return msg.channel.send(utils.errorEmbed("Something Went Wrong"))
 			}
 			if (ci == importJson.tuppers.length - 1) {
@@ -146,7 +148,7 @@ async function cinnamonrollImport(importJson, msg, guildSettings) {
 	}
 }
 
-async function importCharacter(character, msg, guildSettings, imported) {
+async function importCharacter(character, client, msg, guildSettings, imported) {
 	return new Promise(async resolve => {
 		var newDoc;
 		newDoc = new characterModel()
@@ -174,6 +176,7 @@ async function importCharacter(character, msg, guildSettings, imported) {
 		await newDoc.save(async (err, doc) => {
 			if (err) {
 				console.warn(err)
+				utils.logTraceback(err, client, msg)
 				return msg.channel.send(utils.errorEmbed("Something went wrong while saving the data"))
 			}
 			resolve(imported)
@@ -181,7 +184,7 @@ async function importCharacter(character, msg, guildSettings, imported) {
 	})
 }
 
-async function importLocation(location, msg, guildSettings, imported) {
+async function importLocation(location, client, msg, guildSettings, imported) {
 	return new Promise(async resolve => {
 		var newDoc;
 		newDoc = await new locationModel()
@@ -201,6 +204,7 @@ async function importLocation(location, msg, guildSettings, imported) {
 		await newDoc.save(async (err, doc) => {
 			if (err) {
 				console.warn(err)
+				utils.logTraceback(err, client, msg)
 				return msg.channel.send(utils.errorEmbed("Something went wrong while saving the data"))
 			}
 			resolve(imported)

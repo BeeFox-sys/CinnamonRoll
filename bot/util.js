@@ -23,7 +23,7 @@ utils = {
   },
 
   //Webhook Finder
-  async getGuildSettings(guild, collection) {
+  async getGuildSettings(client, guild, collection) {
     return new Promise(async (resolve) => {
       var doc = await collection.findById(guild).populate('locations').populate('characters').exec()
       if(doc) return resolve(doc)
@@ -188,11 +188,13 @@ utils = {
       if (config.logChannel) {
         const logChannel = await client.channels.get(config.logChannel);
         var embed = utils.errorEmbed()
-        var user = await client.fetchUser(msg.author.id)
-        if (msg.content.length > 256) {
-          embed.setTitle(msg.content.substring(0, 256 - 3) + "...")
-        } else embed.setTitle(msg.content)
-        embed.setFooter(`Sender: ${user.tag} (${user.id}) | Guild: ${msg.guild.id} | Channel: ${msg.channel.id}`)
+        if (msg) {
+          var user = await client.fetchUser(msg.author.id)
+          if (msg.content.length > 256) {
+            embed.setTitle(msg.content.substring(0, 256 - 3) + "...")
+          } else embed.setTitle(msg.content)
+          embed.setFooter(`Sender: ${user.tag} (${user.id}) | Guild: ${msg.guild.id} | Channel: ${msg.channel.id}`)
+        }
         embed.description = "```js\n" + err + "```"
         logChannel.send(embed);
       }
