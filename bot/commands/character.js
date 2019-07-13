@@ -49,7 +49,7 @@ module.exports = {
 
     else if (args[0] == "add" || args[0] == "new" || args[0] == "create") {
       args.shift()
-      await addCharacter(guildSettings, msg, args)
+      await addCharacter(guildSettings, client, msg, args)
       return
     }
 
@@ -77,31 +77,31 @@ module.exports = {
         //Colour: <character> colour <hex | word>
         case "colour":
         case "color":
-          await setColour(character, msg, args)
+          await setColour(character, client, msg, args)
           return;
 
         //Description: <character> description <description>
         case "description":
         case "describe":
         case "desc":
-          await setDescription(character, msg, args)
+          await setDescription(character, client, msg, args)
           return;
 
         // Reference: <character> reference <add | remove>
         case "reference":
         case "ref":
         case "references":
-          await setReference(guildSettings, character, msg, args)
+          await setReference(guildSettings, character, client, msg, args)
           return;
 
         case "avatar":
         case "icon":
-          await setAvatar(character, msg, args)
+          await setAvatar(character, client, msg, args)
           return;
 
         case "rename":
         case "name":
-          await setName(character, msg, args)
+          await setName(character, client, msg, args)
           return;
 
         case "bag":
@@ -115,25 +115,25 @@ module.exports = {
 
         case "displayname":
         case "nickname":
-          await setDisplayName(character, msg, args)
+          await setDisplayName(character, client, msg, args)
           return;
 
         case "pronouns":
-          await setPronouns(character, msg, args)
+          await setPronouns(character, client, msg, args)
           return;
 
         case "birthday":
-          await setBirthday(character, msg, args)
+          await setBirthday(character, client, msg, args)
           return;
 
         case "proxy":
         case "tags":
-          await setProxy(character, msg, args)
+          await setProxy(character, client, msg, args)
           return;
 
         case "remove":
         case "delete":
-          await removeCharacter(character, msg)
+          await removeCharacter(character, client, msg)
           return;
 
         default:
@@ -317,7 +317,7 @@ async function showCharacterStats(character, msg, client, message) {
 }
 
 // Add a character
-async function addCharacter(guildSettings, msg, args, message) {
+async function addCharacter(guildSettings, client, msg, args) {
   if (args.length > 0) {
     var newCharacter = await new charactersModel()
     newCharacter.name = args.join(" ")
@@ -331,6 +331,7 @@ async function addCharacter(guildSettings, msg, args, message) {
     return await newCharacter.save(async (err, doc) => {
       if (err) {
         console.warn(err)
+        utils.logTraceback(err, client, msg)
         return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
       }
       await guildSettings.characters.push(doc._id)
@@ -343,7 +344,7 @@ async function addCharacter(guildSettings, msg, args, message) {
 
 
 // Set character colour
-async function setColour(character, msg, args) {
+async function setColour(character, client, msg, args) {
   var colour = args.join("_").toUpperCase().replace(/^"(.+(?="$))"$/, '$1')
   if (utils.validateColour(colour)) {
     character.colour = colour
@@ -351,6 +352,7 @@ async function setColour(character, msg, args) {
     return await character.save((err, doc) => {
       if (err) {
         console.warn(err)
+        utils.logTraceback(err, client, msg)
         return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
       }
       return msg.channel.send(utils.passEmbed(`Set colour to **${utils.toTitleCase(doc.colour.replace(/_/g, " ")) || "default"}**`).setColor(doc.colour))
@@ -370,12 +372,13 @@ async function setColour(character, msg, args) {
 
 
 // Set character description
-async function setDescription(character, msg, args) {
+async function setDescription(character, client, msg, args) {
   var desc = args.join(" ").replace(/^"(.+(?="$))"$/, '$1')
   character.description = desc
   return await character.save((err, doc) => {
     if (err) {
       console.warn(err)
+      utils.logTraceback(err, client, msg)
       return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
     }
     if (!character.description) {
@@ -389,7 +392,7 @@ async function setDescription(character, msg, args) {
 
 
 // Set character references
-async function setReference(guildSettings, character, msg, args) {
+async function setReference(guildSettings, character, client, msg, args) {
   if (args.length > 0) {
     switch (args.shift().toLowerCase()) {
       case 'add':
@@ -408,6 +411,7 @@ async function setReference(guildSettings, character, msg, args) {
         return character.save((err, doc) => {
           if (err) {
             console.warn(err)
+            utils.logTraceback(err, client, msg)
             return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
           }
           return msg.channel.send(utils.passEmbed(`Added reference \"${name}\"!`))
@@ -425,6 +429,7 @@ async function setReference(guildSettings, character, msg, args) {
         return character.save((err) => {
           if (err) {
             console.warn(err)
+            utils.logTraceback(err, client, msg)
             return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
           }
           return msg.channel.send(utils.passEmbed(`Removed reference \"${name}\"!`))
@@ -440,13 +445,14 @@ async function setReference(guildSettings, character, msg, args) {
 
 
 // Set character avatar
-async function setAvatar(character, msg, args) {
+async function setAvatar(character, client, msg, args) {
   var attachments = utils.attachmentsToFileOptions(msg.attachments)
   if (!attachments) { character.avatar = args[0] || undefined }
   else { character.avatar = attachments[0].attachment }
   return await character.save((err, doc) => {
     if (err) {
       console.warn(err)
+      utils.logTraceback(err, client, msg)
       return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
     }
     if (character.avatar == undefined) {
@@ -460,13 +466,14 @@ async function setAvatar(character, msg, args) {
 
 
 // Set character name (rename)
-async function setName(character, msg, args) {
+async function setName(character, client, msg, args) {
   if (args.length < 1) return msg.channel.send(utils.errorEmbed("A character must have a name!"))
   var newName = args.join(" ").replace(/^"(.+(?="$))"$/, '$1')
   character.name = newName
   return await character.save(err => {
     if (err) {
       console.warn(err)
+      utils.logTraceback(err, client, msg)
       return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
     }
     return msg.channel.send(utils.passEmbed(`Updated name to ${character.name}!`))
@@ -475,7 +482,7 @@ async function setName(character, msg, args) {
 
 
 // Set character proxy tags
-async function setProxy(character, msg, args) {
+async function setProxy(character, client, msg, args) {
   var proxy = args.join(" ");
   var response;
   if (args.length > 0) {
@@ -504,6 +511,7 @@ async function setProxy(character, msg, args) {
   return await character.save(err => {
     if (err) {
       console.warn(err)
+      utils.logTraceback(err, client, msg)
       return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
     }
     return msg.channel.send(utils.passEmbed(response))
@@ -512,7 +520,7 @@ async function setProxy(character, msg, args) {
 
 
 // Remove/delete character
-async function removeCharacter(character, msg) {
+async function removeCharacter(character, client, msg) {
   var deleteMessage = await msg.channel.send(utils.passEmbed(`Are you sure you want to delete ${character.name}\`(${character.id})\`?`))
   await deleteMessage.react("✅")
   await deleteMessage.react("❌")
@@ -530,6 +538,7 @@ async function removeCharacter(character, msg) {
       guildSettingsModel.updateOne({ _id: settings.id }, { $pull: { characters: character.id } }, (err, doc) => {
         if (err) {
           console.warn(err)
+          utils.logTraceback(err, client, msg)
           return msg.channel.send(utils.errorEmbed("Something went wrong with that reaction")
           )
         }
@@ -538,6 +547,7 @@ async function removeCharacter(character, msg) {
       return charactersModel.deleteOne({ _id: character._id }, (err) => {
         if (err) {
           console.warn(err)
+          utils.logTraceback(err, client, msg)
           return msg.channel.send(utils.errorEmbed("Something went wrong with that reaction"))
         }
         return msg.channel.send(utils.passEmbed(`Deleted character`))
@@ -549,12 +559,13 @@ async function removeCharacter(character, msg) {
     })
 }
 
-async function setDisplayName(character, msg, args) {
+async function setDisplayName(character, client, msg, args) {
   var newName = args.join(" ").replace(/^"(.+(?="$))"$/, '$1')
   character.displayName = newName
   return await character.save((err, doc) => {
     if (err) {
       console.warn(err)
+      utils.logTraceback(err, client, msg)
       return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
     }
     if (doc.displayName == "") return msg.channel.send(utils.passEmbed(`Cleared Display Name!`))
@@ -563,12 +574,13 @@ async function setDisplayName(character, msg, args) {
   })
 }
 
-async function setPronouns(character, msg, args) {
+async function setPronouns(character, client, msg, args) {
   var pronouns = args.join(" ").replace(/^"(.+(?="$))"$/, '$1')
   character.pronouns = pronouns
   return await character.save((err, doc) => {
     if (err) {
       console.warn(err)
+      utils.logTraceback(err, client, msg)
       return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
     }
     if (doc.pronouns == "") return msg.channel.send(utils.passEmbed(`Cleared pronouns!`))
@@ -576,12 +588,13 @@ async function setPronouns(character, msg, args) {
   })
 }
 
-async function setBirthday(character, msg, args) {
+async function setBirthday(character, client, msg, args) {
   var birthday = args.join(" ").replace(/^"(.+(?="$))"$/, '$1')
   character.birthday = birthday
   return await character.save((err, doc) => {
     if (err) {
       console.warn(err)
+      utils.logTraceback(err, client, msg)
       return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
     }
     if (doc.birthday == "") return msg.channel.send(utils.passEmbed(`Cleared birthday!`))
@@ -602,6 +615,7 @@ async function updateBag(character, msg, args, client) {
       return character.save((err, doc) => {
         if (err) {
           console.warn(err)
+          utils.logTraceback(err, client, msg)
           return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
         }
         return msg.channel.send(utils.passEmbed(`Removed ${item} from ${character.displayName || character.name}'s bag`))
@@ -631,6 +645,7 @@ async function updateBag(character, msg, args, client) {
     return character.save((err, doc) => {
       if (err) {
         console.warn(err)
+        utils.logTraceback(err, client, msg)
         return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
       }
       return msg.channel.send(utils.passEmbed(`Put ${quantity} ${item} into ${character.displayName || character.name}'s bag\nThere is none left!`))
@@ -640,6 +655,7 @@ async function updateBag(character, msg, args, client) {
   return character.save((err, doc) => {
     if (err) {
       console.warn(err)
+      utils.logTraceback(err, client, msg)
       return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
     }
     return msg.channel.send(utils.passEmbed(`Put ${quantity} ${item} into ${character.displayName || character.name}'s bag\nThere is now ${doc.bag[itemIndex].quantity} in their bag`))
@@ -660,6 +676,7 @@ async function updateStat(character, msg, args, client) {
       return character.save((err, doc) => {
         if (err) {
           console.warn(err)
+          utils.logTraceback(err, client, msg)
           return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
         }
         return msg.channel.send(utils.passEmbed(`Removed ${item} stat from ${character.displayName || character.name}'s stat sheet`))
@@ -687,6 +704,7 @@ async function updateStat(character, msg, args, client) {
   return character.save((err, doc) => {
     if (err) {
       console.warn(err)
+      utils.logTraceback(err, client, msg)
       return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
     }
     return msg.channel.send(utils.passEmbed(`Set ${character.displayName || character.name}'s ${doc.stats[itemIndex].name} stat to ${doc.stats[itemIndex].value}`))

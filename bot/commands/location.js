@@ -45,7 +45,7 @@ module.exports = {
 
     else if ((args[0] == "add" || args[0] == "new" || args[0] == "create") && await utils.checkGameAdmin(guildSettings, msg.member)) {
       args.shift()
-      await addLocation(guildSettings, msg, args)
+      await addLocation(guildSettings, client, msg, args)
       return
     }
     else if ((args[0] == "add" || args[0] == "new" || args[0] == "create") && !await utils.checkGameAdmin(guildSettings, msg.member)) {
@@ -75,32 +75,32 @@ module.exports = {
         // Colour: <location> colour <hex | word>
         case "colour":
         case "color":
-          await setColour(location, msg, args)
+          await setColour(location, client, msg, args)
           return;
 
         // Description: <location> description <description>
         case "description":
         case "describe":
         case "desc":
-          await setDescription(location, msg, args)
+          await setDescription(location, client, msg, args)
           return;
 
         // Reference: <location> reference <add | remove>
         case "reference":
         case "ref":
-          await setReference(guildSettings, location, msg, args)
+          await setReference(guildSettings, location, client, msg, args)
           return;
 
         // Rename: <location> rename <new name>
         case "rename":
         case "name":
-          await setName(location, msg, args)
+          await setName(location, client, msg, args)
           return;
 
         // Remove location
         case "remove":
         case "delete":
-          await removeLocation(location, msg, guildSettings)
+          await removeLocation(location, client, msg, guildSettings)
           return;
       }
 
@@ -152,7 +152,7 @@ async function showLocation(location, msg, client) {
 
 
 // Add location
-async function addLocation(guildSettings, msg, args) {
+async function addLocation(guildSettings, client, msg, args) {
   if (args.length > 0) {
     var newLocation = await new locationsModel()
     newLocation.name = args.join(" ").replace(/^"(.+(?="$))"$/, '$1')
@@ -162,6 +162,7 @@ async function addLocation(guildSettings, msg, args) {
     return await newLocation.save(async (err, doc) => {
       if (err) {
         console.warn(err)
+        utils.logTraceback(err, client, msg)
         return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
       }
       await guildSettings.locations.push(doc._id)
@@ -174,7 +175,7 @@ async function addLocation(guildSettings, msg, args) {
 
 
 // Set location colour
-async function setColour(location, msg, args) {
+async function setColour(location, client, msg, args) {
   var colour = args.join("_").toUpperCase().replace(/^"(.+(?="$))"$/, '$1')
   if (utils.validateColour(colour)) {
     location.colour = colour
@@ -182,6 +183,7 @@ async function setColour(location, msg, args) {
     return await location.save((err, doc) => {
       if (err) {
         console.warn(err)
+        utils.logTraceback(err, client, msg)
         return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
       }
       return msg.channel.send(utils.passEmbed(`Set colour to **${doc.colour.toLowerCase() || "default"}**`).setColor(doc.colour))
@@ -201,7 +203,7 @@ async function setColour(location, msg, args) {
 
 
 // Set location description
-async function setDescription(location, msg, args) {
+async function setDescription(location, client, msg, args) {
   var desc = args.join(" ")
   if (desc.charAt(0) === '"' && desc.charAt(desc.length - 1) === '"') {
     desc = desc.substr(1, desc.length - 2);
@@ -210,6 +212,7 @@ async function setDescription(location, msg, args) {
   return await location.save((err, doc) => {
     if (err) {
       console.warn(err)
+      utils.logTraceback(err, client, msg)
       return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
     }
     if (!location.description) {
@@ -223,7 +226,7 @@ async function setDescription(location, msg, args) {
 
 
 // Set location references
-async function setReference(guildSettings, location, msg, args) {
+async function setReference(guildSettings, location, client, msg, args) {
   if (args.length > 1) {
     switch (args.shift().toLowerCase()) {
       case 'add':
@@ -242,6 +245,7 @@ async function setReference(guildSettings, location, msg, args) {
         return location.save((err, doc) => {
           if (err) {
             console.warn(err)
+            utils.logTraceback(err, client, msg)
             return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
           }
           return msg.channel.send(utils.passEmbed(`Added reference \"${name}\"!`))
@@ -259,6 +263,7 @@ async function setReference(guildSettings, location, msg, args) {
         return location.save((err) => {
           if (err) {
             console.warn(err)
+            utils.logTraceback(err, client, msg)
             return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
           }
           return msg.channel.send(utils.passEmbed(`Removed reference \"${name}\"!`))
@@ -274,13 +279,14 @@ async function setReference(guildSettings, location, msg, args) {
 
 
 // Set location name (rename)
-async function setName(location, msg, args) {
+async function setName(location, client, msg, args) {
   if (args.length < 1) return msg.channel.send(utils.errorEmbed("A location must have a name!"))
   var newName = args.join(" ").replace(/^"(.+(?="$))"$/, '$1')
   location.name = newName
   return await location.save(err => {
     if (err) {
       console.warn(err)
+      utils.logTraceback(err, client, msg)
       return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
     }
     return msg.channel.send(utils.passEmbed(`Updated name to ${location.name}!`))
@@ -289,7 +295,7 @@ async function setName(location, msg, args) {
 
 
 // Remove/delete location
-async function removeLocation(location, msg, settings) {
+async function removeLocation(location, client, msg, settings) {
   var deleteMessage = await msg.channel.send(utils.passEmbed(`Are you sure you want to delete ${location.name}\`(${location.id})\`?`))
   deleteMessage.react("✅")
   deleteMessage.react("❌")
@@ -307,6 +313,7 @@ async function removeLocation(location, msg, settings) {
         guildSettingsModel.updateOne({ _id: settings.id }, { $pull: { locations: location.id } }, (err, doc) => {
           if (err) {
             console.warn(err)
+            utils.logTraceback(err, client, msg)
             return msg.channel.send(utils.errorEmbed("Something went wrong with that reaction")
             )
           }
@@ -315,6 +322,7 @@ async function removeLocation(location, msg, settings) {
       return locationsModel.deleteOne({ _id: location._id }, (err) => {
         if (err) {
           console.warn(err)
+          utils.logTraceback(err, client, msg)
           return msg.channel.send(utils.errorEmbed("Something went wrong with that reaction"))
         }
         return msg.channel.send(utils.passEmbed(`Deleted location`))

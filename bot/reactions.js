@@ -45,6 +45,7 @@ async function getMessageData(react, user, client) {
   messages.findOne({ _id: react.message.id }, async (err, doc) => {
     if (err) {
       console.warn(err)
+      utils.logTraceback(err, client)
       return react.message.channel.send(utils.errorEmbed("Something went wrong with that reaction"))
     }
     if (doc == null) return
@@ -74,6 +75,7 @@ function deleteMessage(react, user, client) {
   messages.findOne({ _id: react.message.id }, async (err, doc) => {
     if (err) {
       console.warn(err)
+      utils.logTraceback(err, client)
       return react.message.channel.send(utils.errorEmbed("Something went wrong with that reaction"))
     }
     if (doc == null) return
@@ -81,6 +83,7 @@ function deleteMessage(react, user, client) {
     messages.deleteOne({ _id: doc._id }, err => {
       if (err) {
         console.warn(err)
+        utils.logTraceback(err, client)
         return react.message.channel.send(utils.errorEmbed("Something went wrong with that reaction"))
       }
       return react.message.delete()
