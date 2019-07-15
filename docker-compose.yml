@@ -7,6 +7,8 @@ services:
     entrypoint:
       - node
       - bot/main.js
+    volumes:
+      - "./config.json:/app/config.json:ro"
     depends_on:
       - db
     restart: always
@@ -15,7 +17,6 @@ services:
     image: mongo
     volumes:
       - "data:/data/db"
-      - "./backup:/backup"
     restart: always
 
 volumes:
