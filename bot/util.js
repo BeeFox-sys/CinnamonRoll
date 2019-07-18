@@ -131,7 +131,7 @@ utils = {
     },
 
   quoteFinder(array){
-    if(array == undefined) return array
+    if (!array.length) throw "Input array to quoteFinder is empty!";
     if(array[0].startsWith('"') == false) return array
     var start = null
     var end = null
