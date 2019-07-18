@@ -20,6 +20,7 @@ module.exports = {
     var argLength = 2
     if (attachments) argLength = 1
 
+    if (args.length < 1) return msg.channel.send(utils.errorEmbed("You must provide a name for the NPC!"));
     args = await utils.quoteFinder(args)
     un = utils.fackClyde(args.slice(0, 1).toString())
     content = args.slice(1).join(" ")
