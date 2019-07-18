@@ -44,12 +44,10 @@ module.exports = {
       for (var i = 0; i < command.usage.length; i++) {
         usage += `\n**${prefix}${command.name}  ${command.usage[i]}`
       }
-      embed.addField(`Usage:`, usage);
+      if (usage) embed.addField(`Usage:`, usage);
     }
     if (command.example) embed.addField(`Example:`, `${prefix}${command.name} ${command.example}`);
 
-
     msg.channel.send(embed);
-
   },
 };
