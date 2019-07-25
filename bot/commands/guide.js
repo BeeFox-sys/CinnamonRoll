@@ -5,7 +5,7 @@ module.exports = {
 	name: 'guide',
 	aliases: ["gettingstarted","getstarted"],
 	description: 'An interactive tool for setting up CinnamonRoll',
-	hidden: true,
+	hidden: false,
 	args: false,
 	argsMin: 0,
 	usage: [],
