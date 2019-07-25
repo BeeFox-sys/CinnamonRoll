@@ -165,9 +165,10 @@ async function listCharacters(guildSettings, charactersList, msg) {
 
   for (var index = 0; index < charactersList.length; index++) {
     var character = charactersList[index]
-    if (character.proxy.prefix || character.proxy.suffix !== "") {
-      response.description += `\n[\`${character._id}\`] **${character.name}** (\`${character.proxy.prefix}text${character.proxy.suffix}\`) <@${character.owner}>`
-    } else response.description += `\n[\`${character._id}\`] **${character.name}** <@${character.owner}>`
+    // if (character.proxy.prefix || character.proxy.suffix !== "") {
+    //   response.description += `\n[\`${character._id}\`] **${character.name}** (\`${character.proxy.prefix}text${character.proxy.suffix}\`) <@${character.owner}>`
+    // } else response.description += `\n[\`${character._id}\`] **${character.name}** <@${character.owner}>`
+    response.description += `\n[\`${character._id}\`] **${character.name}**${(character.proxy.prefix || character.proxy.suffix) ? ` (\`${character.proxy.prefix}text${character.proxy.suffix}\`)`:``} <@${character.owner}>${character.open ? ` 🔗`:``}`
 
     if (response.description.length > 1800) {
       part += 1
@@ -188,7 +189,7 @@ async function showCharacter(character, msg, client, message) {
 
   var embed = utils.passEmbed()
   embed.setTitle(character.name)
-  embed.setFooter(`id: ${character._id} | creator: @${user.tag}`)
+  embed.setFooter(`id: ${character._id} | creator: @${user.tag}${character.open ? ` | 🔗`:``}`)
   embed.setColor(character.colour)
   if (character.avatar || character.references.length > 0) embed.setThumbnail(character.avatar || character.references[0].url)
 
