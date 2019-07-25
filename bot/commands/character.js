@@ -165,9 +165,7 @@ async function listCharacters(guildSettings, charactersList, msg) {
 
   for (var index = 0; index < charactersList.length; index++) {
     var character = charactersList[index]
-    // if (character.proxy.prefix || character.proxy.suffix !== "") {
-    //   response.description += `\n[\`${character._id}\`] **${character.name}** (\`${character.proxy.prefix}text${character.proxy.suffix}\`) <@${character.owner}>`
-    // } else response.description += `\n[\`${character._id}\`] **${character.name}** <@${character.owner}>`
+    
     response.description += `\n[\`${character._id}\`] **${character.name}**${(character.proxy.prefix || character.proxy.suffix) ? ` (\`${character.proxy.prefix}text${character.proxy.suffix}\`)`:``} <@${character.owner}>${character.open ? ` 🔗`:``}`
 
     if (response.description.length > 1800) {
