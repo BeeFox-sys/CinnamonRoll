@@ -7,7 +7,7 @@ const messages = mongoose.model('messages', schemas.message)
 
 module.exports.execute = async (client, guildSettings, msg) => {
   // Get sender and their characters
-  sender = msg.member
+  sender = await msg.author
   characters = guildSettings.characters.filter(character => {
     var prefix = (character.proxy.prefix != "" && character.proxy.prefix != undefined)
     var suffix = (character.proxy.suffix != "" && character.proxy.suffix != undefined)
