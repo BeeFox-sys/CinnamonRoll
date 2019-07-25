@@ -120,6 +120,14 @@ client.on('message', async msg => {
 reactions = require('./reactions.js')
 reactions.execute(client)
 
+client.on("messageUpdate",async (old,msg)=>{
+  var messages = msg.channel.messages
+  var latest = messages.last()
+  if(latest.id != msg.id) return
+  var settings = await utils.getGuildSettings(client, msg.guild.id, guildSettings)
+  await proxyMethod.execute(client, settings, msg)
+})
+
 client.on("guildCreate", async () => {
   await setPresence()
 })
