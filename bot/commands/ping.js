@@ -11,6 +11,6 @@ module.exports = {
 	usage: [],
 	example: [],
 	async execute(client, guildSettings, msg, args) {
-    return await msg.channel.send("Pong!")
+		return await msg.channel.send("Pong!")
 	},
 };

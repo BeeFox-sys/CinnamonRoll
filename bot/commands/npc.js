@@ -20,6 +20,7 @@ module.exports = {
     var argLength = 2
     if (attachments) argLength = 1
 
+    if (args.length < 1) return msg.channel.send(utils.errorEmbed("You must provide a name for the NPC!"));
     args = await utils.quoteFinder(args)
     un = utils.fackClyde(args.slice(0, 1).toString())
     content = args.slice(1).join(" ")
@@ -30,7 +31,7 @@ module.exports = {
 
     newMessage = await hook.send(content, {
       username: un,
-      avatarURL: "https://cdn.discordapp.com/avatars/582243614030299136/fe639cfe01e197860599ff347eed9998.png?size=256",
+      avatarURL: "https://cdn.discordapp.com/avatars/582243614030299136/fe639cfe01e197860599ff347eed9998.png?size=256", // Send an empty transparent PNG file so the default avatar is replaced with nothingness
       disableEveryone: true,
       files: attachments
     })

@@ -14,7 +14,7 @@ utils = {
   		var hook
   		webhooks = webhooks.filter(hook => hook.channelID === channel.id)
   		if(webhooks.find(hook => hook.owner.id === client.user.id) == null){
-  			hook = await channel.createWebhook("CinnamonRP")
+  			hook = await channel.createWebhook("CinnamonRoll")
   		} else {
   			hook = await webhooks.find(hook => hook.owner.id === client.user.id)
   		}
@@ -23,7 +23,7 @@ utils = {
   },
 
   //Webhook Finder
-  async getGuildSettings(guild, collection) {
+  async getGuildSettings(client, guild, collection) {
     return new Promise(async (resolve) => {
       var doc = await collection.findById(guild).populate('locations').populate('characters').exec()
       if(doc) return resolve(doc)
@@ -109,7 +109,7 @@ utils = {
     return result
   },
 
-  valadateColour(colour){
+  validateColour(colour){
     if (colour === 'RANDOM') return true
     colourTest = Discord.Constants.Colors[colour]
     if(colourTest != undefined) return true
@@ -131,7 +131,7 @@ utils = {
     },
 
   quoteFinder(array){
-    if(array == undefined) return array
+    if (!array.length) throw new TypeError("Input array to quoteFinder is undefined!");
     if(array[0].startsWith('"') == false) return array
     var start = null
     var end = null
@@ -151,10 +151,10 @@ utils = {
     }
     return array
   },
-  attachmentsToFileOptions(attatchments){
-    if(attatchments.size == 0) return undefined
+  attachmentsToFileOptions(attachments){
+    if(attachments.size == 0) return undefined
     var fileOptions = []
-    attatchments.tap((attachment)=>{
+    attachments.tap((attachment)=>{
       fileOptions.push({
         attachment: attachment.url,
         name: attachment.filename
@@ -164,7 +164,7 @@ utils = {
   },
   async eraseGuild(msg, guildID){
     return new Promise(async resolve => {
-      msg.channel.send(utils.errorEmbed("Reseting your guild, this may take some time"))
+      msg.channel.send(utils.errorEmbed("Resetting your guild, This may take some time..."))
       var guild = await guildSettings.findById(guildID).populate('locations').populate('characters').exec()
       for(var ci = 0; ci < guild.characters.length; ci++){
         guild.characters[ci].delete()
@@ -181,21 +181,27 @@ utils = {
       setTimeout(resolve, ms);
     })
   },
-  
+
   // Traceback logging
-  async logTraceback(client, msg, err) {
-    if(config.logChannel) {
-      const logChannel = await client.channels.get(config.logChannel);
-      var embed = utils.errorEmbed()
-      var user = await client.fetchUser(msg.author.id)
-      if(msg.content.length > 256) {
-        embed.setTitle(msg.content.substring(0, 256 - 3) + "...")
-      } else embed.setTitle(msg.content)
-      embed.setFooter(`Sender: ${user.tag} (${user.id}) | Guild: ${msg.guild.id} | Channel: ${msg.channel.id}`)
-      embed.description = "```js\n" + err + "```"
-      logChannel.send(embed);
+  async logTraceback(err, client, msg) {
+    try {
+      if (config.logChannel) {
+        const logChannel = await client.channels.get(config.logChannel);
+        var embed = utils.errorEmbed()
+        if (msg) {
+          var user = await client.fetchUser(msg.author.id)
+          if (msg.content.length > 256) {
+            embed.setTitle(msg.content.substring(0, 256 - 3) + "...")
+          } else embed.setTitle(msg.content)
+          embed.setFooter(`Sender: ${user.tag} (${user.id}) | Guild: ${msg.guild.id} | Channel: ${msg.channel.id}`)
+        }
+        embed.description = "```js\n" + err + "```"
+        logChannel.send(embed);
+      }
+      return
+    } catch (e) {
+      console.warn("Something went wrong, we couldn't log this error to the log channel because of the following error:\n" + e)
     }
-    return
   },
   fackClyde(str){
     if(!str.toLowerCase().includes("clyde")) return str
