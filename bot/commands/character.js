@@ -26,7 +26,8 @@ module.exports = {
     `<character> birthday <birthday>**\nSets the characters birthday`,
     `<character> nickname <nickname>**\nSets the characters nickname`,
     `<character> proxy <prefix>text<suffix>**\nSets the characters proxy`,
-    `<character> pronouns <pronouns>**\nSets the characters pronouns`],
+    `<character> pronouns <pronouns>**\nSets the characters pronouns`,
+    `<character> share**\nEnables character sharing (anyone can edit or proxy the character)`],
   example: '',
   async execute(client, guildSettings, msg, args) {
     const charactersList = guildSettings.characters.sort((a, b) => {
@@ -71,7 +72,7 @@ module.exports = {
     }
 
     //Character editing commands
-    if (args.length > 0 && character.owner == msg.member.id) {
+    if (args.length > 0 && (character.owner == msg.member.id || character.open)) {
       switch (args.shift().toLowerCase()) {
 
         //Colour: <character> colour <hex | word>
@@ -134,6 +135,11 @@ module.exports = {
         case "remove":
         case "delete":
           await removeCharacter(character, client, msg)
+          return;
+        
+        case "open":
+        case "share":
+          await openCharacter(character, client, msg)
           return;
 
         default:
@@ -708,5 +714,27 @@ async function updateStat(character, msg, args, client) {
       return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
     }
     return msg.channel.send(utils.passEmbed(`Set ${character.displayName || character.name}'s ${doc.stats[itemIndex].name} stat to ${doc.stats[itemIndex].value}`))
+  })
+}
+
+async function openCharacter(character, client, msg){
+  user = await client.fetchUser(character.owner)
+  if(character.owner != msg.member.id) return msg.channel.send(utils.errorEmbed(`Only the character owner (${user.tag}) can enable/disable character sharing`))
+  if(character.open){
+    character.open = false
+  } else {
+    character.open = true
+  }
+
+  return character.save((err, doc) => {
+    if (err) {
+      console.warn(err)
+      utils.logTraceback(err, client, msg)
+      return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
+    }
+    if(character.open) var response = "enabled"
+    else var response = "disabled"
+
+    return msg.channel.send(utils.passEmbed(`Character sharing for ${character.name} has been ${response}`))
   })
 }

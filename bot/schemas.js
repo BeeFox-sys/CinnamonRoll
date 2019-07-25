@@ -55,7 +55,8 @@ module.exports = {
     stats: [{
       name: String,
       value: Number
-    }]
+    }],
+    open: Boolean
   }),
 
   reaction: new mongoose.Schema({

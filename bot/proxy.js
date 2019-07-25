@@ -11,7 +11,7 @@ module.exports.execute = async (client, guildSettings, msg) => {
   characters = guildSettings.characters.filter(character => {
     var prefix = (character.proxy.prefix != "" && character.proxy.prefix != undefined)
     var suffix = (character.proxy.suffix != "" && character.proxy.suffix != undefined)
-    if (character.owner == sender.id && (prefix || suffix)) return character
+    if ((character.owner == sender.id||character.open) && (prefix || suffix)) return character
   })
   characters.sort((a, b) => {
     var aSize = 0
