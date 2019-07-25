@@ -42,9 +42,14 @@ module.exports = {
     if (command.usage) {
       usage = ""
       for (var i = 0; i < command.usage.length; i++) {
+        if(i < command.usage.length && usage.length + `\n**${prefix}${command.name}  ${command.usage[i]}`.length > 1024){
+          embed.addField("Usage:",usage)
+          usage = ""
+        }
         usage += `\n**${prefix}${command.name}  ${command.usage[i]}`
+        console.log(usage.length)
       }
-      if (usage) embed.addField(`Usage:`, usage);
+      embed.addField("Usage:",usage)
     }
     if (command.example) embed.addField(`Example:`, `${prefix}${command.name} ${command.example}`);
 
