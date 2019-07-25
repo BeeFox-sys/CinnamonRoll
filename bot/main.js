@@ -107,7 +107,7 @@ client.on('message', async msg => {
     // Catch any errors
   } catch (err) {
     // Log error to console
-    console.error(err);
+    console.error(err.stack);
     // Notify the user there was an error
   	msg.channel.send(utils.errorEmbed('There was an error trying to execute that command!'));
     // Post error to logging channel if it exists
