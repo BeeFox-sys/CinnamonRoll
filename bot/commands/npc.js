@@ -11,7 +11,7 @@ module.exports = {
   description: 'Summon an extra',
   perms: [''],
   hidden: false,
-  args: false,
+  args: true,
   argsMin: 1,
   usage: ['<name> <text>**\nProxies an npc'],
   async execute(client, guildSettings, msg, args) {

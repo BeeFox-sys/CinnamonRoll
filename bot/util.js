@@ -131,6 +131,7 @@ utils = {
     },
 
   quoteFinder(array){
+    if(array == undefined) return array
     if(array[0].startsWith('"') == false) return array
     var start = null
     var end = null
