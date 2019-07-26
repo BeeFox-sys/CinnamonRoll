@@ -20,7 +20,7 @@ module.exports = {
 	async execute(client, guildSettings, msg, args) {
 		var attachments = msg.attachments.array()
 		if (attachments.length != 1 || !attachments[0].filename.toUpperCase().endsWith(".JSON")) return msg.channel.send(utils.errorEmbed("You must attach only one file from either Tupperbox, CinnamonRoll, or PluralKit"))
-		if (attachments[0].filesize > 8 * 1024 ^ 2) {
+		if (attachments[0].filesize > 8 * 1024 ** 2) {
 			return msg.channel.send(utils.errorEmbed("To prevent overloading the server and reduce running costs, CinnamonRoll only accepts files 8MB and under for importing."))
 		}
 
