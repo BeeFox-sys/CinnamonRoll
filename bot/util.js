@@ -195,12 +195,12 @@ utils = {
           } else embed.setTitle(msg.content)
           embed.setFooter(`Sender: ${user.tag} (${user.id}) | Guild: ${msg.guild.id} | Channel: ${msg.channel.id}`)
         }
-        embed.description = "```js\n" + err + "```"
+        embed.description = "```js\n" + err.stack + "```"
         logChannel.send(embed);
       }
       return
     } catch (e) {
-      console.warn("Something went wrong, we couldn't log this error to the log channel because of the following error:\n" + e)
+      console.warn("Something went wrong, we couldn't log this error to the log channel because of the following error:\n" + e.stack)
     }
   },
   fackClyde(str){
