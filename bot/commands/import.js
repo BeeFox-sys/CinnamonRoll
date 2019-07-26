@@ -52,7 +52,7 @@ async function pluralkitImport(importJson, client, msg, guildSettings) {
 		newDoc._id = await utils.generateID(characterModel)
 		await guildSettings.characters.push(newDoc._id)
 		await guildSettings.save()
-		newDoc.owner = msg.member.id
+		newDoc.owner = msg.author.id
 		newDoc.guild = guildSettings._id
 
 		newDoc.name = member.name
@@ -94,7 +94,7 @@ async function tupperboxImport(importJson, client, msg, guildSettings) {
 		newDoc._id = await utils.generateID(characterModel)
 		await guildSettings.characters.push(newDoc._id)
 		await guildSettings.save()
-		newDoc.owner = msg.member.id
+		newDoc.owner = msg.author.id
 		newDoc.guild = guildSettings._id
 
 		newDoc.name = tulpa.name
@@ -153,7 +153,7 @@ async function importCharacter(character, client, msg, guildSettings, imported) 
 		var newDoc;
 		newDoc = new characterModel()
 		newDoc._id = await utils.generateID(characterModel)
-		newDoc.owner = character.owner || msg.member.id
+		newDoc.owner = character.owner || msg.author.id
 		newDoc.guild = guildSettings._id
 		guildSettings.characters.push(newDoc._id)
 		guildSettings.save()
@@ -189,7 +189,7 @@ async function importLocation(location, client, msg, guildSettings, imported) {
 		var newDoc;
 		newDoc = await new locationModel()
 		newDoc._id = await utils.generateID(characterModel)
-		newDoc.owner = location.owner || msg.member.id
+		newDoc.owner = location.owner || msg.author.id
 		newDoc.guild = guildSettings._id
 		guildSettings.locations.push(newDoc._id)
 		guildSettings.save()
