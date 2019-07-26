@@ -75,7 +75,7 @@ client.on('message', async msg => {
   }
 
   //Check permissions
-  var channelPerms = await msg.channel.permissionsFor(client.user) 
+  var channelPerms = await msg.channel.permissionsFor(client.user)
   var missing = []
   config.permissions.commands.forEach(flag => {
     if(!channelPerms.has(flag)){
@@ -129,7 +129,7 @@ client.on('message', async msg => {
     // Notify the user there was an error
     msg.channel.send(utils.errorEmbed('There was an error trying to execute that command!'));
     // Post error to logging channel if it exists
-    utils.logTraceback(client, err, msg)
+    utils.logTraceback(err, client, msg)
   }
 });
 

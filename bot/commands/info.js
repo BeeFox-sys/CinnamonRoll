@@ -36,6 +36,7 @@ module.exports = {
     const githubUrl = "https://github.com/PlatypodeCode/CinnamonRoll";
 
     const infoMessage = `CinnamonRoll is a bot designed for roleplay on Discord. It allows you to create characters and set up message proxying, set scenes and define locations, post as NPCs, roll dice and more.\n\nType \`${guildSettings.prefix}help\` for a list of commands and \`${guildSettings.prefix}help [command]\` to find out how they work!\n\nWe also have a support server for help, announcements, discussion, suggestions, etc\n`;
+
     const serverUrl = "https://discord.gg/PrKWQP2";
 
     // Generate Embed
@@ -44,11 +45,10 @@ module.exports = {
       .addField("Add the bot!",`[Click here to add CinnamonRoll to your server](${inviteUrl})`)
       .addField("See the code!",`[Click here to view the GitHub for CinnamonRoll](${githubUrl})`)
       .addField("Get help!", `[Click here to join our support server](${serverUrl})`);
-    if (config.owner.id !== undefined) {
-      const botOwner = await client.fetchUser(config.owner.id);
-      if (config.owner.name !== undefined) embed.setFooter(`Instance Owner: @${botOwner.tag} (${config.owner.name})`)
-      else embed.setFooter(`Instance Owner: @${botOwner.tag}`)
-    }
+      if (config.owner.id.length) {
+        const botOwner = await client.fetchUser(config.owner.id);
+        embed.setFooter(`Instance Owner: @${botOwner.tag}${config.owner.name.length ? ` (${config.owner.name})` : ``}`);
+      }
 
     // Finally, send the embed with all the content
     return msg.channel.send(embed);
