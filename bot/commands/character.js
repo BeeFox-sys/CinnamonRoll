@@ -136,7 +136,7 @@ module.exports = {
         case "delete":
           await removeCharacter(character, client, msg)
           return;
-        
+
         case "open":
         case "share":
           await openCharacter(character, client, msg)
@@ -165,8 +165,8 @@ async function listCharacters(guildSettings, charactersList, msg) {
 
   for (var index = 0; index < charactersList.length; index++) {
     var character = charactersList[index]
-    
-    response.description += `\n[\`${character._id}\`] **${character.name}**${(character.proxy.prefix || character.proxy.suffix) ? ` (\`${character.proxy.prefix}text${character.proxy.suffix}\`)`:``} <@${character.owner}>${character.open ? ` 🔗`:``}`
+
+    response.description += `\n[\`${character._id}\`] **${character.name}**${(character.proxy.prefix || character.proxy.suffix) ? ` (\`${character.proxy.prefix}text${character.proxy.suffix}\`)` : ``} <@${character.owner}>${character.open ? ` 🔗` : ``}`
 
     if (response.description.length > 1800) {
       part += 1
@@ -187,7 +187,7 @@ async function showCharacter(character, msg, client, message) {
 
   var embed = utils.passEmbed()
   embed.setTitle(character.name)
-  embed.setFooter(`id: ${character._id} | creator: @${user.tag}${character.open ? ` | 🔗`:``}`)
+  embed.setFooter(`id: ${character._id} | creator: @${user.tag}${character.open ? ` | 🔗` : ``}`)
   embed.setColor(character.colour)
   if (character.avatar || character.references.length > 0) embed.setThumbnail(character.avatar || character.references[0].url)
 
@@ -716,10 +716,10 @@ async function updateStat(character, msg, args, client) {
   })
 }
 
-async function openCharacter(character, client, msg){
+async function openCharacter(character, client, msg) {
   user = await client.fetchUser(character.owner)
-  if(character.owner != msg.member.id) return msg.channel.send(utils.errorEmbed(`Only the character owner (${user.tag}) can enable/disable character sharing`))
-  if(character.open){
+  if (character.owner != msg.member.id) return msg.channel.send(utils.errorEmbed(`Only the character owner (${user.tag}) can enable/disable character sharing`))
+  if (character.open) {
     character.open = false
   } else {
     character.open = true
@@ -731,7 +731,7 @@ async function openCharacter(character, client, msg){
       utils.logTraceback(err, client, msg)
       return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
     }
-    if(character.open) var response = "enabled"
+    if (character.open) var response = "enabled"
     else var response = "disabled"
 
     return msg.channel.send(utils.passEmbed(`Character sharing for ${character.name} has been ${response}`))

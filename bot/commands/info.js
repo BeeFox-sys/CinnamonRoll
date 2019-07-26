@@ -25,16 +25,7 @@ module.exports = {
     Read messages history - might need this later on for message lookup/context-aware stuff
     Add reactions - let the bot react to messages e.g. for controlling embed panels
     */
-    const flags = [
-      "MANAGE_WEBHOOKS",
-      "VIEW_CHANNEL",
-      "SEND_MESSAGES",
-      "MANAGE_MESSAGES",
-      "EMBED_LINKS",
-      "ATTACH_FILES",
-      "READ_MESSAGE_HISTORY",
-      "ADD_REACTIONS"
-    ];
+    const flags = config.permissions.proxy.concat(config.permissions.commands);
     // Resolve the flags to a permissions integer
     const permissions = Permissions.resolve(flags);
 

@@ -3,10 +3,13 @@ const mongoose = require('mongoose');
 const utils = require('./util.js')
 const schemas = require('./schemas.js')
 const messages = mongoose.model('messages', schemas.message)
+const config = require('../config.json');
+
 
 
 module.exports.execute = async (client, guildSettings, msg) => {
   // Get sender and their characters
+
   sender = await msg.author
   characters = guildSettings.characters.filter(character => {
     var prefix = (character.proxy.prefix != "" && character.proxy.prefix != undefined)
@@ -30,6 +33,25 @@ module.exports.execute = async (client, guildSettings, msg) => {
     var prefix = character.proxy.prefix || ""
     var suffix = character.proxy.suffix || ""
     if (msg.content.startsWith(prefix) && msg.content.endsWith(suffix)) {
+      //Check perms
+      var channelPerms = await msg.channel.permissionsFor(client.user) 
+      var missing = []
+      config.permissions.proxy.forEach(flag => {
+        if(!channelPerms.has(flag)){
+          missing.push(flag)
+        }
+      });
+      if(missing.length > 0){
+        var serverOwner = await client.fetchUser(msg.guild.owner)
+          if(!missing.includes("SEND_MESSAGES")){
+            return msg.channel.send(`Missing permissions: \n${missing.join("\n")}`)
+          } else {
+            return serverOwner.send(`Missing permissions in **${msg.guild.name}**: \n${missing.join("\n")}`).catch((err)=>{
+              return utils.logTraceback(new Error(`Missing permissions in ${msg.guild.id}\nServer owner is ${serverOwner.tag}`),client, msg)
+            })
+          }
+      }
+      //Setup and send hook
       var hook = await utils.getWebhook(client, msg.channel)
       var name = character.displayName || character.name
       var suffixLength = -suffix.length

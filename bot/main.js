@@ -35,7 +35,6 @@ for (const file of commandFiles) {
   client.commands.set(command.name, command);
 }
 
-
 client.on('ready', async () => {
   console.warn(`Logged in as ${client.user.tag} (ID: ${client.user.id})!`);
   console.warn(`${client.guilds.size} servers`);
@@ -75,7 +74,26 @@ client.on('message', async msg => {
     args = msg.content.slice(settings.prefix.length).split(/ +/);
   }
 
+  //Check permissions
+  var channelPerms = await msg.channel.permissionsFor(client.user) 
+  var missing = []
+  config.permissions.commands.forEach(flag => {
+    if(!channelPerms.has(flag)){
+      missing.push(flag)
+    }
+  });
+  if(missing.length > 0){
+    var serverOwner = await client.fetchUser(msg.guild.owner)
+      if(!missing.includes("SEND_MESSAGES")){
+        return msg.channel.send(`Missing permissions: \n${missing.join("\n")}`)
+      } else {
+        return serverOwner.send(`Missing permissions in **${msg.guild.name}**: \n${missing.join("\n")}`).catch((err)=>{
+          return utils.logTraceback(new Error(`Missing permissions in ${msg.guild.id}\nServer owner is ${serverOwner.tag}`),client, msg)
+        })
+      }
+  }
 
+  //Find command
   var commandName = args.shift()
   if (!commandName) {
     commandName = args.shift()
