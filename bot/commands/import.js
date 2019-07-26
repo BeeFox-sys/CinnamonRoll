@@ -31,8 +31,8 @@ module.exports = {
 			} catch (err) {
 				return msg.channel.send(utils.errorEmbed("There is something wrong with your JSON file"))
 			}
-			if (importJson.members) return pluralkitImport(importJson, msg, guildSettings)
-			if (importJson.tuppers) return tupperboxImport(importJson, msg, guildSettings)
+			if (importJson.members) return pluralkitImport(importJson, client, msg, guildSettings)
+			if (importJson.tuppers) return tupperboxImport(importJson, client, msg, guildSettings)
 			if (importJson.characters || importJson.locations) return cinnamonrollImport(importJson, msg, guildSettings)
 			return msg.channel.send(utils.errorEmbed("That doesn't seem to be a valid file"))
 		})
