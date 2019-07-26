@@ -6,14 +6,16 @@
   "idLength": 5,
   "owner": {"id":"123456789101112131", "name": "This can be left blank"},
   "logChannel": "123456789098765432",
-  "permissions":[
-    "MANAGE_WEBHOOKS",
-    "VIEW_CHANNEL",
-    "SEND_MESSAGES",
-    "MANAGE_MESSAGES",
-    "EMBED_LINKS",
-    "ATTACH_FILES",
-    "READ_MESSAGE_HISTORY",
-    "ADD_REACTIONS"
-  ]
+  "permissions":{
+    "commands":[
+      "VIEW_CHANNEL",
+      "SEND_MESSAGES",
+      "READ_MESSAGE_HISTORY",
+      "ADD_REACTIONS"
+    ],
+    "proxy":[
+      "MANAGE_WEBHOOKS",
+      "MANAGE_MESSAGES"
+    ]
+  }
 }
