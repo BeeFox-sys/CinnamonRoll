@@ -120,7 +120,7 @@ async function tupperboxImport(importJson, client, msg, guildSettings) {
 
 }
 
-async function cinnamonrollImport(importJson, msg, guildSettings) {
+async function cinnamonrollImport(importJson, client, msg, guildSettings) {
 
 	if (importJson.characters != undefined) {
 		var importMessage = await msg.channel.send(utils.warnEmbed(`Begining import...`).setTitle(`Importing characters from CinnamonRoll for ${msg.member.nickname}`).setFooter("This may take some time..."))
@@ -129,7 +129,7 @@ async function cinnamonrollImport(importJson, msg, guildSettings) {
 		else {
 			var imported = ""
 			for (let ci = 0; ci < importJson.characters.length; ci++) {
-				imported = await importCharacter(importJson.characters[ci], msg, guildSettings, imported)
+				imported = await importCharacter(importJson.characters[ci], client, msg, guildSettings, imported)
 			}
 			await importMessage.edit(utils.passEmbed("Success!\nImported characters:\n" + imported).setTitle(`Importing characters from CinnamonRoll for ${msg.member.nickname}`))
 		}
@@ -142,7 +142,7 @@ async function cinnamonrollImport(importJson, msg, guildSettings) {
 
 		var imported = ""
 		for (let ci = 0; ci < importJson.locations.length; ci++) {
-			imported = await importLocation(importJson.locations[ci], msg, guildSettings, imported)
+			imported = await importLocation(importJson.locations[ci], client, msg, guildSettings, imported)
 		}
 		await importMessage.edit(utils.passEmbed("Success!\nImported locations:\n" + imported).setTitle(`Importing locations from CinnamonRoll for ${msg.member.nickname}`))
 	}
