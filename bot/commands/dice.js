@@ -30,7 +30,7 @@ module.exports = {
 		} catch (err) {
 			console.warn(err)
 			utils.logTraceback(err, client, msg)
-			if (err.message.startsWith("Undefined symbol")) {
+			if (err.message.startsWith("Undefined symbol") || err.name == "TypeError") {
 				msg.channel.send(utils.errorEmbed("There is something not quite right here, [Please check the guide](https://github.com/GreenImp/rpg-dice-roller#supported-notation)"))
 			}
 		}
