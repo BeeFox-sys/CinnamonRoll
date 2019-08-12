@@ -47,7 +47,6 @@ module.exports = {
           usage = ""
         }
         usage += `\n**${prefix}${command.name}  ${command.usage[i]}`
-        console.log(usage.length)
       }
       embed.addField("Usage:",usage)
     }

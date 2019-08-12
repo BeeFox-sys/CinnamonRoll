@@ -186,6 +186,8 @@ utils = {
   async logTraceback(err, client, msg) {
     try {
       if (config.logChannel) {
+        let date = new Date; 
+        console.error(`${date.toUTCString()} Server: ${msg.guild.id} Channel:${msg.channel.id} Input:${msg.content}\n${err.stack}`)
         const logChannel = await client.channels.get(config.logChannel);
         var embed = utils.errorEmbed()
         if (msg) {

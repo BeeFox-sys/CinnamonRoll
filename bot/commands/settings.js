@@ -111,7 +111,6 @@ async function setPrefix(guildSettings, client, msg, args) {
 	guildSettings.prefix = args.join(" ")
 	return guildSettings.save((err, doc) => {
 		if (err) {
-			console.log(err)
 			utils.logTraceback(err, client, msg)
 			return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command!"))
 		} else {
@@ -133,7 +132,6 @@ async function setRole(guildSettings, client, msg, args) {
 			guildSettings.admin.push(role.id)
 			return guildSettings.save((err, doc) => {
 				if (err) {
-					console.log(err)
 					utils.logTraceback(err, client, msg)
 					return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command!"))
 				} else {
@@ -149,7 +147,6 @@ async function setRole(guildSettings, client, msg, args) {
 			guildSettings.admin.splice(pos, 1)
 			return guildSettings.save((err, doc) => {
 				if (err) {
-					console.log(err)
 					utils.logTraceback(err, client, msg)
 					return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command!"))
 				} else {
@@ -176,7 +173,6 @@ async function setName(guildSettings, client, msg, args) {
 
 	return guildSettings.save((err, doc) => {
 		if (err) {
-			console.log(err)
 			utils.logTraceback(err, client, msg)
 			return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command!"))
 		} else {
@@ -191,7 +187,6 @@ function toggleImport(guildSettings, client, msg, args) {
 	guildSettings.enableImport = !currentImport
 	guildSettings.save((err, doc) => {
 		if (err) {
-			console.log(err)
 			utils.logTraceback(err, client, msg)
 			return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command!"))
 		}
@@ -206,7 +201,6 @@ function toggleLocationLock(guildSettings, client, msg, args) {
 	guildSettings.locationLock = !currentLock
 	return guildSettings.save((err, doc) => {
 		if (err) {
-			console.log(err)
 			utils.logTraceback(err, client, msg)
 			return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command!"))
 		}
