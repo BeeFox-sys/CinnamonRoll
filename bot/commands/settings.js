@@ -16,7 +16,7 @@ module.exports = {
 		`import**\nToggles the import command`,
 		`locationlock**\nToggles location lock\n-Enabled: Game Managers can only edit their locations\n-Disabled: Game Managers can edit all locations`,
 		`remove <character | location> <id | name>**\nRemoves specified character/location from the server\nUseful for deleting characters if a user leaves`],
-	example: '',
+	example: undefined,
 	async execute(client, guildSettings, msg, args) {
 		if (args.length == 0) {
 			await displaySettings(guildSettings, msg)

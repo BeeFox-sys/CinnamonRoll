@@ -14,6 +14,7 @@ module.exports = {
   args: true,
   argsMin: 1,
   usage: ['<name> <text>**\nProxies an npc'],
+  example: '"Mysterious Shopkeeper" What do I look like? A brother keeper?',
   async execute(client, guildSettings, msg, args) {
     var attachments = utils.attachmentsToFileOptions(msg.attachments)
 

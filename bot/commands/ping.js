@@ -9,7 +9,7 @@ module.exports = {
 	args: false,
 	argsMin: 0,
 	usage: undefined,
-	example: [],
+	example: undefined,
 	async execute(client, guildSettings, msg, args) {
 		return await msg.channel.send("Pong!")
 	},

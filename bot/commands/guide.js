@@ -9,7 +9,7 @@ module.exports = {
 	args: false,
 	argsMin: 0,
 	usage: undefined,
-	example: [],
+	example: undefined,
 	async execute(client, guildSettings, msg, args) {
 		var message = await msg.channel.send(utils.warnEmbed(
 `There are several guides to choose from, please react with the corresponding reaction

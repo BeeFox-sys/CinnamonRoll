@@ -8,7 +8,8 @@ module.exports = {
   description: 'Shows information about the bot',
   hidden: false,
   args: false,
-  usage: ["**"],
+  usage: undefined,
+  example: undefined,
   async execute(client, guildSettings, msg, args) {
     // Fetch the bot info and get the client ID
     const oauthApp = await client.fetchApplication();

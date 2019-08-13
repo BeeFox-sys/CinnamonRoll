@@ -10,7 +10,7 @@ module.exports = {
 	args: false,
 	argsMin: 0,
 	usage: undefined,
-	example: [],
+	example: undefined,
 	async execute(client, guildSettings, msg, args) {
 		if (msg.member.id == config.owner.id) {
 			var message = args.join(" ")

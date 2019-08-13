@@ -14,7 +14,7 @@ module.exports = {
 	args: false,
 	argsMin: 0,
 	usage: undefined,
-	example: [],
+	example: undefined,
 	async execute(client, guildSettings, msg, args) {
 
         var stats = utils.warnEmbed()

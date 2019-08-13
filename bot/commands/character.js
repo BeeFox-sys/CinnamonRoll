@@ -28,7 +28,7 @@ module.exports = {
     `<character> proxy <prefix>text<suffix>**\nSets the characters proxy`,
     `<character> pronouns <pronouns>**\nSets the characters pronouns`,
     `<character> share**\nEnables character sharing (anyone can edit or proxy the character)`],
-  example: '',
+  example: undefined,
   async execute(client, guildSettings, msg, args) {
     const charactersList = guildSettings.characters.sort((a, b) => {
       var nameA = a.name

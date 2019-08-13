@@ -13,6 +13,7 @@ module.exports = {
 	argsMin: 1,
 	usage: ['<location | character> <name | id>**\nExports a single location/character',
 		'all [characters | locations]**\nExports all locations, all characters, or everything',],
+	example: undefined,
 	async execute(client, guildSettings, msg, args) {
 		args = utils.quoteFinder(args)
 		switch (args[0]) {

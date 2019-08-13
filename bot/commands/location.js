@@ -23,7 +23,7 @@ module.exports = {
     `<location> reference add <name> <url>**\nAdds a reference link to a location`,
     `<location> reference remove <name>**\nRemoves a reference link from a location`,
     `<location> rename <new name>**\nRenames a location`],
-  example: '',
+  example: undefined,
   async execute(client, guildSettings, msg, args) {
     const locationsList = guildSettings.locations.sort((a, b) => {
       var nameA = a.name
