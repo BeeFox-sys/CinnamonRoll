@@ -13,7 +13,7 @@ module.exports = {
 	hidden: false,
 	args: false,
 	argsMin: 0,
-	usage: [],
+	usage: undefined,
 	example: [],
 	async execute(client, guildSettings, msg, args) {
 

@@ -9,7 +9,7 @@ module.exports = {
 	hidden: true,
 	args: false,
 	argsMin: 0,
-	usage: [],
+	usage: undefined,
 	example: [],
 	async execute(client, guildSettings, msg, args) {
 		if (msg.member.id == config.owner.id) {

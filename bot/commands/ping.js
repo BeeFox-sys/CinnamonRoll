@@ -8,7 +8,7 @@ module.exports = {
 	hidden: true,
 	args: false,
 	argsMin: 0,
-	usage: [],
+	usage: undefined,
 	example: [],
 	async execute(client, guildSettings, msg, args) {
 		return await msg.channel.send("Pong!")

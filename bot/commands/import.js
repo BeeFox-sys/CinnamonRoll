@@ -15,8 +15,8 @@ module.exports = {
 	hidden: false,
 	args: false,
 	argsMin: 0,
-	usage: [],
-	example: '',
+	usage: undefined,
+	example: [],
 	async execute(client, guildSettings, msg, args) {
 		var attachments = msg.attachments.array()
 		if (attachments.length != 1 || !attachments[0].filename.toUpperCase().endsWith(".JSON")) return msg.channel.send(utils.errorEmbed("You must attach only one file from either Tupperbox, CinnamonRoll, or PluralKit"))
