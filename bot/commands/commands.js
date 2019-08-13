@@ -9,6 +9,7 @@ module.exports = {
   hidden: false,
   args: false,
   usage: ['[command]'],
+  example: undefined,
   execute(client, guildSettings, msg, args) {
     const { prefix } = guildSettings
     const data = [];
@@ -33,10 +34,9 @@ module.exports = {
       return msg.channel.send(utils.errorEmbed('That\'s not a valid command!'));
     }
 
-    data.push(`**Name:** ${command.name}`);
-
     embed = utils.warnEmbed()
       .setFooter(`You can send \`${prefix}help [command name]\` to get info on a specific command!`)
+      .setTitle(prefix+command.name)
     if (command.aliases) embed.addField(`Aliases:`, `${command.aliases.join(', ')}`);
     if (command.description) embed.addField(`Description:`, `${command.description}`);
     if (command.usage) {
