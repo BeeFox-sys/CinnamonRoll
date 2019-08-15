@@ -134,7 +134,14 @@ utils = {
     if (!input.length) throw new TypeError("Input array to quoteFinder is undefined!");
     var string = input.join(" ")
     solved = string.match(/\w+|["'“][^"'”]+["'”]/g)
-    return solved
+    result = []
+    solved.forEach(part => {
+      if(/^["'“][^"'”]+["'”]$/.test(part)){
+        result.push(part.substr(1,part.length-2))
+      }
+      else(result.push(part))
+    });
+    return result
   },
   attachmentsToFileOptions(attachments){
     if(attachments.size == 0) return undefined
@@ -191,6 +198,7 @@ utils = {
     }
   },
   fackClyde(str){
+    // str = str.padEnd(".",2)
     if(!str.toLowerCase().includes("clyde")) return str
     var pos = str.search(/(clyde)/gi)
     var strarry = str.split('')
