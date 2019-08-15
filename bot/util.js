@@ -130,26 +130,11 @@ utils = {
         );
     },
 
-  quoteFinder(array){
-    if (!array.length) throw new TypeError("Input array to quoteFinder is undefined!");
-    if(array[0].startsWith('"') == false) return array
-    var start = null
-    var end = null
-    for(var i = 0; i < array.length; i++){
-      if(array[i].startsWith(`"`)){
-        start = i
-      }
-      if(array[i].endsWith(`"`)){
-        end = i + 1
-      }
-      if(start != null && end != null) break
-    }
-    if(start != null && end != null && start < end){
-      quote = array.slice(start, end).join(" ").slice(1,-1)
-      var del = end - start
-      array.splice(start, del, quote)
-    }
-    return array
+  quoteFinder(input){
+    if (!input.length) throw new TypeError("Input array to quoteFinder is undefined!");
+    var string = input.join(" ")
+    solved = string.match(/\w+|["'“][^"'”]+["'”]/g)
+    return solved
   },
   attachmentsToFileOptions(attachments){
     if(attachments.size == 0) return undefined
