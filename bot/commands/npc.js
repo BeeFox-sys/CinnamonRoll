@@ -23,15 +23,15 @@ module.exports = {
 
     if (args.length < 1) return msg.channel.send(utils.errorEmbed("You must provide a name for the NPC!"));
     args = await utils.quoteFinder(args)
-    un = utils.fackClyde(args.slice(0, 1).toString())
-    content = args.slice(1).join(" ")
+    un = args.shift()
+    content = args.join(" ")
 
-    if (un.length + content.length < argLength) return msg.channel.send(utils.errorEmbed("Message cannot be empty"))
+    if (content.length < 1 && !attachments) return msg.channel.send(utils.errorEmbed("Message cannot be empty"))
 
     hook = await utils.getWebhook(client, msg.channel)
 
     newMessage = await hook.send(content, {
-      username: un,
+      username: utils.fackClyde(un),
       avatarURL: "https://cdn.discordapp.com/avatars/582243614030299136/fe639cfe01e197860599ff347eed9998.png?size=256", // Send an empty transparent PNG file so the default avatar is replaced with nothingness
       disableEveryone: true,
       files: attachments

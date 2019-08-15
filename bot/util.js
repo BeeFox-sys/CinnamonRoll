@@ -198,7 +198,7 @@ utils = {
     }
   },
   fackClyde(str){
-    // str = str.padEnd(".",2)
+    str = str.padEnd(2,"឵឵") // <- there is a invisbale unicode char there
     if(!str.toLowerCase().includes("clyde")) return str
     var pos = str.search(/(clyde)/gi)
     var strarry = str.split('')
