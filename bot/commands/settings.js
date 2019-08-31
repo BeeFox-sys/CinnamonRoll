@@ -253,16 +253,16 @@ async function removeLocation(client, msg, settings, args) {
 			return locationsModel.deleteOne({ _id: location._id }, (err) => {
 				if (err) {
 					console.warn(err)
-					utils.logTraceback(err, client, msg)
-					return msg.channel.send(utils.errorEmbed("Something went wrong with that reaction"))
+					return utils.logTraceback(error, client, deleteMessage)
 				}
 				return msg.channel.send(utils.passEmbed(`Deleted location`))
 			})
 		})
-		.catch(collected => {
-			msg.channel.send(utils.errorEmbed("Timed Out"))
-			deleteMessage.clearReactions()
-		})
+		.catch((error, collected) => {
+      if(error.size == 0) msg.channel.send(utils.errorEmbed("Timed Out"))
+      else return utils.logTraceback(error, client, deleteMessage)
+      deleteMessage.clearReactions()
+    })
 }
 
 async function removeCharacter(client, msg, settings, args) {
@@ -305,14 +305,14 @@ async function removeCharacter(client, msg, settings, args) {
 			return charactersModel.deleteOne({ _id: character._id }, (err) => {
 				if (err) {
 					console.warn(err)
-					utils.logTraceback(err, client, msg)
-					return msg.channel.send(utils.errorEmbed("Something went wrong with that reaction"))
+					return utils.logTraceback(error, client, deleteMessage)
 				}
 				return msg.channel.send(utils.passEmbed(`Deleted character`))
 			})
 		})
-		.catch(collected => {
-			msg.channel.send(utils.errorEmbed("Timed Out"))
-			deleteMessage.clearReactions()
-		})
+		.catch((error, collected) => {
+      if(error.size == 0) msg.channel.send(utils.errorEmbed("Timed Out"))
+      else return utils.logTraceback(error, client, deleteMessage)
+      deleteMessage.clearReactions()
+    })
 }

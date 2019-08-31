@@ -162,8 +162,7 @@ async function addLocation(guildSettings, client, msg, args) {
     return await newLocation.save(async (err, doc) => {
       if (err) {
         console.warn(err)
-        utils.logTraceback(err, client, msg)
-        return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
+        return utils.logTraceback(err, client, msg)
       }
       await guildSettings.locations.push(doc._id)
       await guildSettings.save()
@@ -183,8 +182,7 @@ async function setColour(location, client, msg, args) {
     return await location.save((err, doc) => {
       if (err) {
         console.warn(err)
-        utils.logTraceback(err, client, msg)
-        return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
+        return utils.logTraceback(err, client, msg)
       }
       return msg.channel.send(utils.passEmbed(`Set colour to **${doc.colour.toLowerCase() || "default"}**`).setColor(doc.colour))
     })
@@ -212,8 +210,7 @@ async function setDescription(location, client, msg, args) {
   return await location.save((err, doc) => {
     if (err) {
       console.warn(err)
-      utils.logTraceback(err, client, msg)
-      return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
+      return utils.logTraceback(err, client, msg)
     }
     if (!location.description) {
       return msg.channel.send(utils.passEmbed(`Cleared description!`))
@@ -245,8 +242,7 @@ async function setReference(guildSettings, location, client, msg, args) {
         return location.save((err, doc) => {
           if (err) {
             console.warn(err)
-            utils.logTraceback(err, client, msg)
-            return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
+            return utils.logTraceback(err, client, msg)
           }
           return msg.channel.send(utils.passEmbed(`Added reference \"${name}\"!`))
         })
@@ -263,8 +259,7 @@ async function setReference(guildSettings, location, client, msg, args) {
         return location.save((err) => {
           if (err) {
             console.warn(err)
-            utils.logTraceback(err, client, msg)
-            return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
+            return utils.logTraceback(err, client, msg)
           }
           return msg.channel.send(utils.passEmbed(`Removed reference \"${name}\"!`))
         })
@@ -286,8 +281,7 @@ async function setName(location, client, msg, args) {
   return await location.save(err => {
     if (err) {
       console.warn(err)
-      utils.logTraceback(err, client, msg)
-      return msg.channel.send(utils.errorEmbed("There was an error trying to execute that command"))
+      return utils.logTraceback(err, client, msg)
     }
     return msg.channel.send(utils.passEmbed(`Updated name to ${location.name}!`))
   })
@@ -313,23 +307,21 @@ async function removeLocation(location, client, msg, settings) {
         guildSettingsModel.updateOne({ _id: settings.id }, { $pull: { locations: location.id } }, (err, doc) => {
           if (err) {
             console.warn(err)
-            utils.logTraceback(err, client, msg)
-            return msg.channel.send(utils.errorEmbed("Something went wrong with that reaction")
-            )
+            return utils.logTraceback(error, client, deleteMessage)
           }
         });
 
       return locationsModel.deleteOne({ _id: location._id }, (err) => {
         if (err) {
           console.warn(err)
-          utils.logTraceback(err, client, msg)
-          return msg.channel.send(utils.errorEmbed("Something went wrong with that reaction"))
+          return utils.logTraceback(error, client, deleteMessage)
         }
         return msg.channel.send(utils.passEmbed(`Deleted location`))
       })
     })
-    .catch(collected => {
-      msg.channel.send(utils.errorEmbed("Timed Out"))
+    .catch((error, collected) => {
+      if(error.size == 0) msg.channel.send(utils.errorEmbed("Timed Out"))
+      else return utils.logTraceback(error, client, deleteMessage)
       deleteMessage.clearReactions()
     })
 }

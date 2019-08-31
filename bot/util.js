@@ -177,6 +177,7 @@ utils = {
   // Traceback logging
   async logTraceback(err, client, msg) {
     try {
+      msg.channel.send(utils.errorEmbed("Something went wrong"))
       if (config.logChannel) {
         let date = new Date; 
         console.error(`${date.toUTCString()} Server: ${msg.guild.id} Channel:${msg.channel.id} Input:${msg.content}\n${err.stack}`)
