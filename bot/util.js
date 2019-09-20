@@ -134,14 +134,7 @@ utils = {
     if (!input.length) throw new TypeError("Input array to quoteFinder is undefined!");
     var string = input.join(" ")
     solved = string.match(/\w+|["'“][^"'”]+["'”]/g)
-    result = []
-    solved.forEach(part => {
-      if(/^["'“][^"'”]+["'”]$/.test(part)){
-        result.push(part.substr(1,part.length-2))
-      }
-      else(result.push(part))
-    });
-    return result
+    return solved
   },
   attachmentsToFileOptions(attachments){
     if(attachments.size == 0) return undefined
