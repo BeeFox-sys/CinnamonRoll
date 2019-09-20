@@ -135,6 +135,7 @@ utils = {
     if(array[0].startsWith('"') == false) return array
     var start = null
     var end = null
+    if(array[0].startsWith('"'))
     for(var i = 0; i < array.length; i++){
       if(array[i].startsWith(`"`)){
         start = i
