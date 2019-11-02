@@ -197,7 +197,7 @@ async function showCharacter(character, msg, client, message) {
 
   if (character.proxy.prefix != "" || character.proxy.suffix != "") embed.addField("Proxy:", `\`${character.proxy.prefix}text${character.proxy.suffix}\``, true)
 
-  if (character.description != "") embed.addField("Description:", character.description)
+  if (character.description != "") embed.setDescription(character.description)
 
   var references = ""
   for (var i = 0; i < character.references.length; i++) {
