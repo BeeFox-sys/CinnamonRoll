@@ -52,14 +52,14 @@ utils = {
   },
 
   errorEmbed(text){
-    embed = new Discord.RichEmbed()
+    embed = new Discord.MessageEmbed()
       .setColor('#ff2200')
       .setDescription(text || "")
     return embed
   },
 
   passEmbed(text){
-    embed = new Discord.RichEmbed()
+    embed = new Discord.MessageEmbed()
       .setColor('#43b581')
       .setDescription(text || "")
     return embed
