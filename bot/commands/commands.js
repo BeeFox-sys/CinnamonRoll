@@ -19,7 +19,7 @@ module.exports = {
 
       data.push(commands.map(command => guildSettings.prefix + command.name).join('\n'))
 
-      embed = new Discord.RichEmbed()
+      embed = new Discord.MessageEmbed()
         .addField("Commands:", data, true)
         .addField("Other things", "• You can also react to a proxied message with ❓ to get information on who sent it\n• You can react to a proxied message you sent with a ❌ to delete it\n• You can edit your message to fix the proxy if it is the latest message in the channel\n• A character with a 🔗 next to them in the list, or in the footer of their character card, is a public character. This means anyone can edit them.", true)
         .setFooter(`You can send \`${prefix}help [command name]\` to get info on a specific command!`)
