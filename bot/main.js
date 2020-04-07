@@ -21,7 +21,6 @@ db.once('open', function () {
 const schemas = require('./schemas.js');
 const guildSettings = mongoose.model('guildSettings', schemas.guildSettings)
 
-
 const client = new Discord.Client();
 
 client.commands = new Discord.Collection();
@@ -140,7 +139,7 @@ reactions.execute(client)
 
 client.on("messageUpdate",async (old,msg)=>{
   var messages = msg.channel.messages
-  var latest = messages.last()
+  var latest = messages.cache.last();
   if(latest.id != msg.id) return
   var settings = await utils.getGuildSettings(client, msg.guild.id, guildSettings)
   await proxyMethod.execute(client, settings, msg)
