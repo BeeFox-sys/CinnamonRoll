@@ -447,7 +447,11 @@ async function setReference(guildSettings, character, client, msg, args) {
 // Set character avatar
 async function setAvatar(character, client, msg, args) {
   var attachments = utils.attachmentsToFileOptions(msg.attachments)
-  if (!attachments) { character.avatar = args[0] || undefined }
+  if (!attachments) { 
+    const url = args[0]
+    if (utils.validateUrl(url) !== true) return msg.channel.send(utils.errorEmbed(`\`${url}\` is not a valid URL. Make sure the website exists and that the link starts with \`http://\` or \`https://\`.`))
+    character.avatar = url
+  }
   else { character.avatar = attachments[0].attachment }
   return await character.save((err, doc) => {
     if (err) {
