@@ -302,14 +302,8 @@ async function removeLocation(location, client, msg, settings) {
 
       deleteMessage.reactions.removeAll()
 
-      if (reaction == "❌")
-
-        guildSettingsModel.updateOne({ _id: settings.id }, { $pull: { locations: location.id } }, (err, doc) => {
-          if (err) {
-            console.warn(err)
-            return utils.logTraceback(error, client, deleteMessage)
-          }
-        });
+      if (reaction == "❌") 
+        return;
 
       return locationsModel.deleteOne({ _id: location._id }, (err) => {
         if (err) {
