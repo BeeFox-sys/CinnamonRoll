@@ -66,7 +66,7 @@ utils = {
   },
 
   warnEmbed(text){
-    embed = new Discord.RichEmbed()
+    embed = new Discord.MessageEmbed()
       .setColor('#ffaa00')
       .setDescription(text || "")
     return embed
@@ -193,7 +193,7 @@ utils = {
         const logChannel = await client.channels.get(config.logChannel);
         var embed = utils.errorEmbed()
         if (msg) {
-          var user = await client.fetchUser(msg.author.id)
+          var user = await client.users.fetch(msg.author.id)
           if (msg.content.length > 256) {
             embed.setTitle(msg.content.substring(0, 256 - 3) + "...")
           } else embed.setTitle(msg.content)

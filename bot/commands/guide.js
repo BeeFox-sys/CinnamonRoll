@@ -57,7 +57,7 @@ async function guidePage(msg, guide, pageNum, message){
 	if(!message) message = await msg.channel.send(utils.warnEmbed(page.content).setTitle(page.title))
 	else await message.edit(utils.warnEmbed(page.content).setTitle(page.title))
 
-	await message.clearReactions()
+	message.reactions.removeAll()
 
 	if(pageNum != 0) await message.react("◀")
 	if(pageNum != guide.length-1) await message.react("▶")
@@ -71,7 +71,7 @@ async function guidePage(msg, guide, pageNum, message){
 		const reaction = collected.first().emoji.name;
 
 		if(reaction == "❌"){
-			message.clearReactions()
+			message.reactions.removeAll()
 		}
 		
 		if(reaction == "◀"){
@@ -82,7 +82,7 @@ async function guidePage(msg, guide, pageNum, message){
 		}
 	})
 	.catch(async collected =>{
-		await message.clearReactions()
+		message.reactions.removeAll()
 	})
 }
 

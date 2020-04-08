@@ -183,7 +183,7 @@ async function listCharacters(guildSettings, charactersList, msg) {
 // Show character card
 async function showCharacter(character, msg, client, message) {
 
-  user = await client.fetchUser(character.owner)
+  user = await client.users.fetch(character.owner)
 
   var embed = utils.passEmbed()
   embed.setTitle(character.name)
@@ -213,7 +213,7 @@ async function showCharacter(character, msg, client, message) {
   message.awaitReactions(reactionFilter, { max: 1, time: 60000 * 2, errors: ["time"] })
     .then(async collection => {
       var reaction = collection.first()
-      await message.clearReactions()
+      message.reactions.removeAll()
       switch (reaction.emoji.name) {
         case "🎒":
           showCharacterBag(character, msg, client, message)
@@ -228,13 +228,13 @@ async function showCharacter(character, msg, client, message) {
       }
     })
     .catch(async err => {
-      await message.clearReactions()
+      message.reactions.removeAll()
     })
 }
 
 async function showCharacterBag(character, msg, client, message) {
 
-  user = await client.fetchUser(character.owner)
+  user = await client.users.fetch(character.owner)
 
   var embed = utils.passEmbed()
     .setTitle(`${character.displayName || character.name}'s Bag`)
@@ -259,7 +259,7 @@ async function showCharacterBag(character, msg, client, message) {
   message.awaitReactions(reactionFilter, { max: 1, time: 60000 * 2, errors: ["time"] })
     .then(async collection => {
       var reaction = collection.first()
-      await message.clearReactions()
+      message.reactions.removeAll()
       switch (reaction.emoji.name) {
         case "👤":
           showCharacter(character, msg, client, message)
@@ -274,13 +274,13 @@ async function showCharacterBag(character, msg, client, message) {
       }
     })
     .catch(async err => {
-      await message.clearReactions()
+      message.reactions.removeAll()
     })
 }
 
 async function showCharacterStats(character, msg, client, message) {
 
-  user = await client.fetchUser(character.owner)
+  user = await client.users.fetch(character.owner)
 
   var embed = utils.passEmbed()
     .setTitle(`${character.displayName || character.name}'s Stats`)
@@ -302,7 +302,7 @@ async function showCharacterStats(character, msg, client, message) {
   message.awaitReactions(reactionFilter, { max: 1, time: 60000 * 2, errors: ["time"] })
     .then(async collection => {
       var reaction = collection.first()
-      await message.clearReactions()
+      message.reactions.removeAll()
       switch (reaction.emoji.name) {
         case "👤":
           showCharacter(character, msg, client, message)
@@ -317,7 +317,7 @@ async function showCharacterStats(character, msg, client, message) {
       }
     })
     .catch(async err => {
-      await message.clearReactions()
+      message.reactions.removeAll()
     })
 }
 
@@ -528,7 +528,7 @@ async function removeCharacter(character, client, msg) {
     .then(collected => {
       var reaction = collected.first().emoji.name
 
-      deleteMessage.clearReactions()
+      deleteMessage.reactions.removeAll()
 
       if (reaction == "❌") return
 
@@ -550,7 +550,7 @@ async function removeCharacter(character, client, msg) {
     .catch((error, collected) => {
       if(error.size == 0) msg.channel.send(utils.errorEmbed("Timed Out"))
       else return utils.logTraceback(error, client, deleteMessage)
-      deleteMessage.clearReactions()
+      deleteMessage.reactions.removeAll()
     })
 }
 
@@ -701,7 +701,7 @@ async function updateStat(character, msg, args, client) {
 }
 
 async function openCharacter(character, client, msg) {
-  user = await client.fetchUser(character.owner)
+  user = await client.users.fetch(character.owner)
   if (character.owner != msg.member.id) return msg.channel.send(utils.errorEmbed(`Only the character owner (${user.tag}) can enable/disable character sharing`))
   if (character.open) {
     character.open = false

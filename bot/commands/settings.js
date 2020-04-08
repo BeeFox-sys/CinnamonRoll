@@ -237,7 +237,7 @@ async function removeLocation(client, msg, settings, args) {
 	deleteMessage.awaitReactions(filter, { max: 1, time: 60000, errors: ['time'] })
 		.then(collected => {
 
-			deleteMessage.clearReactions()
+			deleteMessage.reactions.removeAll()
 
 			//Remove from locations array
 			guildSettingsModel.updateOne({ _id: settings.id }, { $pull: { locations: location.id } }, (err, doc) => {
@@ -261,7 +261,7 @@ async function removeLocation(client, msg, settings, args) {
 		.catch((error, collected) => {
       if(error.size == 0) msg.channel.send(utils.errorEmbed("Timed Out"))
       else return utils.logTraceback(error, client, deleteMessage)
-      deleteMessage.clearReactions()
+      deleteMessage.reactions.removeAll()
     })
 }
 
@@ -287,7 +287,7 @@ async function removeCharacter(client, msg, settings, args) {
 
 			var reaction = collected.first().emoji.name
 
-			deleteMessage.clearReactions()
+			deleteMessage.reactions.removeAll()
 
 			if (reaction == "❌") return
 
@@ -313,6 +313,6 @@ async function removeCharacter(client, msg, settings, args) {
 		.catch((error, collected) => {
       if(error.size == 0) msg.channel.send(utils.errorEmbed("Timed Out"))
       else return utils.logTraceback(error, client, deleteMessage)
-      deleteMessage.clearReactions()
+      deleteMessage.reactions.removeAll()
     })
 }

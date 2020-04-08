@@ -42,7 +42,7 @@ module.exports.execute = async (client, guildSettings, msg) => {
         }
       });
       if(missing.length > 0){
-        var serverOwner = await client.fetchUser(msg.guild.owner)
+        var serverOwner = await client.users.fetch(msg.guild.owner)
           if(!missing.includes("SEND_MESSAGES")){
             return msg.channel.send(`Missing permissions: \n${missing.join("\n")}`)
           } else {

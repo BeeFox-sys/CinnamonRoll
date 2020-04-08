@@ -133,7 +133,7 @@ async function listLocations(guildSettings, locationsList, msg) {
 // Show location card
 async function showLocation(location, msg, client) {
 
-  if (location.owner) var user = await client.fetchUser(location.owner)
+  if (location.owner) var user = await client.users.fetch(location.owner)
   else user = { tag: "[Orphan Location, please export and import it to correct this error]" }
 
   var embed = utils.passEmbed()
@@ -300,7 +300,7 @@ async function removeLocation(location, client, msg, settings) {
     .then(collected => {
       var reaction = collected.first().emoji.name
 
-      deleteMessage.clearReactions()
+      deleteMessage.reactions.removeAll()
 
       if (reaction == "❌")
 
@@ -322,6 +322,6 @@ async function removeLocation(location, client, msg, settings) {
     .catch((error, collected) => {
       if(error.size == 0) msg.channel.send(utils.errorEmbed("Timed Out"))
       else return utils.logTraceback(error, client, deleteMessage)
-      deleteMessage.clearReactions()
+      deleteMessage.reactions.removeAll()
     })
 }

@@ -109,7 +109,7 @@ async function createFile(json, msg, exportMsg) {
 	var writeStream = await fs.createWriteStream(`CinnamonRoll.json.${randIdentifier}`)
 	await writeStream.write(JSON.stringify(json))
 	await writeStream.end()
-	var attachment = await new Discord.Attachment(`CinnamonRoll.json.${randIdentifier}`, `CinnamonRoll.json`)
+	var attachment = await new Discord.MessageAttachment(`CinnamonRoll.json.${randIdentifier}`, `CinnamonRoll.json`)
 
 	try {
 		await msg.author.send(utils.passEmbed(`This may take a second more to upload`).setTitle(`Export for CinnamonRoll`))
