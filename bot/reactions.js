@@ -29,14 +29,14 @@ module.exports.execute = async (client) => {
   client.on('raw', async event => {
     if (!events.hasOwnProperty(event.t)) return;
     const { d: data } = event;
-    const user = client.users.get(data.user_id);
-    const channel = client.channels.get(data.channel_id) || await user.createDM();
+    const user = await client.users.fetch(data.user_id);
+    
+    var channel = await client.channels.fetch(data.channel_id) || await user.createDM();
+    if (channel.messages.cache.has(data.message_id)) return;
 
-    if (channel.messages.has(data.message_id)) return;
-
-    const message = await channel.fetchMessage(data.message_id);
+    const message = await channel.messages.fetch(data.message_id);
     const emojiKey = (data.emoji.id) ? `${data.emoji.name}:${data.emoji.id}` : data.emoji.name;
-    const reaction = message.reactions.get(emojiKey);
+    const reaction = message.reactions.cache.get(emojiKey);
     client.emit(events[event.t], reaction, user);
   });
 }
@@ -50,7 +50,7 @@ async function getMessageData(react, user, client) {
     }
     if (doc == null) return
     react.remove(user.id)
-    var owner = await client.fetchUser(doc.owner)
+    var owner = await client.users.fetch(doc.owner)
     var response = utils.passEmbed()
     response.addField("Owner Username:", owner.tag, true)
     response.addField("Owner id:", owner.id, true)

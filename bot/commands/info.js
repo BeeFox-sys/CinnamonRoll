@@ -47,7 +47,7 @@ module.exports = {
       .addField("See the code!",`[Click here to view the GitHub for CinnamonRoll](${githubUrl})`)
       .addField("Get help!", `[Click here to join our support server](${serverUrl})`);
       if (config.owner.id.length) {
-        const botOwner = await client.fetchUser(config.owner.id);
+        const botOwner = await client.users.fetch(config.owner.id);
         embed.setFooter(`Instance Owner: @${botOwner.tag}${config.owner.name.length ? ` (${config.owner.name})` : ``}`);
       }
 
