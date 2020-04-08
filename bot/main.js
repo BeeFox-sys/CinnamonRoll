@@ -36,7 +36,7 @@ for (const file of commandFiles) {
 
 client.on('ready', async () => {
   console.warn(`Logged in as ${client.user.tag} (ID: ${client.user.id})!`);
-  console.warn(`${client.guilds.size} servers`);
+  console.warn(`${client.guilds.cache.size} servers`);
   // console.warn(`${client.shard.count} shards`); // for future use once sharding becomes necessary
   await setPresence()
 });
