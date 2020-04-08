@@ -27,7 +27,7 @@ module.exports = {
     `<character> nickname <nickname>**\nSets the characters nickname`,
     `<character> proxy <prefix>text<suffix>**\nSets the characters proxy`,
     `<character> pronouns <pronouns>**\nSets the characters pronouns`,
-    `<character> share**\nEnables character sharing (anyone can edit or proxy the character)`],
+    `<character> share**\nEnables character sharing (anyone can edit or proxy the character)`,`<character> bag**\nDisplay's characters bag`,`<character> bag <item> <quantity>**\nAdds an item in a characters bag (negitive numbers remove items from bag)`,`<character> stats**\nDisplay's characters stats`,`<character> stat <stat> <quantity>**\nSets characters stat`],
   example: undefined,
   async execute(client, guildSettings, msg, args) {
     const charactersList = guildSettings.characters.sort((a, b) => {
