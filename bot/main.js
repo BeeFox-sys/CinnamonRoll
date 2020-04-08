@@ -173,7 +173,7 @@ async function setPresence() {
     client.user.setActivity(`Mention me for help!`, { type: 'PLAYING' });
   }
   else {
-    client.user.setActivity(`Mention for help! | in ${client.guilds.size} servers`, { type: 'PLAYING' });
+    client.user.setActivity(`Mention for help! | in ${client.guilds.cache.size} servers`, { type: 'PLAYING' });
   }
 }
 
