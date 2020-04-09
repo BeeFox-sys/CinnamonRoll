@@ -155,7 +155,7 @@ utils = {
   attachmentsToFileOptions(attachments){
     if(attachments.size == 0) return undefined
     var fileOptions = []
-    attachments.tap((attachment)=>{
+    attachments.forEach((attachment)=>{
       fileOptions.push({
         attachment: attachment.url,
         name: attachment.filename

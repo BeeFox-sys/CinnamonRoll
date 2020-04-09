@@ -85,7 +85,7 @@ async function displaySettings(guildSettings, msg) {
 	}
 	var rolesMsg = ""
 	if (roles.size == 0) { rolesMsg = "`None`" }
-	else { roles.tap(role => { rolesMsg += `\n${role.name}` }) }
+	else { roles.forEach(role => { rolesMsg += `\n${role.name}` }) }
 
 
 	embed = utils.warnEmbed()
